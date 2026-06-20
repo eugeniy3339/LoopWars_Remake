@@ -9,6 +9,7 @@ public class Character : MonoBehaviour
     public Movement movement { get; protected set; }
     public Jump jump { get; protected set; }
     public Dash dash { get; protected set; }
+    public WeaponManager weaponManager { get; protected set; }
 
 
     const float defaultGravityScale = 3f;
@@ -31,6 +32,7 @@ public class Character : MonoBehaviour
         movement = GetComponent<Movement>();
         jump = GetComponent<Jump>();
         dash = GetComponent<Dash>();
+        weaponManager = GetComponent<WeaponManager>();
 
         useGravity = true;
         rigidbody.freezeRotation = true;

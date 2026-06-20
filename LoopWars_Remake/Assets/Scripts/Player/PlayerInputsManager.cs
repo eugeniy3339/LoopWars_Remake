@@ -33,4 +33,12 @@ public class PlayerInputsManager : MonoBehaviour
 
         character.dash.DashIfCanTo(lastMoveInput);
     }
+
+    public void OnAttack(InputAction.CallbackContext context)
+    {
+        if(context.started)
+            character.weaponManager.StartAttacking();
+        else if(context.canceled)
+            character.weaponManager.StopAttacking();
+    }
 }
