@@ -2,13 +2,40 @@ using UnityEngine;
 
 public class WeaponManager : MonoBehaviour
 {
-    private Weapon curWeapon;
+    private Character character;
 
-    private Vector2 target;
+    private Weapon curWeapon;
+    private Vector2 direction;
+
+    [SerializeField] private WeaponScriptableObject weapon;
+
+    private void Awake()
+    {
+        character = GetComponent<Character>();
+    }
+
+    private void Start()
+    {
+        SetCurWeapon(weapon);
+    }
+
+    public void SetCurWeapon(WeaponScriptableObject weaponScriptableObject)
+    {
+        if(curWeapon != null)
+            Destroy(curWeapon.gameObject);
+
+        Weapon weapon = Instantiate(weaponScriptableObject.weaponPrefab).GetComponent<Weapon>();
+        weapon.transform.SetParent(transform);
+        weapon.transform.localPosition = Vector3.zero;
+        weapon.weaponScriptableObject = weaponScriptableObject;
+        weapon.attacker = character.healthSystem;
+        curWeapon = weapon;
+    }
 
     public void StartAttacking()
     {
         curWeapon.onAttackCooldown += OnAttackCooldown;
+        Attack();
     }
 
     public void StopAttacking()
@@ -20,7 +47,6 @@ public class WeaponManager : MonoBehaviour
     {
         if (curWeapon == null) { return; }
 
-        Vector2 direction = (target - new Vector2(transform.position.x, transform.position.y)).normalized;
         if (!curWeapon.AttackIfCanTo(direction, out bool becauseOfBullets) && becauseOfBullets)
         {
             //Play out of bullets sound

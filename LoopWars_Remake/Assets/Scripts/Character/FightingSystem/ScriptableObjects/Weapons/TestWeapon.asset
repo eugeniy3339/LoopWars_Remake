@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e543f0ced1ecc504fa50518a00c78f26, type: 3}
+  m_Name: TestWeapon
+  m_EditorClassIdentifier: 
+  weaponPrefab: {fileID: 7793299113729613695, guid: 3fdcd9cba89178a46abcfd9e7d223294, type: 3}
+  attackCooldown: 1
+  infinityBullets: 0
+  bulletsCount: 20
+  bulletScriptableObject: {fileID: 11400000, guid: 5419e7bb527d2a948bb85b89bb7e4c97, type: 2}
+  gunThrowableScriptableObject: {fileID: 0}

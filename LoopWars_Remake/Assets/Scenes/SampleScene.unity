@@ -408,6 +408,7 @@ GameObject:
   - component: {fileID: 552727448}
   - component: {fileID: 552727456}
   - component: {fileID: 552727457}
+  - component: {fileID: 552727458}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -427,7 +428,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60acbf371ea49a74f8b64bf316149b1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 7
+  speed: 3
   airMultiplier: 0.8
   groundDrag: 10
   footPosition: {fileID: 1856128348}
@@ -680,13 +681,13 @@ MonoBehaviour:
     m_ActionName: 'Player/Dash[/Keyboard/shift]'
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 552727447}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: 
-        m_Mode: 1
+      - m_Target: {fileID: 552727454}
+        m_TargetAssemblyTypeName: PlayerInputsManager, Assembly-CSharp
+        m_MethodName: OnAttack
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -727,6 +728,19 @@ MonoBehaviour:
   dashCooldown: 3
   dashSpeed: 20
   dashTime: 0.3
+--- !u!114 &552727458
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 552727447}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 255cd2c4f69bf3246a359ec5863f6553, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weapon: {fileID: 11400000, guid: 75659611a1da8414ebc9fb221d58e24c, type: 2}
 --- !u!1 &619394800
 GameObject:
   m_ObjectHideFlags: 0
