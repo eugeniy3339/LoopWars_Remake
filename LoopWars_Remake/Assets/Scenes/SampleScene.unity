@@ -409,7 +409,8 @@ GameObject:
   - component: {fileID: 552727456}
   - component: {fileID: 552727457}
   - component: {fileID: 552727458}
-  m_Layer: 0
+  - component: {fileID: 552727459}
+  m_Layer: 7
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -438,6 +439,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   maxSlopeAngle: 45
+  limitSpeedOnSlopes: 1
   canMove: 1
 --- !u!212 &552727449
 SpriteRenderer:
@@ -695,6 +697,38 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 22f1f151-adcb-4194-908c-a5bda3718cfb
     m_ActionName: 'Player/Attack[/Mouse/leftButton]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 552727454}
+        m_TargetAssemblyTypeName: PlayerInputsManager, Assembly-CSharp
+        m_MethodName: OnAim
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 5034c054-605f-43be-bbc4-e3894adbbea1
+    m_ActionName: 'Player/Aim[/DualSenseGamepadHID/rightStick]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 552727454}
+        m_TargetAssemblyTypeName: PlayerInputsManager, Assembly-CSharp
+        m_MethodName: OnThrowWeapon
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 61e4f40e-4d5d-496f-b885-5446b66cf8d8
+    m_ActionName: 'Player/Throw[/DualSenseGamepadHID/rightShoulder]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -713,6 +747,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jumpForce: 15
+  minJumpCooldown: 0.1
 --- !u!114 &552727457
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -741,6 +776,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weapon: {fileID: 11400000, guid: 75659611a1da8414ebc9fb221d58e24c, type: 2}
+--- !u!114 &552727459
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 552727447}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51134efcbb1005346a9ad7cd32bfc947, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
 --- !u!1 &619394800
 GameObject:
   m_ObjectHideFlags: 0
@@ -904,6 +952,67 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1758846323
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1002333179105633201, guid: 842c7133a2f329640a288f14d2ab8911, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3935689871176769499, guid: 842c7133a2f329640a288f14d2ab8911, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -7.97639
+      objectReference: {fileID: 0}
+    - target: {fileID: 3935689871176769499, guid: 842c7133a2f329640a288f14d2ab8911, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.0774591
+      objectReference: {fileID: 0}
+    - target: {fileID: 3935689871176769499, guid: 842c7133a2f329640a288f14d2ab8911, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3935689871176769499, guid: 842c7133a2f329640a288f14d2ab8911, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3935689871176769499, guid: 842c7133a2f329640a288f14d2ab8911, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3935689871176769499, guid: 842c7133a2f329640a288f14d2ab8911, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3935689871176769499, guid: 842c7133a2f329640a288f14d2ab8911, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3935689871176769499, guid: 842c7133a2f329640a288f14d2ab8911, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3935689871176769499, guid: 842c7133a2f329640a288f14d2ab8911, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3935689871176769499, guid: 842c7133a2f329640a288f14d2ab8911, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7793299113729613695, guid: 842c7133a2f329640a288f14d2ab8911, type: 3}
+      propertyPath: m_Name
+      value: WeaponToPickUp
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 842c7133a2f329640a288f14d2ab8911, type: 3}
 --- !u!1 &1856128347
 GameObject:
   m_ObjectHideFlags: 0
@@ -913,7 +1022,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1856128348}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: FootPos
   m_TagString: Untagged
   m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
@@ -1079,3 +1188,4 @@ SceneRoots:
   - {fileID: 552727450}
   - {fileID: 207681514}
   - {fileID: 1925786963}
+  - {fileID: 1758846323}

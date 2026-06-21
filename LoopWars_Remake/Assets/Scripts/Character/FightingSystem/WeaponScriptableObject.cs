@@ -8,6 +8,7 @@ public class WeaponScriptableObject : ScriptableObject
     public float attackCooldown = 1f;
     public bool infinityBullets = false;
     public int bulletsCount = 20;
+    public float shotBackForce = 1f;
     public BulletScriptableObject bulletScriptableObject;
     public BulletScriptableObject gunThrowableScriptableObject;
 }

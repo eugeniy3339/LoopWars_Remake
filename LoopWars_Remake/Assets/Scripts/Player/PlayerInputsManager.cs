@@ -4,12 +4,34 @@ using UnityEngine.InputSystem;
 public class PlayerInputsManager : MonoBehaviour
 {
     private Character character;
+    private PlayerInput playerInput;
+    private WeaponManager weaponManager;
 
     private Vector2 lastMoveInput;
 
     private void Awake()
     {
         character = GetComponent<Character>();
+    }
+
+    private void Start()
+    {
+        playerInput = character.playerInput;
+        weaponManager = character.weaponManager;
+    }
+
+    private void Update()
+    {
+        if(playerInput.currentControlScheme == "KeyBoard")
+        {
+            KeyBoardAim();
+        }
+    }
+
+    private void KeyBoardAim()
+    {
+        Vector2 worldMousePosition = Camera.main.ScreenToWorldPoint(new Vector2(Mouse.current.position.x.magnitude, Mouse.current.position.y.magnitude));
+        weaponManager.direction = worldMousePosition - new Vector2(transform.position.x, transform.position.y);
     }
 
     public void OnMove(InputAction.CallbackContext context)
@@ -38,7 +60,25 @@ public class PlayerInputsManager : MonoBehaviour
     {
         if(context.started)
             character.weaponManager.StartAttacking();
-        else if(context.canceled)
+        if(context.canceled)
             character.weaponManager.StopAttacking();
+    }
+
+    public void OnThrowWeapon(InputAction.CallbackContext context)
+    {
+        if (!context.started)
+            return;
+
+        character.weaponManager.ThrowWeapon();
+
+    }
+
+    public void OnAim(InputAction.CallbackContext context)
+    {
+        Vector2 value = context.ReadValue<Vector2>();
+        if(value.magnitude >= 0.1f)
+        {
+            weaponManager.direction = value;
+        }
     }
 }

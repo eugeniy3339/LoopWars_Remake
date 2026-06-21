@@ -65,13 +65,23 @@ public class Dash : MonoBehaviour
         onDash?.Invoke();
         dashing = true;
 
+        float curDashTime = 0f;
+        Vector2 velocity = dashDirection.normalized * dashSpeed;
+
         character.movement.enabled = false;
+        character.useGravity = false;
 
         rigidbody.linearDamping = 0f;
-        character.useGravity = false;
-        rigidbody.linearVelocity = dashDirection.normalized * dashSpeed;
+        rigidbody.linearVelocity = velocity;
 
-        yield return new WaitForSeconds(dashTime);
+
+        while (curDashTime < dashTime)
+        {
+            rigidbody.linearVelocity = velocity;
+
+            curDashTime += Time.deltaTime;
+            yield return new WaitForEndOfFrame();
+        }
 
 
         character.movement.enabled = true;

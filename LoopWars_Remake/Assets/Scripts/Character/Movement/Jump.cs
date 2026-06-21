@@ -9,6 +9,8 @@ public class Jump : MonoBehaviour
     private Movement movement;
 
     [SerializeField] private float jumpForce = 8f;
+    [SerializeField] private float minJumpCooldown = 0.1f;
+    private float curJumpCooldown = 0f;
 
     private void Awake()
     {
@@ -21,15 +23,40 @@ public class Jump : MonoBehaviour
         movement = character.movement;
     }
 
+    private void Update()
+    {
+        JumpCooldown();
+    }
+
+    private void JumpCooldown()
+    {
+        if(curJumpCooldown > 0f)
+        {
+            curJumpCooldown -= Time.deltaTime;
+            if(curJumpCooldown <= 0f)
+            {
+                OnJumpCooldown();
+            }
+        }
+    }
+
+    private void OnJumpCooldown()
+    {
+        movement.limitSpeedOnSlopes = true;
+    }
+
     public void JumpIfCanTo()
     {
         if (!CanJump()) return;
+
+        character.movement.limitSpeedOnSlopes = false;
+        curJumpCooldown = minJumpCooldown;
 
         rigidbody.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
     }
 
     private bool CanJump()
     {
-        return movement.isGrounded;
+        return movement.isGrounded && curJumpCooldown <= 0f;
     }
 }

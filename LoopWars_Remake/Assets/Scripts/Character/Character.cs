@@ -1,10 +1,12 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class Character : MonoBehaviour
 {
     public Rigidbody2D rigidbody { get; protected set; }
     public SpriteRenderer spriteRenderer { get; protected set; }
+    public PlayerInput playerInput { get; protected set; }
 
     public Movement movement { get; protected set; }
     public Jump jump { get; protected set; }
@@ -29,6 +31,7 @@ public class Character : MonoBehaviour
     {
         rigidbody = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        playerInput = GetComponent<PlayerInput>();
 
         movement = GetComponent<Movement>();
         jump = GetComponent<Jump>();

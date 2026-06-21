@@ -33,6 +33,7 @@ public class Movement : MonoBehaviour
     public event Action onGrounded;
     public event Action onUngrounded;
 
+    [HideInInspector] public bool limitSpeedOnSlopes = true;
     [HideInInspector] public bool canMove = true;
 
     private void Awake()
@@ -65,6 +66,8 @@ public class Movement : MonoBehaviour
         }
         onSlope = OnSlope(groundHit);
         character.useGravity = !onSlope;
+
+        SpeedControll();
     }
 
     private void FixedUpdate()
@@ -81,8 +84,7 @@ public class Movement : MonoBehaviour
         if (onSlope)
             moveDir = GetSlopeMoveDirection(moveDir, groundHit);
 
-        if(CanAddForce(moveDir))
-            rigidbody.AddForce(moveDir * speed * 80f * (isGrounded ? 1f : airMultiplier), ForceMode2D.Force);
+        rigidbody.AddForce(moveDir * speed * 80f * (isGrounded ? 1f : airMultiplier), ForceMode2D.Force);
     }
 
     private bool IsGrounded(out RaycastHit2D raycastHit)
@@ -106,13 +108,36 @@ public class Movement : MonoBehaviour
         return Vector3.ProjectOnPlane(moveDirection, raycastHit.normal).normalized;
     }
 
-    private bool CanAddForce(Vector2 moveDir)
+    private void SpeedControll()
     {
-        Vector2 velocity = onSlope ? rigidbody.linearVelocity : new Vector2(rigidbody.linearVelocity.x, 0f);
-        float velocityForce = velocity.magnitude;
-        Vector2 normalizedVelocity = velocity.normalized;
+        if(onSlope)
+        {
+            LimitOnSlopeSpeed();
+        }
+        else
+        {
+            LimitSpeed();
+        }    
+    }
 
-        return velocityForce <= speed || Vector2.Dot(normalizedVelocity, moveDir) <= 0.1f;
+    private void LimitOnSlopeSpeed()
+    {
+        if (!limitSpeedOnSlopes)
+            return;
+
+        if(rigidbody.linearVelocity.magnitude > speed)
+        {
+            rigidbody.linearVelocity = rigidbody.linearVelocity.normalized * speed;
+        }
+    }
+
+    private void LimitSpeed()
+    {
+        float curFlatSpeed = Mathf.Abs(rigidbody.linearVelocityX);
+        if(curFlatSpeed > speed)
+        {
+            rigidbody.linearVelocityX = BetterMath.NormalizedFloat(rigidbody.linearVelocityX) * speed;
+        }
     }
 
     public void OnMove(float moveDir)

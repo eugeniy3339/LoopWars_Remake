@@ -8,20 +8,25 @@ public abstract class Weapon : MonoBehaviour
         get { return _wso; }
         set {
             _wso = value;
+
             bulletScriptableObject = value.bulletScriptableObject;
             infinityAmmo = value.infinityBullets;
             ammo = value.bulletsCount;
+
             attackCooldown = value.attackCooldown;
+
+            shotBackForce = value.shotBackForce;
         } 
     }
     protected virtual BulletScriptableObject bulletScriptableObject { get; set; }
 
-    public virtual HealthSystem attacker { get; set; }
+    public virtual Character attacker { get; set; }
 
     protected bool infinityAmmo;
     public int ammo { get; protected set; }
     protected float attackCooldown;
     protected float curAttackCooldown;
+    protected float shotBackForce;
 
     public event Action onAttackCooldown;
 
@@ -47,12 +52,11 @@ public abstract class Weapon : MonoBehaviour
         onAttackCooldown?.Invoke();
     }
 
-    public bool AttackIfCanTo(Vector2 direction, out bool becauseOfAmmo)
+    public bool AttackIfCanTo(out bool becauseOfAmmo)
     {
-        print(CanAttack(out becauseOfAmmo));
         if (CanAttack(out becauseOfAmmo))
         {
-            Attack(direction);
+            Attack();
             return true;
         }
         else
@@ -61,11 +65,11 @@ public abstract class Weapon : MonoBehaviour
         }
     }
 
-    protected abstract void Attack(Vector2 direction);
+    protected abstract void Attack();
 
-    protected virtual Projectile SpawnProjectile(BulletScriptableObject bulletScriptableObject, Vector2 position, Vector2 direction)
+    protected virtual Projectile SpawnProjectile(BulletScriptableObject bulletScriptableObject, Vector2 position)
     {
-        return Projectile.CreateNewProjectile(bulletScriptableObject, attacker, position, direction);
+        return Projectile.CreateNewProjectile(bulletScriptableObject, attacker, position, transform.right);
     }
 
     private bool CanAttack(out bool becauseOfAmmo)
