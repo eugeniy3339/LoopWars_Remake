@@ -52,7 +52,7 @@ public class Jump : MonoBehaviour
         character.movement.limitSpeedOnSlopes = false;
         curJumpCooldown = minJumpCooldown;
 
-        rigidbody.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+        rigidbody.linearVelocityY = jumpForce;
     }
 
     private bool CanJump()

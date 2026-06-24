@@ -120,7 +120,6 @@ public class WeaponManager : MonoBehaviour
 
     private void OnAttackCooldown()
     {
-        print("onAttackCooldown");
         Attack();
     }
 }

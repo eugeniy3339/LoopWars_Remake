@@ -13,6 +13,15 @@ public class HealthSystem : MonoBehaviour, IDamagable
     public bool Damage(Transform damager, Transform damageObject, float damage)
     {
         health -= damage;
+
+        if (health <= 0f)
+            Die();
+
         return true;
+    }
+
+    private void Die()
+    {
+        Destroy(gameObject);
     }
 }

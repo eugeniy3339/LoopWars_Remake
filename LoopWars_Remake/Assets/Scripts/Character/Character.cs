@@ -6,7 +6,8 @@ public class Character : MonoBehaviour
 {
     public Rigidbody2D rigidbody { get; protected set; }
     public SpriteRenderer spriteRenderer { get; protected set; }
-    public PlayerInput playerInput { get; protected set; }
+    private PlayerInput _pI;
+    public PlayerInput playerInput { get { if (_pI == null) { _pI = GetComponent<PlayerInput>(); } return _pI; } protected set { _pI = value; } }
 
     public Movement movement { get; protected set; }
     public Jump jump { get; protected set; }
