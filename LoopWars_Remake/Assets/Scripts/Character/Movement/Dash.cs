@@ -1,9 +1,10 @@
 using System;
 using System.Collections;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UIElements.Experimental;
 
-public class Dash : MonoBehaviour
+public class Dash : NetworkBehaviour
 {
     private Character character;
     private Rigidbody2D rigidbody;
@@ -28,6 +29,13 @@ public class Dash : MonoBehaviour
     private void Start()
     {
         rigidbody = character.rigidbody;
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+
+        if (!IsOwner) enabled = false;
     }
 
     private void Update()
@@ -57,11 +65,13 @@ public class Dash : MonoBehaviour
 
     private bool CanDash()
     {
+        if (!IsOwner) return false;
         return !dashing && curDashCooldown <= 0f;
     }
 
     private IEnumerator DashCoro(Vector2 dashDirection, float dashSpeed, float dashTime)
     {
+        if (!IsOwner) yield break;
         onDash?.Invoke();
         dashing = true;
 

@@ -1,8 +1,12 @@
+using Unity.Netcode;
 using UnityEngine;
 
-public class WeaponManager : MonoBehaviour
+public class WeaponManager : NetworkBehaviour
 {
-    private Character character;
+    private Character _char;
+    private Character character { get { if (_char == null) { _char = GetComponent<Character>(); } return _char; } set { _char = value; } }
+
+    [SerializeField] private WeaponsListScriptableObject weaponsList;
 
     private WeaponScriptableObject curWeaponScriptableObject;
     private Weapon curWeapon;
@@ -30,16 +34,20 @@ public class WeaponManager : MonoBehaviour
         direction = Vector2.right;
     }
 
-    private void Start()
+    public override void OnNetworkSpawn()
     {
+        base.OnNetworkSpawn();
+
+        if (!IsServer) { enabled = false; return; }
+
         SetCurWeapon(weapon);
     }
 
     public bool SetCurWeapon(WeaponScriptableObject weaponScriptableObject)
     {
-        if (curWeapon != null) return false;
+        if (!IsServer) return false;
         if (weaponScriptableObject == null) return false;
-        //DestroyCurWeapon();
+        if (curWeapon != null) return false;
 
         curWeaponScriptableObject = weaponScriptableObject;
         Weapon weapon = SpawnWeapon(weaponScriptableObject);
@@ -48,24 +56,58 @@ public class WeaponManager : MonoBehaviour
         return true;
     }
 
+    private Weapon SpawnWeapon(WeaponScriptableObject weaponScriptableObject)
+    {
+        if (!IsServer) return null;
+        Weapon weapon = Instantiate(weaponScriptableObject.weaponPrefab).GetComponent<Weapon>();
+        weapon.weaponScriptableObject = weaponScriptableObject;
+        weapon.attacker = character;
+        weapon.NetworkObject.SpawnWithOwnership(OwnerClientId, true);
+        weapon.transform.SetParent(transform);
+        weapon.transform.localPosition = Vector3.zero;
+        weapon.transform.right = direction;
+
+        return weapon;
+    }
+
     public void DestroyCurWeapon()
     {
+        if (!IsServer) return;
         if (curWeapon == null) return;
 
         StopAttacking();
-        Destroy(curWeapon.gameObject);
+        curWeapon.NetworkObject.Despawn();
         curWeaponScriptableObject = null;
+        curWeapon = null;
     }
 
     public void ThrowWeapon()
     {
+        if (!IsOwner) return;
+
+        ThrowWeaponRpc();
+    }
+
+    [Rpc(SendTo.Server)]
+    private void ThrowWeaponRpc()
+    {
         if (curWeapon == null) return;
 
-        Projectile.CreateNewProjectile(curWeaponScriptableObject.gunThrowableScriptableObject, character, curWeapon.transform.position, curWeapon.transform.right);
+        Projectile projectile = Projectile.CreateNewProjectile(curWeaponScriptableObject.gunThrowableScriptableObject, character, true);
+        projectile.LaunchProjectileRpc(curWeapon.transform.position, curWeapon.transform.right, curWeaponScriptableObject.gunThrowableScriptableObject.speed);
+
         DestroyCurWeapon();
     }
 
-    public void StartAttacking()
+    public void StartAttacking() //Owner Player Input
+    {
+        if (!IsOwner) return;
+
+        StartAttackingRpc();
+    }
+
+    [Rpc(SendTo.Server)]
+    private void StartAttackingRpc() //Server Rpc
     {
         if (curWeapon == null) return;
 
@@ -73,15 +115,24 @@ public class WeaponManager : MonoBehaviour
         Attack();
     }
 
-    public void StopAttacking()
+    public void StopAttacking() //Owner Player Input
+    {
+        if (!IsOwner) return;
+            
+        StopAttackingRpc();
+    }
+
+    [Rpc(SendTo.Server)]
+    private void StopAttackingRpc() //Server Rpc
     {
         if (curWeapon == null) return;
 
         UnsubscribeFromCooldownEvent();
     }
 
-    private void Attack()
+    private void Attack() // Server Function
     {
+        if (!IsServer) return;
         if (curWeapon == null) { return; }
 
         if (!curWeapon.AttackIfCanTo(out bool becauseOfBullets) && becauseOfBullets)
@@ -91,20 +142,9 @@ public class WeaponManager : MonoBehaviour
         }
     }
 
-    private Weapon SpawnWeapon(WeaponScriptableObject weaponScriptableObject)
-    {
-        Weapon weapon = Instantiate(weaponScriptableObject.weaponPrefab).GetComponent<Weapon>();
-        weapon.transform.SetParent(transform);
-        weapon.transform.localPosition = Vector3.zero;
-        weapon.transform.right = direction;
-        weapon.weaponScriptableObject = weaponScriptableObject;
-        weapon.attacker = character;
-
-        return weapon;
-    }
-
     private void SubscribeOnCooldownEvent()
     {
+        if (!IsServer) return;
         if (!subscribedToCooldownEvent)
         {
             curWeapon.onAttackCooldown += OnAttackCooldown;
@@ -114,12 +154,14 @@ public class WeaponManager : MonoBehaviour
 
     private void UnsubscribeFromCooldownEvent()
     {
+        if (!IsServer) return;
         curWeapon.onAttackCooldown -= OnAttackCooldown;
         subscribedToCooldownEvent = false;
     }
 
     private void OnAttackCooldown()
     {
+        if (!IsServer) return;
         Attack();
     }
 }

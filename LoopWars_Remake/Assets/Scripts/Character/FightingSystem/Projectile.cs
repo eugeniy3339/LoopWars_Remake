@@ -1,12 +1,15 @@
+using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 [RequireComponent(typeof(Rigidbody2D), typeof(Collider2D))]
-public class Projectile : MonoBehaviour
+public class Projectile : NetworkBehaviour
 {
-    [HideInInspector] public Character attacker;
+    private Character attacker;
+    private BulletScriptableObject bulletScriptableObject;
 
     private Rigidbody2D _rb;
-    public Rigidbody2D rigidbody {  
+    private Rigidbody2D rigidbody {  
         get 
         {
             if (_rb == null)
@@ -16,12 +19,22 @@ public class Projectile : MonoBehaviour
         set { _rb = value; } 
     }
 
-    [HideInInspector] public float damage;
-    [HideInInspector] public float maxDamageMultiplier;
-    [HideInInspector] public bool destroyOnImpact;
+    private float damage;
+    private float maxDamageMultiplier;
+    private bool destroyOnImpact;
 
-    [HideInInspector] public float lifeTime;
+    private float lifeTime;
     private bool canDamageAttacker = false;
+
+    private bool despawnOnDisable = false;
+
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+
+        gameObject.SetActive(false);
+        if (!IsServer) { enabled = false; }
+    }
 
     private void Update()
     {
@@ -32,25 +45,26 @@ public class Projectile : MonoBehaviour
     {
         lifeTime -= Time.deltaTime;
         if (lifeTime <= 0f)
-            DestroyProjectile();
+            DisableProjectile();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(IsThereADamagable(collision.gameObject, out IDamagable damagable, out bool isAttacker))
+        if (!IsServer) return;
+
+        if (IsThereADamagable(collision.gameObject, out IDamagable damagable, out bool isAttacker))
         {
-            if(isAttacker && !canDamageAttacker)
+            if (isAttacker && !canDamageAttacker)
             {
                 canDamageAttacker = true;
                 return;
             }
 
-            float damage = this.damage * Random.Range(1f, maxDamageMultiplier);
-            damagable.Damage(attacker.transform, transform, damage);
+            Damage(damagable);
         }
 
         if(destroyOnImpact)
-            DestroyProjectile();
+            DisableProjectile();
     }
 
     private bool IsThereADamagable(GameObject gameObject, out IDamagable damagable, out bool isAttacker)
@@ -68,31 +82,80 @@ public class Projectile : MonoBehaviour
         return false;
     }
 
-    private void DestroyProjectile()
+    protected virtual void Damage(IDamagable damagable)
     {
-        Destroy(gameObject);
+        if (!IsServer) return;
+        float damage = this.damage * Random.Range(1f, maxDamageMultiplier);
+        damagable.Damage(attacker.transform, transform, damage);
+    }
+
+    private void DisableProjectile()
+    {
+        if (despawnOnDisable)
+            DespawnProjectile();
+        else
+            DisableProjectileRpc();
+    }    
+
+    [Rpc(SendTo.Everyone)]
+    private void DisableProjectileRpc()
+    {
+        if (gameObject == null) return;
+        gameObject.SetActive(false);
+    }
+
+    [Rpc(SendTo.Everyone)]
+    public void LaunchProjectileRpc(Vector3 position, Vector3 direction, float speed)
+    {
+        if (gameObject == null) return;
+
+        gameObject.SetActive(true);
+
+        lifeTime = bulletScriptableObject.maxLifeTime;
+        transform.position = position;
+        transform.right = direction;
+
+        rigidbody.linearVelocity = direction * speed;
+
+        if(IsServer)
+        {
+            canDamageAttacker = false;
+        }
+    }
+
+    public void DespawnProjectile()
+    {
+        if (!IsServer) return;
+        if(NetworkObject != null)
+            NetworkObject.Despawn();
     }
 
 
 
 
 
-    public static Projectile CreateNewProjectile(BulletScriptableObject bulletScriptableObject, Character attacker, Vector2 position, Vector2 direction)
+    public static Projectile CreateNewProjectile(BulletScriptableObject bulletScriptableObject, Character attacker, bool despawnOnDestroy)
+    {
+        if (!NetworkManager.Singleton.IsServer) return null;
+
+        Projectile projectile = SpawnProjectile(bulletScriptableObject, attacker, despawnOnDestroy);
+
+        return projectile;
+    }
+
+    private static Projectile SpawnProjectile(BulletScriptableObject bulletScriptableObject, Character attacker, bool despawnOnDestroy)
     {
         Projectile projectile = Instantiate(bulletScriptableObject.bulletPrefab).GetComponent<Projectile>();
 
-        projectile.transform.position = position;
-        projectile.transform.right = direction;
-
-        projectile.rigidbody.linearVelocity = direction * bulletScriptableObject.speed;
-
+        projectile.bulletScriptableObject = bulletScriptableObject;
         projectile.damage = bulletScriptableObject.damage;
         projectile.maxDamageMultiplier = bulletScriptableObject.maxDamageMultiplier;
         projectile.destroyOnImpact = bulletScriptableObject.destroyOnImpact;
-        projectile.lifeTime = bulletScriptableObject.maxLifeTime;
         projectile.attacker = attacker;
+        projectile.despawnOnDisable = despawnOnDestroy;
+
+        projectile.NetworkObject.SpawnWithOwnership(NetworkManager.ServerClientId, true);
 
         return projectile;
-
     }
 }

@@ -1,8 +1,9 @@
 using System;
+using Unity.Netcode;
 using UnityEngine;
 
 [RequireComponent(typeof(Character))]
-public class Movement : MonoBehaviour
+public class Movement : NetworkBehaviour
 {
     private Character character;
 
@@ -44,6 +45,13 @@ public class Movement : MonoBehaviour
     private void Start()
     {
         rigidbody = character.rigidbody;
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+
+        if (!IsOwner) enabled = false;
     }
 
     private void Update()
@@ -110,7 +118,9 @@ public class Movement : MonoBehaviour
 
     private void SpeedControll()
     {
-        if(onSlope)
+        if (!IsOwner) return;
+
+        if (onSlope)
         {
             LimitOnSlopeSpeed();
         }
@@ -122,8 +132,7 @@ public class Movement : MonoBehaviour
 
     private void LimitOnSlopeSpeed()
     {
-        if (!limitSpeedOnSlopes)
-            return;
+        if (!limitSpeedOnSlopes) return;
 
         if(rigidbody.linearVelocity.magnitude > speed)
         {
@@ -133,6 +142,7 @@ public class Movement : MonoBehaviour
 
     private void LimitSpeed()
     {
+
         float curFlatSpeed = Mathf.Abs(rigidbody.linearVelocityX);
         if(curFlatSpeed > speed)
         {
@@ -142,6 +152,8 @@ public class Movement : MonoBehaviour
 
     public void OnMove(float moveDir)
     {
+        if (!IsOwner) return;
+
         moveDir = BetterMath.NormalizedFloat(moveDir);
         this.moveDir = moveDir;
         if(lastMoveDir != moveDir)

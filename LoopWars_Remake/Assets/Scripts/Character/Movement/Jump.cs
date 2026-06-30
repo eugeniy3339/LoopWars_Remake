@@ -1,7 +1,8 @@
+using Unity.Netcode;
 using UnityEngine;
 
 [RequireComponent(typeof(Character), typeof(Movement))]
-public class Jump : MonoBehaviour
+public class Jump : NetworkBehaviour
 {
     private Character character;
 
@@ -21,6 +22,13 @@ public class Jump : MonoBehaviour
     {
         rigidbody = character.rigidbody;
         movement = character.movement;
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+
+        if (!IsOwner) enabled = false;
     }
 
     private void Update()
@@ -57,6 +65,7 @@ public class Jump : MonoBehaviour
 
     private bool CanJump()
     {
+        if (!IsOwner) return false;
         return movement.isGrounded && curJumpCooldown <= 0f;
     }
 }

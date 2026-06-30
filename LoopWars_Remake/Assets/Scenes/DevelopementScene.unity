@@ -504,6 +504,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 970caa0cde3d95c4593be9c0f0ff7f7b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerPrefab: {fileID: 0}
 --- !u!114 &867770350
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -658,9 +659,9 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1002333179105633201, guid: 842c7133a2f329640a288f14d2ab8911, type: 3}
-      propertyPath: m_IsTrigger
-      value: 1
+    - target: {fileID: 2329825151152171638, guid: 842c7133a2f329640a288f14d2ab8911, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 3833186495
       objectReference: {fileID: 0}
     - target: {fileID: 3935689871176769499, guid: 842c7133a2f329640a288f14d2ab8911, type: 3}
       propertyPath: m_LocalPosition.x

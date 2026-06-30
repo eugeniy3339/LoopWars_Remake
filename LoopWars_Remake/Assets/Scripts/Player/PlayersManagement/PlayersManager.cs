@@ -1,81 +1,95 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Utilities;
-using UnityEngine.SceneManagement;
+using LoopWars.Players;
+using LoopWars.GameMode;
+using Unity.Netcode;
+using System;
+using UnityEngine.TextCore.Text;
 
-public class PlayersManager : MonoBehaviour
+public class PlayersManager : NetworkBehaviour
 {
-    public static List<Player> players = new List<Player>();
-    private List<PlayerInput> alivePlayers = new List<PlayerInput>();
+    public static PlayersManager Instance { get; protected set; }
 
-    private void Start()
+    [SerializeField] private GameObject playerPrefab;
+    public List<Character> alivePlayers = new List<Character>();
+
+    public static event Action<Character, List<Character>> onPlayerDied;
+
+    private void Awake()
     {
-        PlayerInputManager.instance.onPlayerJoined += OnPlayerSpawned;
-        PlayerInputManager.instance.onPlayerLeft += OnPlayerDied;
+        Instance = this;
 
-        foreach (var player in players)
+        if (NetworkManager.Singleton.IsServer)
+            NetworkObject.Spawn(true);
+    }
+
+
+    public override void OnNetworkSpawn()
+    {
+        if (!IsServer) return;
+
+        PlayerInputManager.instance.playerPrefab = playerPrefab;
+
+
+
+        foreach (var player in PlayersContainer.players)
         {
-            PlayerInputManager.instance.JoinPlayer(-1, -1, player.controllScheme, player.devices[0]);
-        }
-    }
+            if (player.multiplayerMode != GameMode.multiplayerMode) continue;
 
-    private void OnPlayerSpawned(PlayerInput playerInput)
-    {
-        print(playerInput + " Spawned");
-        if (alivePlayers.Contains(playerInput)) return;
 
-        alivePlayers.Add(playerInput);
-        Player player = Player.GetPlayerByDevice(playerInput.devices[0]);
-        player.character = playerInput.GetComponent<Character>();
-    }
 
-    private void OnPlayerDied(PlayerInput playerInput)
-    {
-        print(playerInput + " Left");
-        if (!alivePlayers.Contains(playerInput)) return;
-
-        alivePlayers.Remove(playerInput);
-        if(alivePlayers.Count == 1)
-        {
-            EndRound(Player.GetPlayerByDevice(alivePlayers[0].devices[0]));
-        }
-    }
-
-    private void EndRound(Player winner)
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-    }
-
-    public class Player
-    {
-        public ReadOnlyArray<InputDevice> devices;
-        public string controllScheme;
-        public PlayerInput playerInput;
-        private Character _char;
-        public Character character
-        {
-            get { return character; }
-            set { 
-                character = value;
-                playerInput = character.playerInput;
+            Character character;
+            if (GameMode.multiplayerMode == MultiplayerMode.LocalMultiplayer)
+            {
+                PlayerInput playerInput = PlayerInputManager.instance.JoinPlayer(-1, -1, player.controllScheme, player.devices.ToArray());
+                character = playerInput.GetComponent<Character>();
+                character.NetworkObject.Spawn(true);
             }
-        }
+            else
+            {
+                character = Instantiate(playerPrefab).GetComponent<Character>();
+                character.NetworkObject.SpawnWithOwnership(player.playerId, true);
+            }
 
-        public Player(ReadOnlyArray<InputDevice> devices, string controllScheme)
-        {
-            this.devices = devices;
-            this.controllScheme = controllScheme;
+            OnPlayerCreated(character, GameMode.multiplayerMode);
         }
+    }
 
-        public static Player GetPlayerByDevice(InputDevice device)
-        {
-            return players.Find((player) => { foreach (var playerDevice in player.devices) { if (playerDevice == device) return true; } return false; });
-        }
 
-        public static Player GetPlayerByPlayerInput(PlayerInput playerInput)
-        {
-            return players.Find((player) => player.playerInput == playerInput);
-        }
+
+    private void OnPlayerCreated(Character character, MultiplayerMode multiplayerMode)
+    {
+        if (!NetworkManager.Singleton.IsServer) return;
+        if (alivePlayers.Contains(character)) return;
+
+        alivePlayers.Add(character);
+        Player player = multiplayerMode == MultiplayerMode.LocalMultiplayer ? PlayersContainer.GetPlayerByDevice(character.playerInput.devices[0]) : PlayersContainer.GetPlayerById(character.OwnerClientId);
+        player.character = character;
+    }
+
+
+
+    private void OnPlayerDied(Character character) // On player object is destroyed
+    {
+        if (!NetworkManager.Singleton.IsServer) return;
+        if (!alivePlayers.Contains(character)) return;
+
+        alivePlayers.Remove(character);
+        onPlayerDied?.Invoke(character, alivePlayers);
+    }
+
+
+
+    private void OnEnable()
+    {
+        if (NetworkManager.Singleton.IsServer)
+            HealthSystem.onCharacterDied += OnPlayerDied;
+    }
+
+    private void OnDisable()
+    {
+        if (NetworkManager.Singleton.IsServer)
+            HealthSystem.onCharacterDied -= OnPlayerDied;
     }
 }

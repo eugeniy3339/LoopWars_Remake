@@ -1,8 +1,10 @@
+using LoopWars.Players;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class Character : MonoBehaviour
+public class Character : NetworkBehaviour
 {
     public Rigidbody2D rigidbody { get; protected set; }
     public SpriteRenderer spriteRenderer { get; protected set; }
@@ -14,7 +16,6 @@ public class Character : MonoBehaviour
     public Dash dash { get; protected set; }
     public WeaponManager weaponManager { get; protected set; }
     public HealthSystem healthSystem { get; protected set; }
-
 
     const float defaultGravityScale = 3f;
 
@@ -42,5 +43,16 @@ public class Character : MonoBehaviour
 
         useGravity = true;
         rigidbody.freezeRotation = true;
+    }
+
+    public static Character FindCharacter(ulong networkObjectId)
+    {
+        foreach(var character in FindObjectsOfType<Character>())
+        {
+            if (character.NetworkObjectId == networkObjectId)
+                return character;
+        }
+
+        return null;
     }
 }

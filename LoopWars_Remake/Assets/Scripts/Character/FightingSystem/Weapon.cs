@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public abstract class Weapon : MonoBehaviour
+public abstract class Weapon : NetworkBehaviour
 {
     private WeaponScriptableObject _wso;
     public virtual WeaponScriptableObject weaponScriptableObject { 
@@ -28,7 +30,60 @@ public abstract class Weapon : MonoBehaviour
     protected float curAttackCooldown;
     protected float shotBackForce;
 
+    private List<Projectile> spawnedProjectiles;
+    private int curProjectileIndex;
+
     public event Action onAttackCooldown;
+
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+
+        if (!IsServer) { enabled = false; return; }
+
+        spawnedProjectiles = SpawnProjectiles(bulletScriptableObject);
+        curProjectileIndex = 0;
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        base.OnNetworkDespawn();
+
+        if (!IsServer) return;
+
+        DespawnProjectiles();
+    }
+
+    private List<Projectile> SpawnProjectiles(BulletScriptableObject bulletScriptableObject)
+    {
+        int countToSpawn = 100;
+        return SpawnProjectiles(bulletScriptableObject, countToSpawn);
+    }
+
+    private List<Projectile> SpawnProjectiles(BulletScriptableObject bulletScriptableObject, int count)
+    {
+        List<Projectile> projectiles = new List<Projectile>();
+
+        for(int i = 0; i < count; i++)
+        {
+            projectiles.Add(Projectile.CreateNewProjectile(bulletScriptableObject, attacker, false));
+        }
+
+        return projectiles;
+    }
+
+    private void DespawnProjectiles()
+    {
+        DespawnProjectiles(spawnedProjectiles);
+    }
+
+    private void DespawnProjectiles(List<Projectile> projectiles)
+    {
+        foreach(var projectile in projectiles)
+        {
+            projectile.DespawnProjectile();
+        }
+    }
 
     private void Update()
     {
@@ -67,13 +122,24 @@ public abstract class Weapon : MonoBehaviour
 
     protected abstract void Attack();
 
-    protected virtual Projectile SpawnProjectile(BulletScriptableObject bulletScriptableObject, Vector2 position)
+    protected virtual void LaunchProjectile(Vector2 position, Vector2 direction)
     {
-        return Projectile.CreateNewProjectile(bulletScriptableObject, attacker, position, transform.right);
+        Projectile projectile = spawnedProjectiles[curProjectileIndex];
+        if(projectile == null)
+        {
+            curProjectileIndex = 0;
+            return;
+        }
+
+        projectile.LaunchProjectileRpc(position, direction, bulletScriptableObject.speed);
+        curProjectileIndex++;
+        if (curProjectileIndex >= spawnedProjectiles.Count)
+            curProjectileIndex = 0;
     }
 
     private bool CanAttack(out bool becauseOfAmmo)
     {
+        if (!IsServer) { becauseOfAmmo = false; return false; }
         becauseOfAmmo = curAttackCooldown <= 0 && !infinityAmmo && ammo <= 0;
         return curAttackCooldown <= 0f && (infinityAmmo || ammo > 0);
     }

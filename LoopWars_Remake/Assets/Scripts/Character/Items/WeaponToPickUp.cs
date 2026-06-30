@@ -1,3 +1,4 @@
+using Unity.Netcode;
 using UnityEngine;
 
 public class WeaponToPickUp : Trigger
@@ -9,7 +10,14 @@ public class WeaponToPickUp : Trigger
         if(character.weaponManager.SetCurWeapon(weaponToPickUp))
         {
             base.OnTrigger(character);
-            Destroy(gameObject);
+            DespawnTrigger();
         }
+    }
+
+    [Rpc(SendTo.Server)]
+    protected override void TryToTriggerRpc(ulong clientId, ulong characterNetworkObjectId)
+    {
+        if (!CanTrigger()) return;
+        OnTrigger(Character.FindCharacter(characterNetworkObjectId));
     }
 }
