@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: TestBullet
   m_EditorClassIdentifier: 
   bulletPrefab: {fileID: 1732284584695153900, guid: 6f78e9ca3a4f9b6428fd90532d2e3935, type: 3}
-  damage: 100
+  damage: 10
   maxDamageMultiplier: 1
   speed: 10
   maxLifeTime: 3

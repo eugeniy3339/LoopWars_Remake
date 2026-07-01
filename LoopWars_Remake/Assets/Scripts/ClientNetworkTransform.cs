@@ -1,6 +1,4 @@
 using Unity.Netcode.Components;
-using Unity.Netcode.Editor;
-using UnityEditor;
 using UnityEngine;
 
 [DisallowMultipleComponent]
@@ -16,8 +14,12 @@ public class ClientNetworkTransform : NetworkTransform
     }
 }
 
-[CustomEditor(typeof(ClientNetworkTransform))]
-public class ClientNetworkTransformEditor : NetworkTransformEditor
+#if UNITY_EDITOR
+
+[UnityEditor.CustomEditor(typeof(ClientNetworkTransform))]
+public class ClientNetworkTransformEditor : Unity.Netcode.Editor.NetworkTransformEditor
 {
 
 }
+
+#endif

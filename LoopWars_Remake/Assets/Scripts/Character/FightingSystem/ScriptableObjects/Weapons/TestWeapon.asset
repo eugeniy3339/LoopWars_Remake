@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: TestWeapon
   m_EditorClassIdentifier: 
   weaponPrefab: {fileID: 7793299113729613695, guid: 3fdcd9cba89178a46abcfd9e7d223294, type: 3}
-  attackCooldown: 1
+  attackCooldown: 0.1
   infinityBullets: 0
   bulletsCount: 20
   shotBackForce: 1

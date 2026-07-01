@@ -24,6 +24,8 @@ public class Projectile : MonoBehaviour
     private bool destroyOnImpact;
 
     private float lifeTime;
+
+    private float curCanDamageAttackerTimer = 0.1f;
     private bool canDamageAttacker = false;
 
     private bool despawnOnDisable = false;
@@ -31,6 +33,7 @@ public class Projectile : MonoBehaviour
     private void Update()
     {
         LifeTimeControll();
+        CanDamageAttackerTimer();
     }
 
     private void LifeTimeControll()
@@ -38,6 +41,18 @@ public class Projectile : MonoBehaviour
         lifeTime -= Time.deltaTime;
         if (lifeTime <= 0f)
             DisableProjectile();
+    }
+
+    private void CanDamageAttackerTimer()
+    {
+        if(!canDamageAttacker)
+        {
+            curCanDamageAttackerTimer -= Time.deltaTime;
+            if(curCanDamageAttackerTimer <= 0f)
+            {
+                canDamageAttacker = true;
+            }
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -105,6 +120,7 @@ public class Projectile : MonoBehaviour
         lifeTime = bulletScriptableObject.maxLifeTime;
 
         canDamageAttacker = false;
+        curCanDamageAttackerTimer = 0.1f;
     }
 
     public void DespawnProjectile()
