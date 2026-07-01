@@ -5,6 +5,12 @@ public class WeaponToPickUp : Trigger
 {
     [SerializeField] private WeaponScriptableObject weaponToPickUp;
 
+    protected override void Awake()
+    {
+        base.Awake();
+        areThereTriggerConditions = true;
+    }
+
     protected override void OnTrigger(Character character)
     {
         if(character.weaponManager.SetCurWeapon(weaponToPickUp))
@@ -15,7 +21,7 @@ public class WeaponToPickUp : Trigger
     }
 
     [Rpc(SendTo.Server)]
-    protected override void TryToTriggerRpc(ulong clientId, ulong characterNetworkObjectId)
+    protected override void TriggerServerRpc(ulong clientId, ulong characterNetworkObjectId)
     {
         if (!CanTrigger()) return;
         OnTrigger(Character.FindCharacter(characterNetworkObjectId));

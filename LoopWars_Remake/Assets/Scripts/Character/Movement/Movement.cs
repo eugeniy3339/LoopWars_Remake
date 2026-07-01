@@ -1,3 +1,4 @@
+using LoopWars.GameMode;
 using System;
 using Unity.Netcode;
 using UnityEngine;
@@ -85,6 +86,7 @@ public class Movement : NetworkBehaviour
 
     public void Move(float dir)
     {
+        if (!IsOwner) return;
         if (!canMove) return;
         if (Mathf.Abs(dir) <= 0.1f) return;
         Vector2 moveDir = new Vector2(dir, 0f).normalized;

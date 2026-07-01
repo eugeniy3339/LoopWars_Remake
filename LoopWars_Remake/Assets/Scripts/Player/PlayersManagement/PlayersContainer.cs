@@ -51,7 +51,7 @@ public static class PlayersContainer
             if (playerNetowrkObject != null && playerNetowrkObject.IsSpawned)
                 playerNetowrkObject.Despawn();
             else
-                GameObject.Destroy(player.playerInput.gameObject);
+            { GameObject.Destroy(player.playerInput.gameObject); }
         }
     }
 }

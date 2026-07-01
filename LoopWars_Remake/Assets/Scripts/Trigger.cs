@@ -1,13 +1,17 @@
 using System;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 [RequireComponent(typeof(Collider2D))]
 public class Trigger : NetworkBehaviour
 {
     public event Action<Character, Trigger> onTriggerEnter;
     protected virtual bool areThereTriggerConditions { get; set; } = false;
+
+    protected virtual void Awake()
+    {
+
+    }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -18,19 +22,19 @@ public class Trigger : NetworkBehaviour
             if (!areThereTriggerConditions)
                 OnTrigger(character);
             else
-                TryToTriggerRpc(NetworkManager.LocalClientId, character.NetworkObjectId);
+                TriggerServerRpc(NetworkManager.LocalClientId, character.NetworkObjectId);
         }
     }
 
     [Rpc(SendTo.Server)]
-    protected virtual void TryToTriggerRpc(ulong clientId, ulong characterNetworkObjectId)
+    protected virtual void TriggerServerRpc(ulong clientId, ulong characterNetworkObjectId)
     {
         if(CanTrigger())
-            TriggerRpc(characterNetworkObjectId, new RpcSendParams { Target = NetworkManager.RpcTarget.Single(clientId, RpcTargetUse.Temp) });
+            TriggerClientRpc(characterNetworkObjectId, new RpcSendParams { Target = NetworkManager.RpcTarget.Single(clientId, RpcTargetUse.Temp) });
     }
 
     [Rpc(SendTo.SpecifiedInParams)]
-    private void TriggerRpc(ulong characterNetworkObjectId, RpcParams sendParams)
+    private void TriggerClientRpc(ulong characterNetworkObjectId, RpcParams sendParams)
     {
         Character character = Character.FindCharacter(characterNetworkObjectId);
         if(character != null)

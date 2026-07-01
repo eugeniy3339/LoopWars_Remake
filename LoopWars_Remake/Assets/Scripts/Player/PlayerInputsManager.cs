@@ -5,7 +5,8 @@ using UnityEngine.InputSystem;
 public class PlayerInputsManager : NetworkBehaviour
 {
     private Character character;
-    private PlayerInput playerInput;
+    private PlayerInput _pI;
+    private PlayerInput playerInput { get { if (_pI == null) { _pI = character.playerInput != null ? character.playerInput : GetComponent<PlayerInput>(); } return _pI; } }
     private WeaponManager weaponManager;
 
     private Vector2 lastMoveInput;
@@ -17,7 +18,6 @@ public class PlayerInputsManager : NetworkBehaviour
 
     private void Start()
     {
-        playerInput = character.playerInput;
         weaponManager = character.weaponManager;
     }
 
@@ -25,7 +25,11 @@ public class PlayerInputsManager : NetworkBehaviour
     {
         base.OnNetworkSpawn();
 
-        if (!IsOwner) enabled = false;
+        if (!IsOwner)
+        {
+            enabled = false;
+            Destroy(playerInput);
+        }
     }
 
     private void Update()

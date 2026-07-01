@@ -13,9 +13,6 @@ public class GameManager : NetworkBehaviour
     {
         if (curEndRoundCoroutine != null)
             StopCoroutine(curEndRoundCoroutine);
-
-        if(NetworkManager.Singleton.IsServer)
-            NetworkObject.Spawn(true);
     }
 
 

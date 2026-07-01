@@ -43,6 +43,8 @@ public class Projectile : NetworkBehaviour
 
     private void LifeTimeControll()
     {
+        if (!IsServer) return;
+
         lifeTime -= Time.deltaTime;
         if (lifeTime <= 0f)
             DisableProjectile();
@@ -91,6 +93,7 @@ public class Projectile : NetworkBehaviour
 
     private void DisableProjectile()
     {
+        if (!IsServer) return;
         if (despawnOnDisable)
             DespawnProjectile();
         else
@@ -111,7 +114,6 @@ public class Projectile : NetworkBehaviour
 
         gameObject.SetActive(true);
 
-        lifeTime = bulletScriptableObject.maxLifeTime;
         transform.position = position;
         transform.right = direction;
 
@@ -120,13 +122,14 @@ public class Projectile : NetworkBehaviour
         if(IsServer)
         {
             canDamageAttacker = false;
+            lifeTime = bulletScriptableObject.maxLifeTime;
         }
     }
 
     public void DespawnProjectile()
     {
         if (!IsServer) return;
-        if(NetworkObject != null)
+        if(NetworkObject != null && NetworkObject.IsSpawned)
             NetworkObject.Despawn();
     }
 
@@ -154,7 +157,7 @@ public class Projectile : NetworkBehaviour
         projectile.attacker = attacker;
         projectile.despawnOnDisable = despawnOnDestroy;
 
-        projectile.NetworkObject.SpawnWithOwnership(NetworkManager.ServerClientId, true);
+        projectile.NetworkObject.Spawn();
 
         return projectile;
     }

@@ -21,10 +21,10 @@ public class HealthSystem : NetworkBehaviour, IDamagable
     {
         base.OnNetworkSpawn();
 
+        health.OnValueChanged += OnHealthValueChanged;
+
         if (IsServer)
             health.Value = maxHealth;
-
-        health.OnValueChanged += OnHealthValueChanged;
     }
 
     public override void OnNetworkDespawn()
@@ -38,9 +38,6 @@ public class HealthSystem : NetworkBehaviour, IDamagable
     {
         if (!IsServer) return false;
         health.Value -= damage;
-
-        if (health.Value <= 0f)
-            Die();
 
         return true;
     }

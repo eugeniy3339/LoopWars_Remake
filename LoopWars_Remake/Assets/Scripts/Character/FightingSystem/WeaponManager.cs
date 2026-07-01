@@ -43,6 +43,14 @@ public class WeaponManager : NetworkBehaviour
         SetCurWeapon(weapon);
     }
 
+    public override void OnNetworkDespawn()
+    {
+        base.OnNetworkDespawn();
+
+        if (curWeapon != null && curWeapon.NetworkObject != null && curWeapon.NetworkObject.IsSpawned)
+            curWeapon.NetworkObject.Despawn();
+    }
+
     public bool SetCurWeapon(WeaponScriptableObject weaponScriptableObject)
     {
         if (!IsServer) return false;

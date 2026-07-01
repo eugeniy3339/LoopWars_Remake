@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using LoopWars.GameMode;
 using LoopWars.Players;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -100,7 +101,7 @@ public class LocalMultiplayerLobby : MonoBehaviour
     {
         if(multiplayerMode == MultiplayerMode.LocalMultiplayer)
         {
-            SceneManager.LoadScene(1);
+            NetworkManager.Singleton.SceneManager.LoadScene("GameScene", LoadSceneMode.Single);
         }
     }
 

@@ -5,33 +5,56 @@ using LoopWars.Players;
 using LoopWars.GameMode;
 using Unity.Netcode;
 using System;
-using UnityEngine.TextCore.Text;
+using UnityEngine.SceneManagement;
 
 public class PlayersManager : NetworkBehaviour
 {
     public static PlayersManager Instance { get; protected set; }
+    private PlayerInputManager playerInputManager;
 
     [SerializeField] private GameObject playerPrefab;
-    public List<Character> alivePlayers = new List<Character>();
+    [HideInInspector] public List<Character> alivePlayers = new List<Character>();
 
     public static event Action<Character, List<Character>> onPlayerDied;
+
+    private int loadedPlayersCount;
+    private bool spawnedPlayers;
 
     private void Awake()
     {
         Instance = this;
+        playerInputManager = FindAnyObjectByType<PlayerInputManager>();
 
-        if (NetworkManager.Singleton.IsServer)
-            NetworkObject.Spawn(true);
+        playerInputManager.playerPrefab = playerPrefab;
+
+        if (GameMode.multiplayerMode != MultiplayerMode.LocalMultiplayer)
+            Destroy(playerInputManager);
     }
+
+    private void OnLoadComplete(ulong clientId, string sceneName, LoadSceneMode loadSceneMode)
+    {
+        if (sceneName != "GameScene") return;
+
+        print("Load complete for " + clientId + " player");
+        loadedPlayersCount++;
+
+        if (loadedPlayersCount >= NetworkManager.Singleton.ConnectedClients.Count)
+            SpawnPlayers();
+    }
+
 
 
     public override void OnNetworkSpawn()
     {
         if (!IsServer) return;
+    }
 
-        PlayerInputManager.instance.playerPrefab = playerPrefab;
 
 
+    private void SpawnPlayers()
+    {
+        if (spawnedPlayers) return;
+        spawnedPlayers = true;
 
         foreach (var player in PlayersContainer.players)
         {
@@ -42,7 +65,7 @@ public class PlayersManager : NetworkBehaviour
             Character character;
             if (GameMode.multiplayerMode == MultiplayerMode.LocalMultiplayer)
             {
-                PlayerInput playerInput = PlayerInputManager.instance.JoinPlayer(-1, -1, player.controllScheme, player.devices.ToArray());
+                PlayerInput playerInput = playerInputManager.JoinPlayer(-1, -1, player.controllScheme, player.devices.ToArray());
                 character = playerInput.GetComponent<Character>();
                 character.NetworkObject.Spawn(true);
             }
@@ -84,12 +107,18 @@ public class PlayersManager : NetworkBehaviour
     private void OnEnable()
     {
         if (NetworkManager.Singleton.IsServer)
+        {
             HealthSystem.onCharacterDied += OnPlayerDied;
+            NetworkManager.Singleton.SceneManager.OnLoadComplete += OnLoadComplete;
+        }
     }
 
     private void OnDisable()
     {
         if (NetworkManager.Singleton.IsServer)
+        {
             HealthSystem.onCharacterDied -= OnPlayerDied;
+            NetworkManager.Singleton.SceneManager.OnLoadComplete -= OnLoadComplete;
+        }
     }
 }
