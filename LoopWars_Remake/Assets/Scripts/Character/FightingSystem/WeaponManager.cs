@@ -48,8 +48,11 @@ public class WeaponManager : NetworkBehaviour
         }
         else
         {
-            curWeapon = Weapon.FindWeapon(OwnerClientId);
+            if(curWeapon == null)
+                curWeapon = Weapon.FindWeapon(OwnerClientId);
             curWeapon.OnAttackerSpawned(character);
+            if(curWeaponScriptableObject == null)
+                curWeaponScriptableObject = curWeapon.weaponScriptableObject;
         }
 
         if (!IsOwner)
@@ -106,6 +109,7 @@ public class WeaponManager : NetworkBehaviour
     public void ThrowWeapon()
     {
         if (!IsOwner) return;
+        print(curWeaponScriptableObject);
         if (curWeaponScriptableObject == null) return;
 
         ThrowWeaponRpc(WeaponsListScriptableObject.Instance.weapons.IndexOf(curWeaponScriptableObject), curWeapon.transform.position, curWeapon.transform.right);

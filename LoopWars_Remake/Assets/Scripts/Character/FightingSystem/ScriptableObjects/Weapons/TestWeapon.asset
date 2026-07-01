@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponPrefab: {fileID: 7793299113729613695, guid: 3fdcd9cba89178a46abcfd9e7d223294, type: 3}
   attackCooldown: 0.1
-  infinityBullets: 0
+  infinityBullets: 1
   bulletsCount: 20
   shotBackForce: 1
   bulletScriptableObject: {fileID: 11400000, guid: 5419e7bb527d2a948bb85b89bb7e4c97, type: 2}
