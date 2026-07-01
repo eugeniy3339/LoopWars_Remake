@@ -4,9 +4,9 @@ public class DefaultWeapon : Weapon
 {
     protected override void Attack()
     {
-        if (!IsServer) return;
+        if (!IsOwner) return;
 
-        LaunchProjectile(transform.position, transform.right);
+        LaunchProjectileRpc(transform.position, transform.right);
         //attacker.rigidbody.AddForce(-transform.right * shotBackForce, ForceMode2D.Impulse);
 
         ammo -= 1;

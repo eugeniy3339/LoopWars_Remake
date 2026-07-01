@@ -419,8 +419,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
-  weaponsList: {fileID: 11400000, guid: 6cdb65504f9217940bd98ca928289c09, type: 2}
-  weapon: {fileID: 11400000, guid: 75659611a1da8414ebc9fb221d58e24c, type: 2}
+  startWeapon: {fileID: 11400000, guid: 75659611a1da8414ebc9fb221d58e24c, type: 2}
 --- !u!114 &8092218587844499233
 MonoBehaviour:
   m_ObjectHideFlags: 0

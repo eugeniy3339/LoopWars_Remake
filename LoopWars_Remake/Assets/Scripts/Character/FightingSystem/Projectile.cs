@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 
 [RequireComponent(typeof(Rigidbody2D), typeof(Collider2D))]
-public class Projectile : NetworkBehaviour
+public class Projectile : MonoBehaviour
 {
     private Character attacker;
     private BulletScriptableObject bulletScriptableObject;
@@ -28,14 +28,6 @@ public class Projectile : NetworkBehaviour
 
     private bool despawnOnDisable = false;
 
-    public override void OnNetworkSpawn()
-    {
-        base.OnNetworkSpawn();
-
-        gameObject.SetActive(false);
-        if (!IsServer) { enabled = false; }
-    }
-
     private void Update()
     {
         LifeTimeControll();
@@ -43,8 +35,6 @@ public class Projectile : NetworkBehaviour
 
     private void LifeTimeControll()
     {
-        if (!IsServer) return;
-
         lifeTime -= Time.deltaTime;
         if (lifeTime <= 0f)
             DisableProjectile();
@@ -52,8 +42,6 @@ public class Projectile : NetworkBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (!IsServer) return;
-
         if (IsThereADamagable(collision.gameObject, out IDamagable damagable, out bool isAttacker))
         {
             if (isAttacker && !canDamageAttacker)
@@ -62,7 +50,8 @@ public class Projectile : NetworkBehaviour
                 return;
             }
 
-            Damage(damagable);
+            if (NetworkManager.Singleton.IsServer)
+                Damage(damagable);
         }
 
         if(destroyOnImpact)
@@ -73,7 +62,7 @@ public class Projectile : NetworkBehaviour
     {
         damagable = gameObject.GetComponentInChildren<IDamagable>();
 
-        if(damagable != null)
+        if (damagable != null)
         {
             HealthSystem healthSystem = damagable as HealthSystem;
             isAttacker = attacker != null && healthSystem != null && healthSystem == attacker.healthSystem;
@@ -86,51 +75,41 @@ public class Projectile : NetworkBehaviour
 
     protected virtual void Damage(IDamagable damagable)
     {
-        if (!IsServer) return;
+        if (!NetworkManager.Singleton.IsServer) return;
         float damage = this.damage * Random.Range(1f, maxDamageMultiplier);
         damagable.Damage(attacker.transform, transform, damage);
     }
 
     private void DisableProjectile()
     {
-        if (!IsServer) return;
         if (despawnOnDisable)
             DespawnProjectile();
         else
             DisableProjectileRpc();
     }    
 
-    [Rpc(SendTo.Everyone)]
     private void DisableProjectileRpc()
     {
         if (gameObject == null) return;
         gameObject.SetActive(false);
     }
 
-    [Rpc(SendTo.Everyone)]
-    public void LaunchProjectileRpc(Vector3 position, Vector3 direction, float speed)
+    public void LaunchProjectile(Vector2 position, Vector2 direction)
     {
-        if (gameObject == null) return;
-
         gameObject.SetActive(true);
 
         transform.position = position;
         transform.right = direction;
 
-        rigidbody.linearVelocity = direction * speed;
+        rigidbody.linearVelocity = direction * bulletScriptableObject.speed;
+        lifeTime = bulletScriptableObject.maxLifeTime;
 
-        if(IsServer)
-        {
-            canDamageAttacker = false;
-            lifeTime = bulletScriptableObject.maxLifeTime;
-        }
+        canDamageAttacker = false;
     }
 
     public void DespawnProjectile()
     {
-        if (!IsServer) return;
-        if(NetworkObject != null && NetworkObject.IsSpawned)
-            NetworkObject.Despawn();
+        Destroy(gameObject);
     }
 
 
@@ -139,8 +118,6 @@ public class Projectile : NetworkBehaviour
 
     public static Projectile CreateNewProjectile(BulletScriptableObject bulletScriptableObject, Character attacker, bool despawnOnDestroy)
     {
-        if (!NetworkManager.Singleton.IsServer) return null;
-
         Projectile projectile = SpawnProjectile(bulletScriptableObject, attacker, despawnOnDestroy);
 
         return projectile;
@@ -156,8 +133,6 @@ public class Projectile : NetworkBehaviour
         projectile.destroyOnImpact = bulletScriptableObject.destroyOnImpact;
         projectile.attacker = attacker;
         projectile.despawnOnDisable = despawnOnDestroy;
-
-        projectile.NetworkObject.Spawn();
 
         return projectile;
     }

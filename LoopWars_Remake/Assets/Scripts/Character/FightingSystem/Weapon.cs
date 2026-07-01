@@ -5,19 +5,20 @@ using UnityEngine;
 
 public abstract class Weapon : NetworkBehaviour
 {
+    private NetworkVariable<int> weaponScriptableObjectIndex = new NetworkVariable<int>();
     private WeaponScriptableObject _wso;
     public virtual WeaponScriptableObject weaponScriptableObject { 
         get { return _wso; }
         set {
             _wso = value;
 
-            bulletScriptableObject = value.bulletScriptableObject;
-            infinityAmmo = value.infinityBullets;
-            ammo = value.bulletsCount;
+            bulletScriptableObject = value?.bulletScriptableObject;
+            infinityAmmo = value != null ? value.infinityBullets : true;
+            ammo = value != null ? value.bulletsCount : 1;
 
-            attackCooldown = value.attackCooldown;
+            attackCooldown = value != null ? value.attackCooldown : 1f;
 
-            shotBackForce = value.shotBackForce;
+            shotBackForce = value != null ? value.shotBackForce : 1f;
         } 
     }
     protected virtual BulletScriptableObject bulletScriptableObject { get; set; }
@@ -37,27 +38,55 @@ public abstract class Weapon : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        base.OnNetworkSpawn();
+        if (!IsOwner)
+            enabled = false;
 
-        if (!IsServer) { enabled = false; return; }
+        if (IsServer)
+        {
+            weaponScriptableObjectIndex.Value = WeaponsListScriptableObject.Instance.weapons.IndexOf(weaponScriptableObject);
+        }
 
-        spawnedProjectiles = SpawnProjectiles(bulletScriptableObject);
-        curProjectileIndex = 0;
+        weaponScriptableObjectIndex.OnValueChanged += OnWeaponScriptableObjectIndexChanged;
+        OnWeaponScriptableObjectIndexChanged(0, weaponScriptableObjectIndex.Value);
+
+        if (attacker == null)
+            attacker = Character.FindCharacterByPlayerId(OwnerClientId);
+
+        if (attacker != null)
+            SpawnProjectiles();
+    }
+
+    public void OnAttackerSpawned(Character attacker)
+    {
+        if (this.attacker != null) return;
+
+        this.attacker = attacker;
+        SpawnProjectiles();
     }
 
     public override void OnNetworkDespawn()
     {
         base.OnNetworkDespawn();
 
-        if (!IsServer) return;
-
+        weaponScriptableObjectIndex.OnValueChanged -= OnWeaponScriptableObjectIndexChanged;
         DespawnProjectiles();
     }
 
-    private List<Projectile> SpawnProjectiles(BulletScriptableObject bulletScriptableObject)
+    private void OnWeaponScriptableObjectIndexChanged(int oldIndex, int curIndex)
     {
-        int countToSpawn = 100;
-        return SpawnProjectiles(bulletScriptableObject, countToSpawn);
+        weaponScriptableObject = WeaponsListScriptableObject.Instance.weapons[curIndex];
+    }
+
+    private void SpawnProjectiles()
+    {
+        int countToSpawn = (int)(bulletScriptableObject.maxLifeTime / attackCooldown);
+        SpawnProjectiles(countToSpawn);
+    }
+
+    private void SpawnProjectiles(int count)
+    {
+        spawnedProjectiles = SpawnProjectiles(bulletScriptableObject, count);
+        curProjectileIndex = 0;
     }
 
     private List<Projectile> SpawnProjectiles(BulletScriptableObject bulletScriptableObject, int count)
@@ -79,10 +108,13 @@ public abstract class Weapon : NetworkBehaviour
 
     private void DespawnProjectiles(List<Projectile> projectiles)
     {
+        if (projectiles == null) return;
         foreach(var projectile in projectiles)
         {
             projectile.DespawnProjectile();
         }
+
+        projectiles.Clear();
     }
 
     private void Update()
@@ -92,6 +124,7 @@ public abstract class Weapon : NetworkBehaviour
 
     private void AttackCooldown()
     {
+        if (!IsOwner) return;
         if(curAttackCooldown > 0f)
         {
             curAttackCooldown -= Time.deltaTime;
@@ -104,6 +137,7 @@ public abstract class Weapon : NetworkBehaviour
 
     private void OnAttackCooldown()
     {
+        if (!IsOwner) return;
         onAttackCooldown?.Invoke();
     }
 
@@ -122,25 +156,38 @@ public abstract class Weapon : NetworkBehaviour
 
     protected abstract void Attack();
 
-    protected virtual void LaunchProjectile(Vector2 position, Vector2 direction)
+    [Rpc(SendTo.Everyone)]
+    protected virtual void LaunchProjectileRpc(Vector2 position, Vector2 direction)
     {
-        Projectile projectile = spawnedProjectiles[curProjectileIndex];
-        if(projectile == null)
-        {
-            curProjectileIndex = 0;
-            return;
-        }
-
-        projectile.LaunchProjectileRpc(position, direction, bulletScriptableObject.speed);
-        curProjectileIndex++;
         if (curProjectileIndex >= spawnedProjectiles.Count)
             curProjectileIndex = 0;
+
+        Projectile projectile = spawnedProjectiles[curProjectileIndex];
+        if(projectile == null)
+            return;
+
+        projectile.LaunchProjectile(position, direction);
+        curProjectileIndex++;
     }
 
     private bool CanAttack(out bool becauseOfAmmo)
     {
-        if (!IsServer) { becauseOfAmmo = false; return false; }
+        if (!IsOwner) { becauseOfAmmo = false; return false; }
         becauseOfAmmo = curAttackCooldown <= 0 && !infinityAmmo && ammo <= 0;
         return curAttackCooldown <= 0f && (infinityAmmo || ammo > 0);
+    }
+
+
+
+
+    public static Weapon FindWeapon(ulong ownerId)
+    {
+        foreach(var weapon in FindObjectsOfType<Weapon>())
+        {
+            if (weapon.OwnerClientId == ownerId)
+                return weapon;
+        }
+
+        return null;
     }
 }

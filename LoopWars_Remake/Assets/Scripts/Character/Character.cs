@@ -54,4 +54,15 @@ public class Character : NetworkBehaviour
 
         return null;
     }
+
+    public static Character FindCharacterByPlayerId(ulong playerId)
+    {
+        foreach (var character in FindObjectsOfType<Character>())
+        {
+            if (character.OwnerClientId == playerId)
+                return character;
+        }
+
+        return null;
+    }
 }
