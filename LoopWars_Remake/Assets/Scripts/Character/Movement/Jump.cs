@@ -7,7 +7,7 @@ public class Jump : NetworkBehaviour
     private Character character;
 
     private Rigidbody2D rigidbody;
-    private Movement movement;
+    private MovementManager movementManager;
 
     [SerializeField] private float jumpForce = 8f;
     [SerializeField] private float minJumpCooldown = 0.1f;
@@ -21,7 +21,7 @@ public class Jump : NetworkBehaviour
     private void Start()
     {
         rigidbody = character.rigidbody;
-        movement = character.movement;
+        movementManager = character.movementManager;
     }
 
     public override void OnNetworkSpawn()
@@ -50,22 +50,22 @@ public class Jump : NetworkBehaviour
 
     private void OnJumpCooldown()
     {
-        movement.limitSpeedOnSlopes = true;
+        movementManager.limitSpeedOnSlopes = true;
     }
 
     public void JumpIfCanTo()
     {
         if (!CanJump()) return;
 
-        character.movement.limitSpeedOnSlopes = false;
+        movementManager.limitSpeedOnSlopes = false;
         curJumpCooldown = minJumpCooldown;
 
         rigidbody.linearVelocityY = jumpForce;
     }
 
-    private bool CanJump()
+    public bool CanJump()
     {
         if (!IsOwner) return false;
-        return movement.isGrounded && curJumpCooldown <= 0f;
+        return movementManager.isGrounded && curJumpCooldown <= 0f;
     }
 }

@@ -6,10 +6,10 @@ public class PlayerInputsManager : NetworkBehaviour
 {
     private Character character;
     private PlayerInput _pI;
-    private PlayerInput playerInput { get { if (_pI == null) { _pI = character.playerInput != null ? character.playerInput : GetComponent<PlayerInput>(); } return _pI; } }
+    private PlayerInput playerInput 
+    { get { if (_pI == null) { _pI = character.playerInput != null ? character.playerInput : GetComponent<PlayerInput>(); } return _pI; } }
+    private MovementManager movementManager;
     private WeaponManager weaponManager;
-
-    private Vector2 lastMoveInput;
 
     private void Awake()
     {
@@ -19,6 +19,7 @@ public class PlayerInputsManager : NetworkBehaviour
     private void Start()
     {
         weaponManager = character.weaponManager;
+        movementManager = character.movementManager;
     }
 
     public override void OnNetworkSpawn()
@@ -53,9 +54,7 @@ public class PlayerInputsManager : NetworkBehaviour
         if (!IsOwner) return;
 
         Vector2 input = context.ReadValue<Vector2>();
-        character.movement.OnMove(input.x);
-        if (input.magnitude > 0.1f)
-            lastMoveInput = input;
+        movementManager.OnMove(input);
     }
 
     public void OnJump(InputAction.CallbackContext context)
@@ -63,15 +62,7 @@ public class PlayerInputsManager : NetworkBehaviour
         if (!IsOwner) return;
         if (!context.started) return;
 
-        character.jump.JumpIfCanTo();
-    }
-
-    public void OnDash(InputAction.CallbackContext context)
-    {
-        if (!IsOwner) return;
-        if (!context.started) return;
-
-        character.dash.DashIfCanTo(lastMoveInput);
+        movementManager.OnJump();
     }
 
     public void OnAttack(InputAction.CallbackContext context)

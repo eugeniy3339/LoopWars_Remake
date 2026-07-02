@@ -2,11 +2,11 @@ using System;
 using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.UIElements.Experimental;
 
 public class Dash : NetworkBehaviour
 {
     private Character character;
+
     private Rigidbody2D rigidbody;
 
     [SerializeField] private float dashCooldown = 3f;
@@ -20,6 +20,8 @@ public class Dash : NetworkBehaviour
 
     public event Action onDash;
     public event Action onDashEnd;
+
+    public bool subscribedOnEvents = false;
 
     private void Awake()
     {
@@ -78,10 +80,6 @@ public class Dash : NetworkBehaviour
         float curDashTime = 0f;
         Vector2 velocity = dashDirection.normalized * dashSpeed;
 
-        character.movement.enabled = false;
-        character.useGravity = false;
-
-        rigidbody.linearDamping = 0f;
         rigidbody.linearVelocity = velocity;
 
 
@@ -93,10 +91,6 @@ public class Dash : NetworkBehaviour
             yield return new WaitForEndOfFrame();
         }
 
-
-        character.movement.enabled = true;
-
-        character.useGravity = true;
         rigidbody.linearVelocity = new Vector2(rigidbody.linearVelocity.x, 0f);
 
         curDashCoroutine = null;
