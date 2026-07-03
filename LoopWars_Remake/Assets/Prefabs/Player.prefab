@@ -139,7 +139,7 @@ CapsuleCollider2D:
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 835b985d36aa52744993b80ad706c1db, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -435,8 +435,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   maxSlopeAngle: 45
-  limitSpeedOnSlopes: 1
-  canMove: 1
+  onWallDrag: 10
 --- !u!114 &7877804223309084861
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -450,7 +449,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
-  speed: 3
+  subscribedOnEvents: 0
+  speed: 5
   airMultiplier: 0.8
 --- !u!114 &5468013906401626360
 MonoBehaviour:
@@ -465,8 +465,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
+  subscribedOnEvents: 0
   jumpForce: 15
-  minJumpCooldown: 0.1
+  minJumpTime: 0.2
+  jumpCancelationForceMultiplayer: 0.5
+  wallJumpAngle: 75
+  wallJumpForce: 13
 --- !u!114 &2629246180494822490
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -480,10 +484,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
+  subscribedOnEvents: 0
   dashCooldown: 3
   dashSpeed: 20
   dashTime: 0.3
-  subscribedOnEvents: 0
 --- !u!114 &6774770880441065928
 MonoBehaviour:
   m_ObjectHideFlags: 0

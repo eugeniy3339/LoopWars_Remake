@@ -60,9 +60,9 @@ public class PlayerInputsManager : NetworkBehaviour
     public void OnJump(InputAction.CallbackContext context)
     {
         if (!IsOwner) return;
-        if (!context.started) return;
+        if (context.performed) return;
 
-        movementManager.OnJump();
+        movementManager.OnJump(context.started);
     }
 
     public void OnAttack(InputAction.CallbackContext context)

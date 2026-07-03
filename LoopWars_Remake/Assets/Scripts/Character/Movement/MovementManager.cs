@@ -1,7 +1,9 @@
+using System.Collections.Generic;
 using System;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Windows;
+using System.Linq;
 
 public class MovementManager : NetworkBehaviour
 {
@@ -12,6 +14,18 @@ public class MovementManager : NetworkBehaviour
     private Jump jump;
     private Dash dash;
 
+    private MovementState _mS;
+    public MovementState movementState 
+    { 
+        get { return _mS; } 
+        private set { 
+            if (_mS == value) { return; } 
+            _mS = value; 
+            onMovementStateChanged?.Invoke(value); 
+        } 
+    }
+    public event Action<MovementState> onMovementStateChanged;
+    
     public bool isGrounded { get; private set; }
     public bool onTheWall { get; private set; }
     public bool onSlope { get; private set; }
@@ -28,11 +42,12 @@ public class MovementManager : NetworkBehaviour
     [Header("Slope Settings")]
     [SerializeField] private float maxSlopeAngle = 45f;
 
-    public float lastMoveDir { get; private set; }
-    public float moveDir { get; private set; }
-    private Vector2 lastMoveInput;
+    [Header("On Wall Settings")]
+    [SerializeField] private float onWallDrag = 10f;
 
-    public event Action<float> onChangedMoveDir;
+    public bool onWall { get; private set; }
+    private List<Collider2D> wallsImCollidingWith = new List<Collider2D>();
+    public Collider2D curWall { get; private set; }
 
     public event Action onGrounded;
     public event Action onUngrounded;
@@ -41,11 +56,21 @@ public class MovementManager : NetworkBehaviour
     public event Action onGotOffTheWall;
 
 
+    public float lastMoveDir { get; private set; }
+    public float moveDir { get; private set; }
+    private Vector2 lastMoveInput;
+
+    public event Action<float> onChangedMoveDir;
+
+
+    private bool canChangeLinearDamping = true;
+    private bool canChangeUseGravity = true;
+
     private float _lD;
     public float linearDamping
     {
         get { return _lD; }
-        set
+        private set
         {
             if (!canChangeLinearDamping) return;
 
@@ -55,13 +80,13 @@ public class MovementManager : NetworkBehaviour
     }
 
 
-    const float defaultGravityScale = 3f;
+    public const float defaultGravityScale = 3f;
 
     private bool _ug;
     public bool useGravity
     {
         get { return _ug; }
-        set
+        private set
         {
             if (!canChangeUseGravity) return;
             _ug = value;
@@ -70,11 +95,11 @@ public class MovementManager : NetworkBehaviour
     }
 
 
-    private bool canChangeLinearDamping = true;
-    private bool canChangeUseGravity = true;
+    public bool limitSpeed { get; private set; } = true;
+    public bool limitSpeedOnSlopes { get; private set; } = true;
+    public bool canMove { get; private set; } = true;
 
-    [HideInInspector] public bool limitSpeedOnSlopes = true;
-    [HideInInspector] public bool canMove = true;
+    private bool subscribedOnEvents = false;
 
     private void Awake()
     {
@@ -141,14 +166,58 @@ public class MovementManager : NetworkBehaviour
     }
 
 
+    
+    private bool GetOnAWallIfCanTo(Collider2D wallCantToGetOn = null)
+    {
+        if (!wallsImCollidingWith.Any()) return false;
+        Collider2D wallToGetOn = wallsImCollidingWith.Find((wall) => wall != wallCantToGetOn);
+        if (wallToGetOn == null) return false;
+
+        return GetOnTheWall(wallToGetOn);
+    }
+
+    private bool GetOnTheWall(Collider2D wall)
+    {
+        if (movementState != MovementState.Default) return false;
+
+        linearDamping = onWallDrag;
+        curWall = wall;
+        onWall = true;
+
+        onGotOnTheWall?.Invoke(wall);
+        return true;
+    }
+
+    private void GetOffTheWall()
+    {
+        if (!onWall) return;
+        if (GetOnAWallIfCanTo(curWall)) return;
+
+        curWall = null;
+
+        linearDamping = isGrounded ? groundDrag : 0f;
+        onWall = false;
+
+        onGotOffTheWall?.Invoke();
+    }
+
+
+    private void OnGrounded()
+    {
+        GetOffTheWall();
+    }
 
     private void OnStartedDash()
     {
         canChangeLinearDamping = true;
         canChangeUseGravity = true;
 
-        useGravity = false;
         linearDamping = 0f;
+        useGravity = false;
+        limitSpeed = false;
+        canMove = false;
+
+        movementState = MovementState.Dashing;
 
         canChangeLinearDamping = false;
         canChangeUseGravity = false;
@@ -159,19 +228,55 @@ public class MovementManager : NetworkBehaviour
         canChangeLinearDamping = true;
         canChangeUseGravity = true;
 
+        linearDamping = isGrounded ? groundDrag : 0f;
         useGravity = true;
+        limitSpeed = true;
+        canMove = true;
+
+        movementState = MovementState.Default;
+
+        GetOnAWallIfCanTo();
     }
 
-
-
-    private void OnGotOnTheWall(Collider2D wall)
+    private void OnJump()
     {
+        canChangeLinearDamping = true;
 
+        linearDamping = 0f;
+
+        movementState = MovementState.Jumping;
+
+        canChangeLinearDamping = false;
     }
 
-    private void OnGotOffWall()
+    private void OnWallJump()
     {
+        canChangeLinearDamping = true;
 
+        linearDamping = 0f;
+        limitSpeed = false;
+        canMove = false;
+
+        movementState = MovementState.Jumping;
+
+        canChangeLinearDamping = false;
+    }
+
+    private void OnJumpEnd()
+    {
+        if (movementState == MovementState.Dashing)
+            return;
+
+        print("jumpEnded");
+
+        canChangeLinearDamping = true;
+        linearDamping = isGrounded ? groundDrag : 0f;
+        limitSpeed = true;
+        canMove = true;
+
+        movementState = MovementState.Default;
+
+        GetOnAWallIfCanTo();
     }
 
 
@@ -188,13 +293,47 @@ public class MovementManager : NetworkBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        print(collision.contacts[0].normal);
+        if(collision.collider.gameObject.tag == "Wall")
+        {
+            if (collision.contacts[0].normal.y <= 0.1f)
+            {
+                wallsImCollidingWith.Add(collision.collider);
+
+                if (!onWall && !isGrounded)
+                {
+                    GetOnTheWall(collision.collider);
+                }
+            }
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if(collision.collider.gameObject.tag == "Wall")
+        {
+            if(wallsImCollidingWith.Contains(collision.collider))
+            {
+                wallsImCollidingWith.Remove(collision.collider);
+
+                if(onWall && curWall == collision.collider)
+                {
+                    GetOffTheWall();
+                }
+            }
+        }
     }
 
 
 
     private void SubscribeOnEvents()
     {
+        if(!subscribedOnEvents)
+        {
+            onGrounded += OnGrounded;
+
+            subscribedOnEvents = true;
+        }
+
         if(dash != null && !dash.subscribedOnEvents)
         {
             dash.onDash += OnStartedDash;
@@ -202,16 +341,38 @@ public class MovementManager : NetworkBehaviour
 
             dash.subscribedOnEvents = true;
         }
+
+        if(jump != null && !jump.subscribedOnEvents)
+        {
+            jump.onJump += OnJump;
+            jump.onWallJump += OnWallJump;
+            jump.onJumpEnd += OnJumpEnd;
+
+            jump.subscribedOnEvents = true;
+        }
     }
 
     private void UnsubscribeFromEvents()
     {
+        onGrounded -= OnGrounded;
+
+        subscribedOnEvents = false;
+
         if (dash != null)
         {
             dash.onDash -= OnStartedDash;
             dash.onDashEnd -= OnEndedDash;
 
             dash.subscribedOnEvents = false;
+        }
+
+        if (jump != null)
+        {
+            jump.onJump -= OnJump;
+            jump.onWallJump -= OnWallJump;
+            jump.onJumpEnd -= OnJumpEnd;
+
+            jump.subscribedOnEvents = false;
         }
     }
 
@@ -237,11 +398,25 @@ public class MovementManager : NetworkBehaviour
         }
     }
 
-    public void OnJump()
+    public void OnJump(bool start)
     {
-        if (jump.CanJump())
-            jump.JumpIfCanTo();
+        if(start)
+        {
+            if (jump.CanJump())
+                jump.JumpIfCanTo();
+            else
+                dash.DashIfCanTo(lastMoveInput);
+        }
         else
-            dash.DashIfCanTo(lastMoveInput);
+        {
+            jump.CancelTheJump();
+        }
+    }
+
+    public enum MovementState
+    {
+        Default,
+        Dashing,
+        Jumping
     }
 }

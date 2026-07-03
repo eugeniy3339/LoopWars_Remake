@@ -4,27 +4,11 @@ using Unity.Netcode;
 using UnityEngine;
 
 [RequireComponent(typeof(Character))]
-public class Movement : NetworkBehaviour
+public class Movement : MovementComponent
 {
-    private Character character;
-
-    private Rigidbody2D rigidbody;
-    private MovementManager movementManager;
-
     [Header("Movement Settings")]
     [SerializeField] private float speed = 3f;
     [SerializeField] private float airMultiplier = 0.8f;
-
-    private void Awake()
-    {
-        character = GetComponent<Character>();
-    }
-
-    private void Start()
-    {
-        rigidbody = character.rigidbody;
-        movementManager = character.movementManager;
-    }
 
     public override void OnNetworkSpawn()
     {
@@ -64,6 +48,7 @@ public class Movement : NetworkBehaviour
     private void SpeedControll()
     {
         if (!IsOwner) return;
+        if (!movementManager.limitSpeed) return;
 
         if (movementManager.onSlope)
         {
@@ -87,7 +72,6 @@ public class Movement : NetworkBehaviour
 
     private void LimitSpeed()
     {
-
         float curFlatSpeed = Mathf.Abs(rigidbody.linearVelocityX);
         if(curFlatSpeed > speed)
         {
