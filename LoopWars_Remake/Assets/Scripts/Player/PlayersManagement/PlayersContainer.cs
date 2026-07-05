@@ -65,6 +65,9 @@ namespace LoopWars
         {
             public MultiplayerMode multiplayerMode;
 
+            public string name;
+            public Color color;
+
             public List<InputDevice> devices = new List<InputDevice>(); //Used for local multiplayer
             public string controllScheme; //Used for local multiplayer
 

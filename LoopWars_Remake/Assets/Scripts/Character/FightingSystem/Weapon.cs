@@ -2,9 +2,12 @@ using System;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public abstract class Weapon : NetworkBehaviour
 {
+    [SerializeField] private Transform _shootPosition;
+    public Transform shootPosition { protected set { _shootPosition = value; } get { return _shootPosition; } }
     private NetworkVariable<int> weaponScriptableObjectIndex = new NetworkVariable<int>();
     private WeaponScriptableObject _wso;
     public virtual WeaponScriptableObject weaponScriptableObject { 
@@ -35,6 +38,7 @@ public abstract class Weapon : NetworkBehaviour
     private int curProjectileIndex;
 
     public event Action onAttackCooldown;
+    public static event Action<Weapon, WeaponScriptableObject> onShootStatic;
 
     public override void OnNetworkSpawn()
     {
@@ -157,13 +161,19 @@ public abstract class Weapon : NetworkBehaviour
     protected abstract void Attack();
 
     [Rpc(SendTo.Everyone)]
-    protected virtual void LaunchProjectileRpc(Vector2 position, Vector2 direction)
+    protected virtual void ShootRpc(Vector2 position, Vector2 direction)
+    {
+        LaunchProjectile(position, direction);
+        onShootStatic?.Invoke(this, weaponScriptableObject);
+    }
+
+    private void LaunchProjectile(Vector2 position, Vector2 direction)
     {
         if (curProjectileIndex >= spawnedProjectiles.Count)
             curProjectileIndex = 0;
 
         Projectile projectile = spawnedProjectiles[curProjectileIndex];
-        if(projectile == null)
+        if (projectile == null)
             return;
 
         projectile.LaunchProjectile(position, direction);

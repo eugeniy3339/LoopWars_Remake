@@ -11,6 +11,7 @@ public class WeaponScriptableObject : ScriptableObject
     public float shotBackForce = 1f;
     public BulletScriptableObject bulletScriptableObject;
     public BulletScriptableObject gunThrowableScriptableObject;
+    public GameObject fireVFXPrefab;
 }
 
 #if UNITY_EDITOR

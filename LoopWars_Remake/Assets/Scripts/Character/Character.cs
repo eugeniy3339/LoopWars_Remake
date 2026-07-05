@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 public class Character : NetworkBehaviour
 {
     public Rigidbody2D rigidbody { get; protected set; }
+    public CapsuleCollider2D collider { get; protected set; }
     public SpriteRenderer spriteRenderer { get; protected set; }
     private PlayerInput _pI;
     public PlayerInput playerInput { get { if (_pI == null) { _pI = GetComponent<PlayerInput>(); } return _pI; } protected set { _pI = value; } }
@@ -20,6 +21,7 @@ public class Character : NetworkBehaviour
     private void Awake()
     {
         rigidbody = GetComponent<Rigidbody2D>();
+        collider = GetComponent<CapsuleCollider2D>();
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         playerInput = GetComponent<PlayerInput>();
 

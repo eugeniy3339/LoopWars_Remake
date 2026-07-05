@@ -10,7 +10,7 @@ public class WindowsManager : MonoBehaviour
 
     public static WindowsManager Instance { get; protected set; }
 
-    private void Awake()
+    protected virtual void Awake()
     {
         Instance = this;
 

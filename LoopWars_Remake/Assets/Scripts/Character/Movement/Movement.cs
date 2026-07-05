@@ -37,7 +37,7 @@ public class Movement : MovementComponent
         if (movementManager.onSlope)
             moveDir = GetSlopeMoveDirection(moveDir, movementManager.groundHit);
 
-        rigidbody.AddForce(moveDir * speed * 80f * (movementManager.isGrounded ? 1f : airMultiplier), ForceMode2D.Force);
+        rigidbody.AddForce(moveDir * speed * 10f * (movementManager.isGrounded ? 1f : airMultiplier), ForceMode2D.Force);
     }
 
     private Vector3 GetSlopeMoveDirection(Vector2 moveDirection, RaycastHit2D raycastHit)

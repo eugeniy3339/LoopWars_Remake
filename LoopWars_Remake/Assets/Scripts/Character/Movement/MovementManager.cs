@@ -254,8 +254,6 @@ public class MovementManager : NetworkBehaviour
         canChangeLinearDamping = true;
 
         linearDamping = 0f;
-        limitSpeed = false;
-        canMove = false;
 
         movementState = MovementState.Jumping;
 
@@ -267,12 +265,8 @@ public class MovementManager : NetworkBehaviour
         if (movementState == MovementState.Dashing)
             return;
 
-        print("jumpEnded");
-
         canChangeLinearDamping = true;
         linearDamping = isGrounded ? groundDrag : 0f;
-        limitSpeed = true;
-        canMove = true;
 
         movementState = MovementState.Default;
 

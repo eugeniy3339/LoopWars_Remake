@@ -427,9 +427,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
-  groundDrag: 10
+  groundDrag: 5
   _footPosition: {fileID: 8751657932034540373}
-  groundCheckRadius: 0.5
+  groundCheckRadius: 0.3
   groundCheckDistance: 0.1
   groundLayer:
     serializedVersion: 2
@@ -469,8 +469,8 @@ MonoBehaviour:
   jumpForce: 15
   minJumpTime: 0.2
   jumpCancelationForceMultiplayer: 0.5
-  wallJumpAngle: 75
-  wallJumpForce: 13
+  wallJumpAngle: 45
+  wallJumpForce: 20
 --- !u!114 &2629246180494822490
 MonoBehaviour:
   m_ObjectHideFlags: 0

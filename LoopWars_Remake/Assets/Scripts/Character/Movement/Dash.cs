@@ -14,6 +14,7 @@ public class Dash : MovementComponent
     private Coroutine curDashCoroutine;
 
     public event Action onDash;
+    public static event Action<Character> onDashStatic;
     public event Action onDashEnd;
 
     public override void OnNetworkSpawn()
@@ -57,7 +58,7 @@ public class Dash : MovementComponent
     private IEnumerator DashCoro(Vector2 dashDirection, float dashSpeed, float dashTime)
     {
         if (!IsOwner) yield break;
-        onDash?.Invoke();
+        CallOnDashEventRpc();
 
         float curDashTime = 0f;
         Vector2 velocity = dashDirection.normalized * dashSpeed;
@@ -79,5 +80,12 @@ public class Dash : MovementComponent
         curDashCooldown = dashCooldown;
         onDashEnd?.Invoke();
         yield break;
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void CallOnDashEventRpc()
+    {
+        onDash?.Invoke();
+        onDashStatic?.Invoke(character);
     }
 }

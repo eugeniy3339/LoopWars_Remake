@@ -10,7 +10,9 @@ public class HealthSystem : NetworkBehaviour, IDamagable
     private NetworkVariable<float> health = new NetworkVariable<float>();
 
     private bool sentDeathEvent = false;
+    public static event Action<Character, Transform, float> onCharacterDamaged;
     public static event Action<Character> onCharacterDied;
+    public static event Action<Character, float, float> onCharactersHealthChanged;
 
     private void Awake()
     {
@@ -36,8 +38,9 @@ public class HealthSystem : NetworkBehaviour, IDamagable
 
     public bool Damage(Transform damager, Transform damageObject, float damage)
     {
-        if (!IsServer) return false;
-        health.Value -= damage;
+        if (IsServer)
+            health.Value -= damage;
+        onCharacterDamaged?.Invoke(character, damageObject, damage);
 
         return true;
     }
@@ -51,6 +54,8 @@ public class HealthSystem : NetworkBehaviour, IDamagable
                 Die();
             }
         }
+
+        onCharactersHealthChanged?.Invoke(character, prevValue, newValue);
     }
 
     private void Die()

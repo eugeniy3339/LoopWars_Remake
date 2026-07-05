@@ -8,8 +8,13 @@ public class BulletScriptableObject : ScriptableObject
     public float maxDamageMultiplier = 1f;
     public float speed = 10f;
     public float maxLifeTime = 3f;
-    //public float wallImpactScreenShakeMultiplier;
+    public bool canDamageAttacker = false;
+    public bool canBeDestroyedByAttackersProjectiles = false;
     public bool destroyOnImpact = true;
+    public GameObject bulletDestroyParticlesPrefab;
+    public float bulletDestroyScreenShakeTime = 1f;
+    public float bulletDestroyScreenShakeAmplitude = 1f;
+    public float bulletDestroyScreenShakeFrequency = 1f;
 
 
 #if UNITY_EDITOR

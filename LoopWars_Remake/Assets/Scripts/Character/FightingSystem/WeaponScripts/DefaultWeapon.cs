@@ -6,8 +6,7 @@ public class DefaultWeapon : Weapon
     {
         if (!IsOwner) return;
 
-        LaunchProjectileRpc(transform.position, transform.right);
-        //attacker.rigidbody.AddForce(-transform.right * shotBackForce, ForceMode2D.Impulse);
+        ShootRpc(shootPosition.position, shootPosition.right);
 
         ammo -= 1;
         curAttackCooldown = attackCooldown;

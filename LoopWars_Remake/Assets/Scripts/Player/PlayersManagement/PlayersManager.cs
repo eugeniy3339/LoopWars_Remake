@@ -22,13 +22,17 @@ public class PlayersManager : NetworkBehaviour
 
     private void Awake()
     {
-        Instance = this;
-        playerInputManager = FindAnyObjectByType<PlayerInputManager>();
+        try
+        {
+            Instance = this;
+            playerInputManager = FindAnyObjectByType<PlayerInputManager>();
 
-        playerInputManager.playerPrefab = playerPrefab;
+            playerInputManager.playerPrefab = playerPrefab;
 
-        if (GameMode.multiplayerMode != MultiplayerMode.LocalMultiplayer)
-            Destroy(playerInputManager);
+            if (GameMode.multiplayerMode != MultiplayerMode.LocalMultiplayer)
+                Destroy(playerInputManager);
+        }
+        catch { }
     }
 
     private void OnLoadComplete(ulong clientId, string sceneName, LoadSceneMode loadSceneMode)

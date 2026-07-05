@@ -13,6 +13,7 @@ public class LocalMultiplayerLobby : MonoBehaviour
     private PlayerInputManager playerInputManager;
 
     private List<Player> connectedPlayers = new List<Player>();
+    private int readyPlayersCount;
 
     private void Awake()
     {
@@ -57,6 +58,12 @@ public class LocalMultiplayerLobby : MonoBehaviour
         connectedPlayers.Add(player);
 
         playerInput.onDeviceLost += OnDeviceDiscontected;
+
+        LocalLobbyPlayer localLobbyPlayer = playerInput.GetComponent<LocalLobbyPlayer>();
+        localLobbyPlayer.player = player;
+        localLobbyPlayer.lobbyPlayerUIHandler = MainMenu.Instance.CreateNewLobbyUI(MainMenu.Instance.localMultiplayerPlayersUIsContainer, player.name, player.color);
+
+        CheckIfCanStart();
     }
 
     private void OnPlayerLeft(PlayerInput playerInput)
@@ -72,6 +79,7 @@ public class LocalMultiplayerLobby : MonoBehaviour
     private void OnPlayerLeave(Player player)
     {
         KickPlayer(player);
+        CheckIfCanStart();
     }
 
     private void OnDeviceDiscontected(PlayerInput playerInput)
@@ -105,12 +113,40 @@ public class LocalMultiplayerLobby : MonoBehaviour
         }
     }
 
+    private void OnPlayerReady(Player player)
+    {
+        readyPlayersCount++;
+        CheckIfCanStart();
+    }
+
+    private void OnPlayerUnready(Player player)
+    {
+        readyPlayersCount--;
+        CheckIfCanStart();
+    }
+
+    private void CheckIfCanStart()
+    {
+        MainMenu.Instance.ActivateLocalMultiplayerStartButton(CanStart());
+    }
+
+    private bool CanStart()
+    {
+        return connectedPlayers.Count > 1 && readyPlayersCount == connectedPlayers.Count;
+    }
+
     private void OnEnable()
     {
         LobbyManager.onGameStarted += OnGameStarted;
 
         if (playerInputManager != null)
             playerInputManager.EnableJoining();
+
+        LocalLobbyPlayer.onPlayerReady += OnPlayerReady;
+        LocalLobbyPlayer.onPlayerUneady += OnPlayerUnready;
+        LocalLobbyPlayer.onPlayerLeave += OnPlayerLeave;
+
+        CheckIfCanStart();
     }
 
     private void OnDisable()
@@ -119,5 +155,9 @@ public class LocalMultiplayerLobby : MonoBehaviour
 
         if (playerInputManager != null)
             playerInputManager.DisableJoining();
+
+        LocalLobbyPlayer.onPlayerReady -= OnPlayerReady;
+        LocalLobbyPlayer.onPlayerUneady -= OnPlayerUnready;
+        LocalLobbyPlayer.onPlayerLeave -= OnPlayerLeave;
     }
 }

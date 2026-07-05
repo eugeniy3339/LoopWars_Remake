@@ -17,4 +17,9 @@ MonoBehaviour:
   maxDamageMultiplier: 1
   speed: 12
   maxLifeTime: 3
+  canDamageAttacker: 0
   destroyOnImpact: 0
+  bulletDestroyParticlesPrefab: {fileID: 0}
+  bulletDestroyScreenShakeTime: 0
+  bulletDestroyScreenShakeAmplitude: 0
+  bulletDestroyScreenShakeFrequency: 0

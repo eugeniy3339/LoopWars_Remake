@@ -162,7 +162,7 @@
                 {
                     "name": "",
                     "id": "30dc4417-ba27-4f6f-ba7a-161bebd941f2",
-                    "path": "<Gamepad>/start",
+                    "path": "<Gamepad>/buttonSouth",
                     "interactions": "",
                     "processors": "",
                     "groups": ";GamePad",
@@ -294,6 +294,76 @@
                     "processors": "",
                     "groups": "",
                     "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Lobby",
+            "id": "7f2b7a18-1057-4407-b69d-a408f0a6d5bf",
+            "actions": [
+                {
+                    "name": "ReadyUnready",
+                    "type": "Button",
+                    "id": "9d8e67ee-536b-47ed-a8e3-e4d47790153c",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Leave",
+                    "type": "Button",
+                    "id": "cb5a4dfd-39e6-497b-96aa-26cdaa544cf1",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "7d8aea27-9018-461d-8dba-61e810662e37",
+                    "path": "<Keyboard>/9",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";KeyBoard",
+                    "action": "ReadyUnready",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "22f9c21d-ec6e-431f-ad85-727798269d2a",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";GamePad",
+                    "action": "ReadyUnready",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7228bb9c-4675-4f40-8c86-e90d816d05c1",
+                    "path": "<Keyboard>/backspace",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";KeyBoard",
+                    "action": "Leave",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4459bad7-e13f-4390-af53-861c086aa6ab",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";GamePad",
+                    "action": "Leave",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

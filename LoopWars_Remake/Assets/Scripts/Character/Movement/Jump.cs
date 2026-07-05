@@ -16,7 +16,9 @@ public class Jump : MovementComponent
     private Vector2 wallJumpDirection;
 
     public event Action onJump;
+    public static event Action<Character> onJumpStatic;
     public event Action onWallJump;
+    public static event Action<Character, Vector2> onWallJumpStatic;
     public event Action onJumpEnd;
 
     private bool jumping = false;
@@ -85,7 +87,14 @@ public class Jump : MovementComponent
     {
         curMinJumpTime = minJumpTime;
         rigidbody.linearVelocityY = jumpForce;
+        CallJumpEventRpc();
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void CallJumpEventRpc()
+    {
         onJump?.Invoke();
+        onJumpStatic?.Invoke(character);
     }
 
     private void DoWallJump()
@@ -93,7 +102,14 @@ public class Jump : MovementComponent
         Vector2 jumpDirection = new Vector2(wallJumpDirection.x * BetterMath.NormalizedFloat(transform.position.x - movementManager.curWall.transform.position.x), wallJumpDirection.y);
         rigidbody.linearVelocity = jumpDirection * wallJumpForce;
 
+        CallWallJumpEventRpc(jumpDirection);
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void CallWallJumpEventRpc(Vector2 jumpDirection)
+    {
         onWallJump?.Invoke();
+        onWallJumpStatic?.Invoke(character, jumpDirection);
     }
 
     public void CancelTheJump()
