@@ -2,6 +2,7 @@ using LoopWars.Players;
 using System.Collections.Generic;
 using System.Text;
 using TMPro;
+using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -104,6 +105,11 @@ public class MainMenu : WindowsManager
         lobbyPlayerUIHandlers.Remove(player);
     }
 
+    private void OnLocalLobbyCanStartChanged(bool canStart)
+    {
+        localMultiplayerStartButton.interactable = canStart;
+    }
+
     private void OnNetworkLobbyPlayerJoined(Player player)
     {
         if (lobbyPlayerUIHandlers.ContainsKey(player)) return;
@@ -117,16 +123,41 @@ public class MainMenu : WindowsManager
         lobbyPlayerUIHandlers.Remove(player);
     }
 
-    private void PlayerReady(Player player)
+    private void OnNetworkLobbyCanStartChanged(bool canStart)
+    {
+        networkMultiplayerStartButton.interactable = canStart;
+    }
+
+    private void OnPlayerReady(Player player)
     {
         if (!lobbyPlayerUIHandlers.ContainsKey(player)) return;
         lobbyPlayerUIHandlers[player].SetReadyState(true);
     }
 
-    private void PlayerUnready(Player player)
+    private void OnPlayerUnready(Player player)
     {
         if (!lobbyPlayerUIHandlers.ContainsKey(player)) return;
         lobbyPlayerUIHandlers[player].SetReadyState(false);
+    }
+
+    private void OnNetworkPlayerReady(Player player)
+    {
+        OnPlayerReady(player);
+        if(player.playerId == NetworkManager.Singleton.LocalClientId)
+        {
+            networkMultiplayerReadyButton.gameObject.SetActive(false);
+            networkMultiplayerUnreadyButton.gameObject.SetActive(true);
+        }
+    }
+
+    private void OnNetworkPlayerUnready(Player player)
+    {
+        OnPlayerUnready(player);
+        if (player.playerId == NetworkManager.Singleton.LocalClientId)
+        {
+            networkMultiplayerReadyButton.gameObject.SetActive(true);
+            networkMultiplayerUnreadyButton.gameObject.SetActive(false);
+        }
     }
 
     private void OnRelayCodeChanged(string relayCode)
@@ -142,16 +173,20 @@ public class MainMenu : WindowsManager
         LocalMultiplayerLobbyManager.onPlayerJoined += OnLocalLobbyPlayerJoined;
         LocalMultiplayerLobbyManager.onPlayerLeft += OnLocalLobbyPlayerLeft;
 
-        LocalLobbyPlayer.onPlayerReady += PlayerReady;
-        LocalLobbyPlayer.onPlayerUneady += PlayerUnready;
+        LocalLobbyPlayer.onPlayerReady += OnPlayerReady;
+        LocalLobbyPlayer.onPlayerUneady += OnPlayerUnready;
+
+        LocalMultiplayerLobbyManager.onCanStartChanged += OnLocalLobbyCanStartChanged;
 
         NetworkMultiplayerLobbyManager.onPlayerJoined += OnNetworkLobbyPlayerJoined;
         NetworkMultiplayerLobbyManager.onPlayerLeft += OnNetworkLobbyPlayerLeft;
 
-        NetworkMultiplayerLobbyManager.onPlayerReady += PlayerReady;
-        NetworkMultiplayerLobbyManager.onPlayerUnready += PlayerUnready;
+        NetworkMultiplayerLobbyManager.onPlayerReady += OnNetworkPlayerReady;
+        NetworkMultiplayerLobbyManager.onPlayerUnready += OnNetworkPlayerUnready;
 
         NetworkMultiplayerLobbyManager.onJoinedLobby += OnJoinedNetworkLobby;
+
+        NetworkMultiplayerLobbyManager.onCanStartChanged += OnNetworkLobbyCanStartChanged;
 
         playerNameInputField?.onSubmit.AddListener(OnPlayerNameEntered);
         playerNameInputField?.onDeselect.AddListener(OnPlayerNameEntered);
@@ -172,16 +207,20 @@ public class MainMenu : WindowsManager
         LocalMultiplayerLobbyManager.onPlayerJoined -= OnLocalLobbyPlayerJoined;
         LocalMultiplayerLobbyManager.onPlayerLeft -= OnLocalLobbyPlayerLeft;
 
-        LocalLobbyPlayer.onPlayerReady -= PlayerReady;
-        LocalLobbyPlayer.onPlayerUneady -= PlayerUnready;
+        LocalLobbyPlayer.onPlayerReady -= OnPlayerReady;
+        LocalLobbyPlayer.onPlayerUneady -= OnPlayerUnready;
+
+        LocalMultiplayerLobbyManager.onCanStartChanged += OnLocalLobbyCanStartChanged;
 
         NetworkMultiplayerLobbyManager.onPlayerJoined -= OnNetworkLobbyPlayerJoined;
         NetworkMultiplayerLobbyManager.onPlayerLeft -= OnNetworkLobbyPlayerLeft;
 
-        NetworkMultiplayerLobbyManager.onPlayerReady -= PlayerReady;
-        NetworkMultiplayerLobbyManager.onPlayerUnready -= PlayerUnready;
+        NetworkMultiplayerLobbyManager.onPlayerReady -= OnNetworkPlayerReady;
+        NetworkMultiplayerLobbyManager.onPlayerUnready -= OnNetworkPlayerUnready;
 
         NetworkMultiplayerLobbyManager.onJoinedLobby -= OnJoinedNetworkLobby;
+
+        NetworkMultiplayerLobbyManager.onCanStartChanged -= OnNetworkLobbyCanStartChanged;
 
         playerNameInputField?.onSubmit.RemoveListener(OnPlayerNameEntered);
         playerNameInputField?.onDeselect.RemoveListener(OnPlayerNameEntered);

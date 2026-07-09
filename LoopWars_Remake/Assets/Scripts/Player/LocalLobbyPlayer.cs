@@ -6,7 +6,6 @@ using UnityEngine.InputSystem;
 public class LocalLobbyPlayer : MonoBehaviour
 {
     private PlayerInput playerInput;
-    [HideInInspector] public LobbyPlayerUIHandler lobbyPlayerUIHandler;
     public Player player;
 
     private bool ready;
@@ -26,7 +25,6 @@ public class LocalLobbyPlayer : MonoBehaviour
         if (!context.started) return;
 
         ready = !ready;
-        lobbyPlayerUIHandler.SetUp(player.name, ready, player.color);
         if (ready)
             onPlayerReady?.Invoke(player);
         else
@@ -38,11 +36,5 @@ public class LocalLobbyPlayer : MonoBehaviour
         if (!context.started) return;
 
         onPlayerLeave?.Invoke(player);
-    }
-
-    private void OnDestroy()
-    {
-        if (ready)
-            onPlayerUneady?.Invoke(player);
     }
 }

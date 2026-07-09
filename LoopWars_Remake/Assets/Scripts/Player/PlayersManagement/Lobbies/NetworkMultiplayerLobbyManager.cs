@@ -10,7 +10,6 @@ using Unity.Services.Authentication;
 using Unity.Services.Core;
 using Unity.Services.Relay;
 using Unity.Services.Relay.Models;
-using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -52,8 +51,6 @@ public class NetworkMultiplayerLobbyManager : NetworkBehaviour
         await AuthenticationService.Instance.SignInAnonymouslyAsync();
 
         NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
-        NetworkManager.Singleton.OnClientStarted += OnClientStarted;
-        NetworkManager.Singleton.OnServerStarted += OnServerStarted;
     }
 
     public override void OnNetworkSpawn()
@@ -65,6 +62,8 @@ public class NetworkMultiplayerLobbyManager : NetworkBehaviour
         {
             OnPlayerAdded(playerToSynchronize);
         }
+
+        AddPlayerRpc(PlayerSettings.name, NetworkManager.Singleton.LocalClientId);
     }
 
     public override void OnNetworkDespawn()
@@ -85,6 +84,7 @@ public class NetworkMultiplayerLobbyManager : NetworkBehaviour
     {
         try
         {
+            if (curJoinedAllocation != null) return;
             curJoinedAllocation = await RelayService.Instance.JoinAllocationAsync(joinCode);
 
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetClientRelayData(
@@ -113,22 +113,30 @@ public class NetworkMultiplayerLobbyManager : NetworkBehaviour
 
     public async Task<string> CreateGameAsync(int maxPlayersCount)
     {
-        maxPlayers = maxPlayersCount;
-        curHostedAllocation = await RelayService.Instance.CreateAllocationAsync(maxPlayersCount);
-        string joinCode = await RelayService.Instance.GetJoinCodeAsync(curHostedAllocation.AllocationId);
+        try
+        {
+            if (curHostedAllocation != null) return null;
+            maxPlayers = maxPlayersCount;
+            curHostedAllocation = await RelayService.Instance.CreateAllocationAsync(maxPlayersCount);
+            string joinCode = await RelayService.Instance.GetJoinCodeAsync(curHostedAllocation.AllocationId);
 
-        NetworkManager.Singleton.GetComponent<UnityTransport>().SetHostRelayData(
-            curHostedAllocation.RelayServer.IpV4,
-            (ushort)curHostedAllocation.RelayServer.Port,
-            curHostedAllocation.AllocationIdBytes,
-            curHostedAllocation.Key,
-            curHostedAllocation.ConnectionData
-        );
+            NetworkManager.Singleton.GetComponent<UnityTransport>().SetHostRelayData(
+                curHostedAllocation.RelayServer.IpV4,
+                (ushort)curHostedAllocation.RelayServer.Port,
+                curHostedAllocation.AllocationIdBytes,
+                curHostedAllocation.Key,
+                curHostedAllocation.ConnectionData
+            );
 
-        GameMode.multiplayerMode = MultiplayerMode.NetworkMultiplayer;
-        NetworkManager.Singleton.StartServer();
-        onJoinedLobby?.Invoke(true, joinCode);
-        return joinCode;
+            GameMode.multiplayerMode = MultiplayerMode.NetworkMultiplayer;
+            NetworkManager.Singleton.StartServer();
+            onJoinedLobby?.Invoke(true, joinCode);
+            return joinCode;
+        }
+        catch
+        {
+            return null;
+        }
     }
 
 
@@ -168,7 +176,7 @@ public class NetworkMultiplayerLobbyManager : NetworkBehaviour
         Player player = PlayersContainer.GetPlayerById(changedPlayer.Id);
         if (player == null) return;
 
-        if(changedPlayer.IsReady)
+        if (changedPlayer.IsReady)
             onPlayerReady?.Invoke(player);
         else
             onPlayerUnready?.Invoke(player);
@@ -192,6 +200,8 @@ public class NetworkMultiplayerLobbyManager : NetworkBehaviour
         player.name = addedPlayer.Name.ToString();
         PlayersContainer.AddPlayer(player);
         onPlayerJoined?.Invoke(player);
+        if (addedPlayer.IsReady)
+            onPlayerReady?.Invoke(player);
     }
 
     private void KickPlayer(Player player)
@@ -280,7 +290,7 @@ public class NetworkMultiplayerLobbyManager : NetworkBehaviour
 
     private void OnClientConnected(ulong clientId)
     {
-        if(GameMode.multiplayerMode != MultiplayerMode.NetworkMultiplayer) return;
+        if (GameMode.multiplayerMode != MultiplayerMode.NetworkMultiplayer) return;
         if (!NetworkManager.Singleton.IsServer) return;
 
         if (NetworkManager.Singleton.ConnectedClientsList.Count > maxPlayers)
@@ -288,17 +298,6 @@ public class NetworkMultiplayerLobbyManager : NetworkBehaviour
             NetworkManager.Singleton.DisconnectClient(clientId);
             return;
         }
-    }
-
-    private void OnServerStarted()
-    {
-        AddPlayerRpc(PlayerSettings.name, NetworkManager.Singleton.LocalClientId);
-
-    }
-
-    private void OnClientStarted()
-    {
-        AddPlayerRpc(PlayerSettings.name, NetworkManager.Singleton.LocalClientId);
     }
 
     public struct PlayerToSynchronize : INetworkSerializable, IEquatable<PlayerToSynchronize>
