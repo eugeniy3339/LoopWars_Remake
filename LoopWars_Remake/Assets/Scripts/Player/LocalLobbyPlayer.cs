@@ -40,23 +40,6 @@ public class LocalLobbyPlayer : MonoBehaviour
         onPlayerLeave?.Invoke(player);
     }
 
-    public void OnStart(InputAction.CallbackContext context)
-    {
-        if (!context.started) return;
-        if (!LocalMultiplayerLobby.Instance.CanStart()) return;
-        LobbyManager.Instance.StartLocalGame();
-    }
-
-    public void OnMove(InputAction.CallbackContext context)
-    {
-        CustomEventSystem.Instance?.OnMove(context, playerInput);
-    }
-
-    public void OnInteract(InputAction.CallbackContext context)
-    {
-        CustomEventSystem.Instance?.OnInteract(context, playerInput);
-    }
-
     private void OnDestroy()
     {
         if (ready)

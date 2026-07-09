@@ -70,7 +70,7 @@ namespace LoopWars
     {
         public class Player
         {
-            public static List<Color> playersColors = new List<Color>();
+            public static List<Color> playersColors { get { return PlayersColorsList.Instance.colors; } }
             public static Color GetRandomColor()
             {
                 return playersColors[UnityEngine.Random.Range(0, playersColors.Count)];

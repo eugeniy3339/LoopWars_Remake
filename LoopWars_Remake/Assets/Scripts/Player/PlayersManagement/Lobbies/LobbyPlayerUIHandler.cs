@@ -11,7 +11,12 @@ public class LobbyPlayerUIHandler : MonoBehaviour
     public void SetUp(string name, bool ready, Color color)
     {
         nameText.text = name;
-        readyText.text = ready ? "Ready" : "Unready";
         colorIndicatorImage.color = color;
+        SetReadyState(ready);
+    }
+
+    public void SetReadyState(bool ready)
+    {
+        readyText.text = ready ? "Ready" : "Unready";
     }
 }

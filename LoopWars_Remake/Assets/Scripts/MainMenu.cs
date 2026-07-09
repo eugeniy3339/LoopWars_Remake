@@ -1,16 +1,15 @@
-using System.Runtime.CompilerServices;
+using LoopWars.Players;
+using System.Collections.Generic;
 using System.Text;
 using TMPro;
-using Unity.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class MainMenu : WindowsManager
 {
     public static MainMenu Instance { get; private set; }
 
-    [SerializeField] private GameObject localLobbyPlayerUIPrefab;
     [SerializeField] private GameObject lobbyPlayerUIPrefab;
 
     [Header("Player Settings")]
@@ -19,17 +18,20 @@ public class MainMenu : WindowsManager
 
     [Header("Local Multiplayer Lobby")]
     [SerializeField] private GameObject localMultiplayerLobbyPanel;
+    [SerializeField] private Transform localMultiplayerPlayersUIsContainer;
     [SerializeField] private Button localMultiplayerStartButton;
-    [SerializeField] private Transform _localMultiplayerPlayersUIsContainer;
-    public Transform localMultiplayerPlayersUIsContainer { get { return _localMultiplayerPlayersUIsContainer; } }
 
     [Header("Network Multiplayer Lobby")]
     [SerializeField] private GameObject networkMultiplayerLobbyPanel;
-    [SerializeField] private Transform _networkMultiplayerPlayersUIsContainer;
-    public Transform networkMultiplayerPlayersUIsContainer { get { return _networkMultiplayerPlayersUIsContainer; } }
+    [SerializeField] private Transform networkMultiplayerPlayersUIsContainer;
     [SerializeField] private Button networkMultiplayerReadyButton, networkMultiplayerUnreadyButton;
-    [SerializeField] private Button _networkMultiplayerStartButton;
-    public Button networkMultiplayerStartButton { get { return _networkMultiplayerStartButton; } }
+    [SerializeField] private Button networkMultiplayerStartButton;
+    [SerializeField] private TMP_Text relayCodeText;
+    [SerializeField] private TMP_InputField relayCodeInputField;
+    [SerializeField] private Button createNetworkLobbyButton;
+    [SerializeField] private Button joinNetworkLobbyButton;
+
+    private Dictionary<Player, LobbyPlayerUIHandler> lobbyPlayerUIHandlers = new Dictionary<Player, LobbyPlayerUIHandler>();
 
     protected override void Awake()
     {
@@ -39,58 +41,18 @@ public class MainMenu : WindowsManager
         lastPlayerName = PlayerSettings.name;
         playerNameInputField.text = PlayerSettings.name;
 
+        localMultiplayerStartButton.interactable = false;
+
         networkMultiplayerReadyButton.gameObject.SetActive(false);
         networkMultiplayerUnreadyButton.gameObject.SetActive(false);
         networkMultiplayerStartButton.gameObject.SetActive(false);
         networkMultiplayerStartButton.interactable = false;
     }
 
-    public void OpenLocalMultiplayerLobby()
+    public LobbyPlayerUIHandler CreateNewLobbyUI(Transform container, GameObject prefab, string name, Color color, bool ready = false)
     {
-        OpenPanel(localMultiplayerLobbyPanel);
-        LocalMultiplayerLobby.Instance.enabled = true;
-    }
-
-    public void OpenNetworkMultiplayerLobby()
-    {
-        OpenPanel(networkMultiplayerLobbyPanel);
-        LocalMultiplayerLobby.Instance.enabled = false;
-    }
-
-    public void ActivateLocalMultiplayerStartButton(bool activate)
-    {
-        //localMultiplayerStartButton.interactable = activate;
-    }
-
-    private void ReadyUnreadyNetworkLobby(bool ready)
-    {
-        NetworkMultiplayerLobby.Instance.UpdatePlayerDataAsync(ready);
-        networkMultiplayerReadyButton.gameObject.SetActive(!ready);
-        networkMultiplayerUnreadyButton.gameObject.SetActive(ready);
-    }
-
-    private void ReadyNetworkLobby()
-    {
-        ReadyUnreadyNetworkLobby(true);
-    }
-
-    private void UnreadyNetworkLobby()
-    {
-        ReadyUnreadyNetworkLobby(false);
-    }
-
-
-    public LobbyPlayerUIHandler CreateNewLobbyUI(Transform container, string name, Color color, bool ready = false)
-    {
-        LobbyPlayerUIHandler lobbyPlayerUIHandler = Instantiate(lobbyPlayerUIPrefab, container).GetComponent<LobbyPlayerUIHandler>();
+        LobbyPlayerUIHandler lobbyPlayerUIHandler = Instantiate(prefab, container).GetComponent<LobbyPlayerUIHandler>();
         lobbyPlayerUIHandler.SetUp(name, ready, color);
-        return lobbyPlayerUIHandler;
-    }
-
-    public LobbyPlayerUIHandler CreateNewLobbyUI(PlayerInput playerInput, Transform container, string name, Color color, bool ready = false)
-    {
-        LocalLobbyPlayerUIHandler lobbyPlayerUIHandler = Instantiate(localLobbyPlayerUIPrefab, container).GetComponent<LocalLobbyPlayerUIHandler>();
-        lobbyPlayerUIHandler.SetUp(name, ready, color, playerInput);
         return lobbyPlayerUIHandler;
     }
 
@@ -106,34 +68,130 @@ public class MainMenu : WindowsManager
         PlayerSettings.name = newName;
     }
 
-    private void OnJoinedNetworkLobby(bool isHost)
+
+    public void OpenLocalLobbyPanel()
+    {
+        OpenPanel(localMultiplayerLobbyPanel);
+        LocalMultiplayerLobbyManager.Instance.enabled = true;
+    }
+
+    public void OpenNetworkLobbyPanel()
+    {
+        OpenPanel(networkMultiplayerLobbyPanel);
+        LocalMultiplayerLobbyManager.Instance.enabled = false;
+    }
+
+
+    private void OnJoinedNetworkLobby(bool isHost, string lobbyCode)
     {
         networkMultiplayerReadyButton.gameObject.SetActive(true);
         networkMultiplayerUnreadyButton.gameObject.SetActive(false);
         networkMultiplayerStartButton.gameObject.SetActive(isHost);
+        relayCodeText.text = lobbyCode;
     }
+
+
+    private void OnLocalLobbyPlayerJoined(Player player)
+    {
+        if (lobbyPlayerUIHandlers.ContainsKey(player)) return;
+        lobbyPlayerUIHandlers.Add(player, CreateNewLobbyUI(localMultiplayerPlayersUIsContainer, lobbyPlayerUIPrefab, player.name, player.color));
+    }
+
+    private void OnLocalLobbyPlayerLeft(Player player)
+    {
+        if (!lobbyPlayerUIHandlers.ContainsKey(player)) return;
+        Destroy(lobbyPlayerUIHandlers[player]);
+        lobbyPlayerUIHandlers.Remove(player);
+    }
+
+    private void OnNetworkLobbyPlayerJoined(Player player)
+    {
+        if (lobbyPlayerUIHandlers.ContainsKey(player)) return;
+        lobbyPlayerUIHandlers.Add(player, CreateNewLobbyUI(networkMultiplayerPlayersUIsContainer, lobbyPlayerUIPrefab, player.name, player.color));
+    }
+
+    private void OnNetworkLobbyPlayerLeft(Player player)
+    {
+        if (!lobbyPlayerUIHandlers.ContainsKey(player)) return;
+        Destroy(lobbyPlayerUIHandlers[player]);
+        lobbyPlayerUIHandlers.Remove(player);
+    }
+
+    private void PlayerReady(Player player)
+    {
+        if (!lobbyPlayerUIHandlers.ContainsKey(player)) return;
+        lobbyPlayerUIHandlers[player].SetReadyState(true);
+    }
+
+    private void PlayerUnready(Player player)
+    {
+        if (!lobbyPlayerUIHandlers.ContainsKey(player)) return;
+        lobbyPlayerUIHandlers[player].SetReadyState(false);
+    }
+
+    private void OnRelayCodeChanged(string relayCode)
+    {
+        NetworkMultiplayerLobbyManager.Instance.curRelayCode = relayCode;
+    }
+
+
+
 
     private void OnEnable()
     {
+        LocalMultiplayerLobbyManager.onPlayerJoined += OnLocalLobbyPlayerJoined;
+        LocalMultiplayerLobbyManager.onPlayerLeft += OnLocalLobbyPlayerLeft;
+
+        LocalLobbyPlayer.onPlayerReady += PlayerReady;
+        LocalLobbyPlayer.onPlayerUneady += PlayerUnready;
+
+        NetworkMultiplayerLobbyManager.onPlayerJoined += OnNetworkLobbyPlayerJoined;
+        NetworkMultiplayerLobbyManager.onPlayerLeft += OnNetworkLobbyPlayerLeft;
+
+        NetworkMultiplayerLobbyManager.onPlayerReady += PlayerReady;
+        NetworkMultiplayerLobbyManager.onPlayerUnready += PlayerUnready;
+
+        NetworkMultiplayerLobbyManager.onJoinedLobby += OnJoinedNetworkLobby;
+
         playerNameInputField?.onSubmit.AddListener(OnPlayerNameEntered);
         playerNameInputField?.onDeselect.AddListener(OnPlayerNameEntered);
 
-        networkMultiplayerStartButton?.onClick.AddListener(LobbyManager.Instance.StartNetworkGame);
-        networkMultiplayerReadyButton?.onClick.AddListener(ReadyNetworkLobby);
-        networkMultiplayerUnreadyButton?.onClick.AddListener(UnreadyNetworkLobby);
+        print(LocalMultiplayerLobbyManager.Instance);
+        localMultiplayerStartButton?.onClick.AddListener(LocalMultiplayerLobbyManager.Instance.StartGame);
+        networkMultiplayerReadyButton?.onClick.AddListener(NetworkMultiplayerLobbyManager.Instance.Ready);
+        networkMultiplayerUnreadyButton?.onClick.AddListener(NetworkMultiplayerLobbyManager.Instance.Unready);
+        networkMultiplayerStartButton?.onClick.AddListener(NetworkMultiplayerLobbyManager.Instance.StartGame);
+        relayCodeInputField?.onValueChanged.AddListener(OnRelayCodeChanged);
+        createNetworkLobbyButton?.onClick.AddListener(NetworkMultiplayerLobbyManager.Instance.CreateLobby);
+        joinNetworkLobbyButton?.onClick.AddListener(NetworkMultiplayerLobbyManager.Instance.JoinLobby);
 
-        NetworkMultiplayerLobby.onJoinedLobby += OnJoinedNetworkLobby;
     }
 
     private void OnDisable()
     {
+        LocalMultiplayerLobbyManager.onPlayerJoined -= OnLocalLobbyPlayerJoined;
+        LocalMultiplayerLobbyManager.onPlayerLeft -= OnLocalLobbyPlayerLeft;
+
+        LocalLobbyPlayer.onPlayerReady -= PlayerReady;
+        LocalLobbyPlayer.onPlayerUneady -= PlayerUnready;
+
+        NetworkMultiplayerLobbyManager.onPlayerJoined -= OnNetworkLobbyPlayerJoined;
+        NetworkMultiplayerLobbyManager.onPlayerLeft -= OnNetworkLobbyPlayerLeft;
+
+        NetworkMultiplayerLobbyManager.onPlayerReady -= PlayerReady;
+        NetworkMultiplayerLobbyManager.onPlayerUnready -= PlayerUnready;
+
+        NetworkMultiplayerLobbyManager.onJoinedLobby -= OnJoinedNetworkLobby;
+
         playerNameInputField?.onSubmit.RemoveListener(OnPlayerNameEntered);
         playerNameInputField?.onDeselect.RemoveListener(OnPlayerNameEntered);
 
-        networkMultiplayerStartButton?.onClick.RemoveListener(LobbyManager.Instance.StartNetworkGame);
-        networkMultiplayerReadyButton?.onClick.RemoveListener(ReadyNetworkLobby);
-        networkMultiplayerUnreadyButton?.onClick.RemoveListener(UnreadyNetworkLobby);
-
-        NetworkMultiplayerLobby.onJoinedLobby -= OnJoinedNetworkLobby;
+        localMultiplayerStartButton?.onClick.RemoveListener(LocalMultiplayerLobbyManager.Instance.StartGame);
+        networkMultiplayerReadyButton?.onClick.RemoveListener(NetworkMultiplayerLobbyManager.Instance.Ready);
+        networkMultiplayerUnreadyButton?.onClick.RemoveListener(NetworkMultiplayerLobbyManager.Instance.Unready);
+        networkMultiplayerStartButton?.onClick.RemoveListener(NetworkMultiplayerLobbyManager.Instance.StartGame);
+        relayCodeInputField?.onValueChanged.RemoveListener(OnRelayCodeChanged);
+        createNetworkLobbyButton?.onClick.RemoveListener(NetworkMultiplayerLobbyManager.Instance.CreateLobby);
+        joinNetworkLobbyButton?.onClick.RemoveListener(NetworkMultiplayerLobbyManager.Instance.JoinLobby);
     }
 }

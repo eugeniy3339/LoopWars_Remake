@@ -1,14 +1,17 @@
-using System.Collections.Generic;
 using LoopWars.GameMode;
 using LoopWars.Players;
+using System;
+using System.Collections.Generic;
 using Unity.Netcode;
+using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
-public class LocalMultiplayerLobby : MonoBehaviour
+public class LocalMultiplayerLobbyManager : MonoBehaviour
 {
-    public static LocalMultiplayerLobby Instance { get; protected set; }
+    private static LocalMultiplayerLobbyManager _i;
+    public static LocalMultiplayerLobbyManager Instance { get { if (_i == null) { _i = FindObjectOfType<LocalMultiplayerLobbyManager>(); } return _i; } private set { _i = value; } }
 
     private PlayerInputManager playerInputManager;
 
@@ -16,6 +19,12 @@ public class LocalMultiplayerLobby : MonoBehaviour
     private List<Player> readyPlayers = new List<Player>();
 
     private List<int> usedColors = new List<int>();
+
+    public static event Action<Player> onPlayerJoined;
+    public static event Action<Player> onPlayerLeft;
+
+    private bool canStart;
+    public static event Action<bool> onCanStartChanged;
 
     private void Awake()
     {
@@ -26,26 +35,11 @@ public class LocalMultiplayerLobby : MonoBehaviour
 
     private void Start()
     {
-        SpawnConnectedPlayers();
+        KickConnectedPlayers();
         enabled = false;
     }
 
-    private void SpawnConnectedPlayers()
-    {
-        for (int i = PlayersContainer.players.Count - 1; i >= 0; i--)
-        {
-            Player player = PlayersContainer.players[i];
-            if (player.multiplayerMode != MultiplayerMode.LocalMultiplayer) continue;
 
-            if (player.devices[0] == null)
-            {
-                KickPlayer(player);
-                continue;
-            }
-
-            PlayerInput playerInput = playerInputManager.JoinPlayer(-1, -1, player.controllScheme, player.devices.ToArray());
-        }
-    }
 
     private void OnPlayerJoined(PlayerInput playerInput) //On player object is spawned
     {
@@ -61,19 +55,20 @@ public class LocalMultiplayerLobby : MonoBehaviour
         usedColors.Add(color);
         player.playerInput = playerInput;
 
-        LobbyManager.JoinPlayer(player);
+        PlayersContainer.AddPlayer(player);
         connectedPlayers.Add(player);
 
         playerInput.onDeviceLost += OnDeviceDiscontected;
 
         LocalLobbyPlayer localLobbyPlayer = playerInput.GetComponent<LocalLobbyPlayer>();
         localLobbyPlayer.player = player;
-        localLobbyPlayer.lobbyPlayerUIHandler = MainMenu.Instance.CreateNewLobbyUI(playerInput, MainMenu.Instance.localMultiplayerPlayersUIsContainer, player.name, player.color);
+
+        onPlayerJoined?.Invoke(player);
 
         CheckIfCanStart();
     }
 
-    private void OnPlayerLeft(PlayerInput playerInput)
+    private void OnPlayerLeft(PlayerInput playerInput) //On player object is despawned
     {
         playerInput.onDeviceLost -= OnDeviceDiscontected;
     }
@@ -92,8 +87,11 @@ public class LocalMultiplayerLobby : MonoBehaviour
     private void KickPlayer(Player player)
     {
         OnPlayerUnready(player);
-        LobbyManager.KickPlayer(player);
+        PlayersContainer.KickPlayer(player);
+        onPlayerLeft?.Invoke(player);
     }
+
+
 
     private void OnPlayerReady(Player player)
     {
@@ -109,9 +107,16 @@ public class LocalMultiplayerLobby : MonoBehaviour
         CheckIfCanStart();
     }
 
+
+
     private void CheckIfCanStart()
     {
-        MainMenu.Instance.ActivateLocalMultiplayerStartButton(CanStart());
+        bool canStart = CanStart();
+        if(canStart != this.canStart)
+        {
+            this.canStart = canStart;
+            onCanStartChanged?.Invoke(canStart);
+        }
     }
 
     public bool CanStart()
@@ -119,18 +124,47 @@ public class LocalMultiplayerLobby : MonoBehaviour
         return connectedPlayers.Count > 1 && readyPlayers.Count == connectedPlayers.Count;
     }
 
+    public void StartGame()
+    {
+        var transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
+        transport.SetConnectionData(
+            ipv4Address: "127.0.0.1",
+            port: 7777,
+            listenAddress: "0.0.0.0");
+
+        bool startedHost = NetworkManager.Singleton.StartHost();
+        if (!startedHost)
+            return;
+        GameMode.multiplayerMode = MultiplayerMode.LocalMultiplayer;
+        NetworkManager.Singleton.SceneManager.LoadScene("GameScene", LoadSceneMode.Single);
+    }
+
+
+
     private void OnGameStarted(MultiplayerMode multiplayerMode, string relayCode)
     {
         if (multiplayerMode == MultiplayerMode.LocalMultiplayer)
         {
-            NetworkManager.Singleton.SceneManager.LoadScene("GameScene", LoadSceneMode.Single);
+            
+        }
+        else
+        {
+            KickConnectedPlayers();
+        }
+    }
+
+    private void KickConnectedPlayers()
+    {
+        for (int i = PlayersContainer.players.Count - 1; i >= 0; i--)
+        {
+            Player player = PlayersContainer.players[i];
+            if (player.multiplayerMode == MultiplayerMode.LocalMultiplayer)
+                KickPlayer(player);
         }
     }
 
     private void OnEnable()
     {
-        LobbyManager.onGameStarted += OnGameStarted;
-
         if (playerInputManager != null)
             playerInputManager.EnableJoining();
 
@@ -143,8 +177,6 @@ public class LocalMultiplayerLobby : MonoBehaviour
 
     private void OnDisable()
     {
-        LobbyManager.onGameStarted -= OnGameStarted;
-
         if (playerInputManager != null)
             playerInputManager.DisableJoining();
 
