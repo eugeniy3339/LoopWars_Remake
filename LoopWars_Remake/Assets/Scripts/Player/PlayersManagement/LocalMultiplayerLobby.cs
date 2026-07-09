@@ -13,7 +13,9 @@ public class LocalMultiplayerLobby : MonoBehaviour
     private PlayerInputManager playerInputManager;
 
     private List<Player> connectedPlayers = new List<Player>();
-    private int readyPlayersCount;
+    private List<Player> readyPlayers = new List<Player>();
+
+    private List<int> usedColors = new List<int>();
 
     private void Awake()
     {
@@ -53,7 +55,12 @@ public class LocalMultiplayerLobby : MonoBehaviour
         if (player != null) return;
 
         player = new Player(playerInput.devices, playerInput.currentControlScheme);
+        player.name = PlayerSettings.name + (connectedPlayers.Count + 1).ToString();
+        int color = Player.GetRandomColor(usedColors.ToArray());
+        player.color = Player.playersColors[color];
+        usedColors.Add(color);
         player.playerInput = playerInput;
+
         LobbyManager.JoinPlayer(player);
         connectedPlayers.Add(player);
 
@@ -61,7 +68,7 @@ public class LocalMultiplayerLobby : MonoBehaviour
 
         LocalLobbyPlayer localLobbyPlayer = playerInput.GetComponent<LocalLobbyPlayer>();
         localLobbyPlayer.player = player;
-        localLobbyPlayer.lobbyPlayerUIHandler = MainMenu.Instance.CreateNewLobbyUI(MainMenu.Instance.localMultiplayerPlayersUIsContainer, player.name, player.color);
+        localLobbyPlayer.lobbyPlayerUIHandler = MainMenu.Instance.CreateNewLobbyUI(playerInput, MainMenu.Instance.localMultiplayerPlayersUIsContainer, player.name, player.color);
 
         CheckIfCanStart();
     }
@@ -69,11 +76,6 @@ public class LocalMultiplayerLobby : MonoBehaviour
     private void OnPlayerLeft(PlayerInput playerInput)
     {
         playerInput.onDeviceLost -= OnDeviceDiscontected;
-    }
-
-    private void OnPlayerLeave(PlayerInput playerInput)
-    {
-        KickPlayer(playerInput);
     }
 
     private void OnPlayerLeave(Player player)
@@ -84,44 +86,26 @@ public class LocalMultiplayerLobby : MonoBehaviour
 
     private void OnDeviceDiscontected(PlayerInput playerInput)
     {
-        Debug.Log(playerInput + "'s device has been disconected");
-        KickPlayer(playerInput);
+        KickPlayer(PlayersContainer.GetPlayerByPlayerInput(playerInput));
     }
 
     private void KickPlayer(Player player)
     {
+        OnPlayerUnready(player);
         LobbyManager.KickPlayer(player);
-    }
-
-    private void KickPlayer(PlayerInput playerInput)
-    {
-        Player player = PlayersContainer.GetPlayerByPlayerInput(playerInput);
-
-        if(player != null)
-            KickPlayer(player);
-        else
-        {
-            Destroy(playerInput.gameObject);
-        }
-    }
-
-    private void OnGameStarted(MultiplayerMode multiplayerMode, string relayCode)
-    {
-        if(multiplayerMode == MultiplayerMode.LocalMultiplayer)
-        {
-            NetworkManager.Singleton.SceneManager.LoadScene("GameScene", LoadSceneMode.Single);
-        }
     }
 
     private void OnPlayerReady(Player player)
     {
-        readyPlayersCount++;
+        if (readyPlayers.Contains(player)) return;
+        readyPlayers.Add(player);
         CheckIfCanStart();
     }
 
     private void OnPlayerUnready(Player player)
     {
-        readyPlayersCount--;
+        if (!readyPlayers.Contains(player)) return;
+        readyPlayers.Remove(player);
         CheckIfCanStart();
     }
 
@@ -130,9 +114,17 @@ public class LocalMultiplayerLobby : MonoBehaviour
         MainMenu.Instance.ActivateLocalMultiplayerStartButton(CanStart());
     }
 
-    private bool CanStart()
+    public bool CanStart()
     {
-        return connectedPlayers.Count > 1 && readyPlayersCount == connectedPlayers.Count;
+        return connectedPlayers.Count > 1 && readyPlayers.Count == connectedPlayers.Count;
+    }
+
+    private void OnGameStarted(MultiplayerMode multiplayerMode, string relayCode)
+    {
+        if (multiplayerMode == MultiplayerMode.LocalMultiplayer)
+        {
+            NetworkManager.Singleton.SceneManager.LoadScene("GameScene", LoadSceneMode.Single);
+        }
     }
 
     private void OnEnable()

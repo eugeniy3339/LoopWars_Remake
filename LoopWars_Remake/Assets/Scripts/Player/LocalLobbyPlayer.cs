@@ -16,6 +16,11 @@ public class LocalLobbyPlayer : MonoBehaviour
 
     public static Action<Player> onPlayerLeave;
 
+    private void Awake()
+    {
+        playerInput = GetComponent<PlayerInput>();
+    }
+
     public void OnReadyUnready(InputAction.CallbackContext context)
     {
         if (!context.started) return;
@@ -33,6 +38,23 @@ public class LocalLobbyPlayer : MonoBehaviour
         if (!context.started) return;
 
         onPlayerLeave?.Invoke(player);
+    }
+
+    public void OnStart(InputAction.CallbackContext context)
+    {
+        if (!context.started) return;
+        if (!LocalMultiplayerLobby.Instance.CanStart()) return;
+        LobbyManager.Instance.StartLocalGame();
+    }
+
+    public void OnMove(InputAction.CallbackContext context)
+    {
+        CustomEventSystem.Instance?.OnMove(context, playerInput);
+    }
+
+    public void OnInteract(InputAction.CallbackContext context)
+    {
+        CustomEventSystem.Instance?.OnInteract(context, playerInput);
     }
 
     private void OnDestroy()

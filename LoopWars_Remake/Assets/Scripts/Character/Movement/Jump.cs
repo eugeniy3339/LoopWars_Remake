@@ -141,28 +141,6 @@ public class Jump : MovementComponent
         return new Vector2(1f, tanA).normalized;
     }
 
-    private void OnValidate()
-    {
-        if (beforeWallJumpAngle != wallJumpAngle)
-        {
-            wallJumpDirection = GetWallJumpDirection(wallJumpAngle);
-
-#if UNITY_EDITOR
-            curArchToDraw = GetJumpArch(wallJumpDirection, wallJumpForce, MovementManager.defaultGravityScale);
-            beforeWallJumpAngle = wallJumpAngle;
-#endif
-        }
-
-#if UNITY_EDITOR
-        if (beforeWallJumpForce != wallJumpForce)
-        {
-            curArchToDraw = GetJumpArch(wallJumpDirection, wallJumpForce, MovementManager.defaultGravityScale);
-            beforeWallJumpForce = wallJumpForce;
-        }
-#endif
-
-    }
-
 #if UNITY_EDITOR
     private float beforeWallJumpAngle;
     private float beforeWallJumpForce;
@@ -211,6 +189,24 @@ public class Jump : MovementComponent
             Gizmos.DrawLine(points[point - 1], points[point]);
         }
     }
+
+    private void OnValidate()
+    {
+        if (beforeWallJumpAngle != wallJumpAngle)
+        {
+            wallJumpDirection = GetWallJumpDirection(wallJumpAngle);
+
+            curArchToDraw = GetJumpArch(wallJumpDirection, wallJumpForce, MovementManager.defaultGravityScale);
+            beforeWallJumpAngle = wallJumpAngle;
+        }
+
+        if (beforeWallJumpForce != wallJumpForce)
+        {
+            curArchToDraw = GetJumpArch(wallJumpDirection, wallJumpForce, MovementManager.defaultGravityScale);
+            beforeWallJumpForce = wallJumpForce;
+        }
+    }
+
 
 #endif
 }

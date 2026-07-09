@@ -1,3 +1,4 @@
+using System;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -8,6 +9,7 @@ public class Character : NetworkBehaviour
     public Rigidbody2D rigidbody { get; protected set; }
     public CapsuleCollider2D collider { get; protected set; }
     public SpriteRenderer spriteRenderer { get; protected set; }
+    public Animator animator { get; protected set;   }
     private PlayerInput _pI;
     public PlayerInput playerInput { get { if (_pI == null) { _pI = GetComponent<PlayerInput>(); } return _pI; } protected set { _pI = value; } }
 
@@ -17,12 +19,16 @@ public class Character : NetworkBehaviour
     public Dash dash { get; protected set; }
     public WeaponManager weaponManager { get; protected set; }
     public HealthSystem healthSystem { get; protected set; }
+    public ObjectColorsHandler objectColorsHandler { get; protected set; }
+
+    public static event Action<Character> onCharacterSpawned;
 
     private void Awake()
     {
         rigidbody = GetComponent<Rigidbody2D>();
         collider = GetComponent<CapsuleCollider2D>();
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        animator = GetComponent<Animator>();
         playerInput = GetComponent<PlayerInput>();
 
         movementManager = GetComponent<MovementManager>();
@@ -31,8 +37,16 @@ public class Character : NetworkBehaviour
         dash = GetComponent<Dash>();
         weaponManager = GetComponent<WeaponManager>();
         healthSystem = GetComponent<HealthSystem>();
+        objectColorsHandler = GetComponent<ObjectColorsHandler>();
 
         rigidbody.freezeRotation = true;
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+
+        onCharacterSpawned?.Invoke(this);
     }
 
     public static Character FindCharacter(ulong networkObjectId)

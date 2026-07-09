@@ -16,6 +16,7 @@ public class Dash : MovementComponent
     public event Action onDash;
     public static event Action<Character> onDashStatic;
     public event Action onDashEnd;
+    public static event Action<Character> onDashEndStatic;
 
     public override void OnNetworkSpawn()
     {
@@ -78,7 +79,7 @@ public class Dash : MovementComponent
 
         curDashCoroutine = null;
         curDashCooldown = dashCooldown;
-        onDashEnd?.Invoke();
+        CallOnDashEndEventRpc();
         yield break;
     }
 
@@ -87,5 +88,12 @@ public class Dash : MovementComponent
     {
         onDash?.Invoke();
         onDashStatic?.Invoke(character);
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void CallOnDashEndEventRpc()
+    {
+        onDashEnd?.Invoke();
+        onDashEndStatic?.Invoke(character);
     }
 }

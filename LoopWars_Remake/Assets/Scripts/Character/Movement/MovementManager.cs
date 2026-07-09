@@ -51,10 +51,14 @@ public class MovementManager : NetworkBehaviour
 
     public event Action onGrounded;
     public event Action onUngrounded;
+    public static event Action<Character> onGroundedStatic;
+    public static event Action<Character> onUngroundedStatic;
 
     public event Action<Collider2D> onGotOnTheWall;
     public event Action onGotOffTheWall;
 
+    public static event Action<Character> onStartedMoving;
+    public static event Action<Character> onStopedMoving;
 
     public float lastMoveDir { get; private set; }
     public float moveDir { get; private set; }
@@ -121,7 +125,7 @@ public class MovementManager : NetworkBehaviour
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
-        if (!IsOwner) enabled = false;
+        //if (!IsOwner) enabled = false;
     }
 
 
@@ -135,10 +139,12 @@ public class MovementManager : NetworkBehaviour
             if (isGrounded)
             {
                 onGrounded?.Invoke();
+                onGroundedStatic?.Invoke(character);
             }
             else
             {
                 onUngrounded?.Invoke();
+                onUngroundedStatic?.Invoke(character);
             }
 
             linearDamping = isGrounded ? groundDrag : 0f;
@@ -374,6 +380,7 @@ public class MovementManager : NetworkBehaviour
 
     public void OnMove(Vector2 moveDir)
     {
+        if (!IsOwner) return;
         if (moveDir.magnitude > 0.1f)
             lastMoveInput = moveDir;
         OnMove(moveDir.x);
@@ -390,6 +397,23 @@ public class MovementManager : NetworkBehaviour
             onChangedMoveDir?.Invoke(moveDir);
             lastMoveDir = moveDir;
         }
+
+        if (Mathf.Abs(moveDir) >= 0.1f)
+            CallOnStartedMovingEventRpc();
+        else
+            CallOnStopedMovingEventRpc();
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void CallOnStartedMovingEventRpc()
+    {
+        onStartedMoving?.Invoke(character);
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void CallOnStopedMovingEventRpc()
+    {
+        onStopedMoving?.Invoke(character);
     }
 
     public void OnJump(bool start)

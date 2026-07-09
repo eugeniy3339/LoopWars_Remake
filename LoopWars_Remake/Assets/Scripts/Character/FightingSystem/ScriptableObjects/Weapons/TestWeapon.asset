@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e543f0ced1ecc504fa50518a00c78f26, type: 3}
   m_Name: TestWeapon
   m_EditorClassIdentifier: 
+  weaponToPickupPrefab: {fileID: 7793299113729613695, guid: 842c7133a2f329640a288f14d2ab8911, type: 3}
   weaponPrefab: {fileID: 7793299113729613695, guid: 3fdcd9cba89178a46abcfd9e7d223294, type: 3}
   attackCooldown: 0.1
   infinityBullets: 1

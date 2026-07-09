@@ -122,6 +122,54 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: cb5a4dfd-39e6-497b-96aa-26cdaa544cf1
     m_ActionName: 'Lobby/Leave[/Keyboard/backspace,/DualSenseGamepadHID/buttonEast]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: -6273378167012844321}
+        m_TargetAssemblyTypeName: LocalLobbyPlayer, Assembly-CSharp
+        m_MethodName: OnStart
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: fcd8c46d-7174-444a-8bd0-509ac7a1a020
+    m_ActionName: 'Lobby/Start[/Keyboard/space,/DualSenseGamepadHID/start]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: -6273378167012844321}
+        m_TargetAssemblyTypeName: LocalLobbyPlayer, Assembly-CSharp
+        m_MethodName: OnMove
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 4b729d12-4d3f-409b-8800-dff31931bfdc
+    m_ActionName: 'Lobby/Move[/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d,/Keyboard/upArrow,/Keyboard/downArrow,/Keyboard/leftArrow,/Keyboard/rightArrow,/DualSenseGamepadHID/leftStick,/DualSenseGamepadHID/dpad]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: -6273378167012844321}
+        m_TargetAssemblyTypeName: LocalLobbyPlayer, Assembly-CSharp
+        m_MethodName: OnInteract
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: c9bc03c7-ad3a-4e4d-9213-05ecda07fe13
+    m_ActionName: 'Lobby/Interact[/Keyboard/enter,/DualSenseGamepadHID/buttonSouth]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Lobby

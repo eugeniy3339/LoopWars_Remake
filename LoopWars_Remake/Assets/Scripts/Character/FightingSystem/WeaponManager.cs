@@ -175,4 +175,20 @@ public class WeaponManager : NetworkBehaviour
         if (!IsOwner) return;
         Attack();
     }
+
+    private void OnWeaponSpawned(Weapon weapon)
+    {
+        if (curWeapon == null && weapon.OwnerClientId == OwnerClientId)
+            curWeapon = weapon;
+    }
+
+    private void OnEnable()
+    {
+        Weapon.onWeaponSpawned += OnWeaponSpawned;
+    }
+
+    private void OnDisable()
+    {
+        Weapon.onWeaponSpawned -= OnWeaponSpawned;
+    }
 }

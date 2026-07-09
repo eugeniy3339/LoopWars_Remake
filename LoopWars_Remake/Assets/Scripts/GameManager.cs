@@ -20,17 +20,19 @@ public class GameManager : NetworkBehaviour
     private void EndRound(Player winner)
     {
         if (!IsServer) return;
-        EndRoundRpc();
+        EndRoundRpc(winner.playerId);
     }
 
     [Rpc(SendTo.Everyone)]
-    private void EndRoundRpc()
+    private void EndRoundRpc(ulong winnerId)
     {
-        curEndRoundCoroutine = StartCoroutine(EndRoundCoro());
+        curEndRoundCoroutine = StartCoroutine(EndRoundCoro(PlayersContainer.GetPlayerById(winnerId)));
     }
 
-    private IEnumerator EndRoundCoro()
+    private IEnumerator EndRoundCoro(Player winner)
     {
+        Debug.Log(winner.name + " has won!");
+
         yield return new WaitForSeconds(3f);
 
         if (IsServer)

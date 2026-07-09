@@ -3,6 +3,23 @@ using UnityEngine;
 
 public class ParticlesHandler : MonoBehaviour
 {
+    public static ParticleSystem SpawnParticles(GameObject particlesPrefab, Vector2 position, Vector2 upVector, Color color)
+    {
+        if (particlesPrefab == null) return null;
+        Transform particles = GameObject.Instantiate(particlesPrefab).transform;
+        particles.position = position;
+        particles.up = upVector;
+
+        ParticleSystem particleSystem = particles.GetComponent<ParticleSystem>();
+        var main = particleSystem.main;
+        main.startColor = new ParticleSystem.MinMaxGradient(ColorsManager.GetTonedColor(particleSystem.main.startColor.colorMin, color), ColorsManager.GetTonedColor(particleSystem.main.startColor.colorMax, color));
+        particleSystem.Play();
+        if(!particleSystem.loop)
+            MonoCommandsStarter.Instance.StartCoroutine(ParticleLifeCoro(particles.gameObject, particleSystem.startLifetime));
+
+        return particleSystem;
+    }
+
     public static ParticleSystem SpawnParticles(GameObject particlesPrefab, Vector2 position, Vector2 upVector)
     {
         if (particlesPrefab == null) return null;

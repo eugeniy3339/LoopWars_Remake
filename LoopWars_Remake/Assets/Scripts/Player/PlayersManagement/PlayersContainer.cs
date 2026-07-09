@@ -1,16 +1,16 @@
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.InputSystem.Utilities;
-using UnityEngine.InputSystem;
-using LoopWars.Players;
-using System;
-using Unity.Netcode;
 using LoopWars.GameMode;
+using LoopWars.Players;
+using System.Collections.Generic;
+using System.Linq;
+using Unity.Netcode;
+using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Utilities;
 
 public static class PlayersContainer
 {
     public static List<Player> players = new List<Player>();
-    
+
     public static void AddPlayer(Player player)
     {
         if (player == null) return;
@@ -36,7 +36,14 @@ public static class PlayersContainer
 
     public static Player GetPlayerByCharacter(Character character)
     {
-        return players.Find((player) => player.character == character);
+        Player player;
+
+        if (GameMode.multiplayerMode == MultiplayerMode.LocalMultiplayer)
+            player = GetPlayerByDevice(character.playerInput.devices[0]);
+        else
+            player = GetPlayerById(character.OwnerClientId);
+
+        return player;
     }
 
     public static void KickPlayer(Player player)
@@ -63,6 +70,33 @@ namespace LoopWars
     {
         public class Player
         {
+            public static List<Color> playersColors = new List<Color>();
+            public static Color GetRandomColor()
+            {
+                return playersColors[UnityEngine.Random.Range(0, playersColors.Count)];
+            }
+            public static Color GetRandomColor(Color[] colorsToIgnore)
+            {
+                Color color;
+                do
+                {
+                    color = GetRandomColor();
+                }
+                while (colorsToIgnore.Contains(color));
+                return color;
+            }
+            public static int GetRandomColor(int[] colorsToIgnore)
+            {
+                int randomIndex;
+                do
+                {
+                    randomIndex = UnityEngine.Random.Range(0, playersColors.Count);
+                }
+                while (colorsToIgnore.Contains(randomIndex));
+                Debug.Log(randomIndex);
+                return randomIndex;
+            }
+
             public MultiplayerMode multiplayerMode;
 
             public string name;

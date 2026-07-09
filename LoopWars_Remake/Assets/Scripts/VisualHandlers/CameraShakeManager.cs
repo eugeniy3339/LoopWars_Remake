@@ -42,6 +42,8 @@ public static class CameraShakeManager
             yield return new WaitForEndOfFrame();
         }
 
+        cinemachineBasicMultiChannelPerlin.m_AmplitudeGain = 0f;
+
         yield break;
     }
 }

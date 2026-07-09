@@ -4,6 +4,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "newWeaponScriptableObject", menuName = "Weapons/Create new Weapon Scriptable Object")]
 public class WeaponScriptableObject : ScriptableObject
 {
+    public GameObject weaponToPickupPrefab;
     public GameObject weaponPrefab;
     public float attackCooldown = 1f;
     public bool infinityBullets = false;

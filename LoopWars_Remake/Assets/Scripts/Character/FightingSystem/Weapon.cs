@@ -37,14 +37,13 @@ public abstract class Weapon : NetworkBehaviour
     private List<Projectile> spawnedProjectiles;
     private int curProjectileIndex;
 
+    public static event Action<Weapon> onWeaponSpawned;
+
     public event Action onAttackCooldown;
     public static event Action<Weapon, WeaponScriptableObject> onShootStatic;
 
     public override void OnNetworkSpawn()
     {
-        if (!IsOwner)
-            enabled = false;
-
         if (IsServer)
         {
             weaponScriptableObjectIndex.Value = WeaponsListScriptableObject.Instance.weapons.IndexOf(weaponScriptableObject);
@@ -58,6 +57,8 @@ public abstract class Weapon : NetworkBehaviour
 
         if (attacker != null)
             SpawnProjectiles();
+
+        onWeaponSpawned?.Invoke(this);
     }
 
     public void OnAttackerSpawned(Character attacker)
@@ -123,6 +124,8 @@ public abstract class Weapon : NetworkBehaviour
 
     private void Update()
     {
+        if(transform.localPosition != Vector3.zero)
+            transform.localPosition = Vector2.zero;
         AttackCooldown();
     }
 

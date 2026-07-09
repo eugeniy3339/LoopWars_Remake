@@ -12,6 +12,8 @@ public class PlayersManager : NetworkBehaviour
     public static PlayersManager Instance { get; protected set; }
     private PlayerInputManager playerInputManager;
 
+    [SerializeField] private List<GameObject> maps = new List<GameObject>();
+
     [SerializeField] private GameObject playerPrefab;
     [HideInInspector] public List<Character> alivePlayers = new List<Character>();
 
@@ -37,13 +39,16 @@ public class PlayersManager : NetworkBehaviour
 
     private void OnLoadComplete(ulong clientId, string sceneName, LoadSceneMode loadSceneMode)
     {
+        if (!NetworkManager.Singleton.IsServer) return;
         if (sceneName != "GameScene") return;
 
         print("Load complete for " + clientId + " player");
         loadedPlayersCount++;
 
         if (loadedPlayersCount >= NetworkManager.Singleton.ConnectedClients.Count)
+        {
             SpawnPlayers();
+        }
     }
 
 
@@ -55,9 +60,20 @@ public class PlayersManager : NetworkBehaviour
 
 
 
+    private void SpawnMap()
+    {
+        if (!IsServer) return;
+        GameObject map = Instantiate(maps[UnityEngine.Random.Range(0, maps.Count)]);
+        map.GetComponent<NetworkObject>().Spawn(true);
+    }
+
     private void SpawnPlayers()
     {
+        if (!NetworkManager.Singleton.IsServer) return;
         if (spawnedPlayers) return;
+        if(MapHandler.Instance == null)
+            SpawnMap();
+
         spawnedPlayers = true;
 
         foreach (var player in PlayersContainer.players)
@@ -67,15 +83,18 @@ public class PlayersManager : NetworkBehaviour
 
 
             Character character;
+            Transform spawnPoint = MapHandler.Instance.GetRandomSpawnPoint();
             if (GameMode.multiplayerMode == MultiplayerMode.LocalMultiplayer)
             {
                 PlayerInput playerInput = playerInputManager.JoinPlayer(-1, -1, player.controllScheme, player.devices.ToArray());
                 character = playerInput.GetComponent<Character>();
+                character.transform.position = spawnPoint.position;
                 character.NetworkObject.Spawn(true);
             }
             else
             {
                 character = Instantiate(playerPrefab).GetComponent<Character>();
+                character.transform.position = spawnPoint.position;
                 character.NetworkObject.SpawnWithOwnership(player.playerId, true);
             }
 
