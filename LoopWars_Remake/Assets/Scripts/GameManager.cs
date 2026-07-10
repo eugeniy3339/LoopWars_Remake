@@ -9,13 +9,40 @@ public class GameManager : NetworkBehaviour
 {
     private Coroutine curEndRoundCoroutine;
 
+    private int loadedPlayersCount;
+
     private void Awake()
     {
         if (curEndRoundCoroutine != null)
             StopCoroutine(curEndRoundCoroutine);
     }
 
+    private void OnLoadComplete(ulong clientId, string sceneName, LoadSceneMode loadSceneMode)
+    {
+        if (!NetworkManager.Singleton.IsServer) return;
+        if (sceneName != "GameScene") return;
 
+        loadedPlayersCount++;
+
+        if (loadedPlayersCount >= NetworkManager.Singleton.ConnectedClients.Count)
+        {
+            StartGame();
+        }
+    }
+
+    private void SpawnMap()
+    {
+        if (!IsServer) return;
+        GameObject map = Instantiate(MapsListScriptableObject.Instance.GetRandomMap());
+        map.GetComponent<NetworkObject>().Spawn(true);
+    }
+
+    private void StartGame()
+    {
+        if (MapHandler.Instance == null)
+            SpawnMap();
+        PlayersManager.Instance.SpawnPlayers();
+    }
 
     private void EndRound(Player winner)
     {
@@ -52,12 +79,18 @@ public class GameManager : NetworkBehaviour
     private void OnEnable()
     {
         if (NetworkManager.Singleton.IsServer)
+        {
             PlayersManager.onPlayerDied += OnPlayerDied;
+            NetworkManager.Singleton.SceneManager.OnLoadComplete += OnLoadComplete;
+        }
     }
 
     private void OnDisable()
     {
         if (NetworkManager.Singleton.IsServer)
+        {
             PlayersManager.onPlayerDied -= OnPlayerDied;
+            NetworkManager.Singleton.SceneManager.OnLoadComplete -= OnLoadComplete;
+        }
     }
 }

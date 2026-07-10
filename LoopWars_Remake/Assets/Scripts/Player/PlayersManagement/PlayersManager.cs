@@ -9,17 +9,15 @@ using UnityEngine.SceneManagement;
 
 public class PlayersManager : NetworkBehaviour
 {
-    public static PlayersManager Instance { get; protected set; }
+    private static PlayersManager _i;
+    public static PlayersManager Instance { get { if (_i == null) { _i = FindAnyObjectByType<PlayersManager>(); } return _i; } protected set { _i = value; } }
     private PlayerInputManager playerInputManager;
-
-    [SerializeField] private List<GameObject> maps = new List<GameObject>();
 
     [SerializeField] private GameObject playerPrefab;
     [HideInInspector] public List<Character> alivePlayers = new List<Character>();
 
     public static event Action<Character, List<Character>> onPlayerDied;
 
-    private int loadedPlayersCount;
     private bool spawnedPlayers;
 
     private void Awake()
@@ -37,19 +35,7 @@ public class PlayersManager : NetworkBehaviour
         catch { }
     }
 
-    private void OnLoadComplete(ulong clientId, string sceneName, LoadSceneMode loadSceneMode)
-    {
-        if (!NetworkManager.Singleton.IsServer) return;
-        if (sceneName != "GameScene") return;
 
-        print("Load complete for " + clientId + " player");
-        loadedPlayersCount++;
-
-        if (loadedPlayersCount >= NetworkManager.Singleton.ConnectedClients.Count)
-        {
-            SpawnPlayers();
-        }
-    }
 
 
 
@@ -58,21 +44,10 @@ public class PlayersManager : NetworkBehaviour
         if (!IsServer) return;
     }
 
-
-
-    private void SpawnMap()
-    {
-        if (!IsServer) return;
-        GameObject map = Instantiate(maps[UnityEngine.Random.Range(0, maps.Count)]);
-        map.GetComponent<NetworkObject>().Spawn(true);
-    }
-
-    private void SpawnPlayers()
+    public void SpawnPlayers()
     {
         if (!NetworkManager.Singleton.IsServer) return;
         if (spawnedPlayers) return;
-        if(MapHandler.Instance == null)
-            SpawnMap();
 
         spawnedPlayers = true;
 
@@ -132,7 +107,6 @@ public class PlayersManager : NetworkBehaviour
         if (NetworkManager.Singleton.IsServer)
         {
             HealthSystem.onCharacterDied += OnPlayerDied;
-            NetworkManager.Singleton.SceneManager.OnLoadComplete += OnLoadComplete;
         }
     }
 
@@ -141,7 +115,6 @@ public class PlayersManager : NetworkBehaviour
         if (NetworkManager.Singleton.IsServer)
         {
             HealthSystem.onCharacterDied -= OnPlayerDied;
-            NetworkManager.Singleton.SceneManager.OnLoadComplete -= OnLoadComplete;
         }
     }
 }
