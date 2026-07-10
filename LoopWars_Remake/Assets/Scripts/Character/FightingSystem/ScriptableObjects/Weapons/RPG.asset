@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e543f0ced1ecc504fa50518a00c78f26, type: 3}
+  m_Name: RPG
+  m_EditorClassIdentifier: 
+  weaponToPickupPrefab: {fileID: 2389650858894993659, guid: f6cf75bfcd9816149889ed492a9a4291, type: 3}
+  weaponPrefab: {fileID: 6241412477574245328, guid: 2a6894dc401423b4f9a77059f9bd9788, type: 3}
+  attackCooldown: 0.1
+  infinityBullets: 1
+  bulletsCount: 20
+  shotBackForce: 1
+  bulletScriptableObject: {fileID: 11400000, guid: 86073b95219d1e549a53c5b07d7a8f65, type: 2}
+  gunThrowableScriptableObject: {fileID: 11400000, guid: 491148c340d6a4f4e823ae472d7324d8, type: 2}
+  fireVFXPrefab: {fileID: 5100191992029250864, guid: 58607d88be78e1142ad0a908998961e2, type: 3}

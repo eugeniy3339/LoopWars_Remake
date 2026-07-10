@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16844faf1d1adc94f9ab64ce5939c804, type: 3}
+  m_Name: ThrowableGranade
+  m_EditorClassIdentifier: 
+  bulletPrefab: {fileID: 1871654346085065679, guid: 44c1ca2ddd6ed8c42800c905fbc65cf7, type: 3}
+  damage: 0
+  maxDamageMultiplier: 1
+  speed: 10
+  maxLifeTime: 3
+  canDamageAttacker: 1
+  canBeDestroyedByAttackersProjectiles: 0
+  destroyOnImpact: 0
+  bulletDestroyParticlesPrefab: {fileID: 0}
+  bulletDestroyScreenShakeTime: 0.3
+  bulletDestroyScreenShakeAmplitude: 2
+  bulletDestroyScreenShakeFrequency: 3
+  explosionParticles: {fileID: 807005535252179894, guid: 795c723954111914ea7cb524799990af, type: 3}
+  explosionRange: 4
+  explosionStrength: 20
+  explosionDamage: 50

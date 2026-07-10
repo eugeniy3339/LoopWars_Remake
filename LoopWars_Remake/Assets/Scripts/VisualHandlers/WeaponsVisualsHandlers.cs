@@ -9,6 +9,7 @@ public static class WeaponsVisualsHandlers
     {
         Weapon.onShootStatic += OnWeaponShoot;
         Projectile.onDestroyedStatic += OnBulletDestroyed;
+        ExplosiveProjectile.onExplodeStatic += OnProjectileExplode;
     }
 
     private static void OnWeaponShoot(Weapon weapon, WeaponScriptableObject weaponScriptableObject)
@@ -22,5 +23,11 @@ public static class WeaponsVisualsHandlers
         CameraShakeManager.StartScreenShake(bulletScriptableObject.bulletDestroyScreenShakeTime, bulletScriptableObject.bulletDestroyScreenShakeAmplitude, bulletScriptableObject.bulletDestroyScreenShakeFrequency);
         if (bulletScriptableObject.bulletDestroyParticlesPrefab != null)
             ParticlesHandler.SpawnParticles(bulletScriptableObject.bulletDestroyParticlesPrefab, bullet.transform.position + bullet.transform.right * bullet.collider.size.x / 2f, -bullet.transform.right);
+    }
+
+    private static void OnProjectileExplode(ExplosiveProjectile explosiveProjectile, ExplosiveBulletScriptableObject explosiveBulletScriptableObject)
+    {
+        if(explosiveBulletScriptableObject.explosionParticles != null)
+            ParticlesHandler.SpawnParticles(explosiveBulletScriptableObject.explosionParticles, explosiveProjectile.transform.position, -explosiveProjectile.transform.right);
     }
 }

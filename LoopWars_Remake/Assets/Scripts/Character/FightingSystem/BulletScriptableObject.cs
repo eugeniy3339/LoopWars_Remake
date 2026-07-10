@@ -12,9 +12,9 @@ public class BulletScriptableObject : ScriptableObject
     public bool canBeDestroyedByAttackersProjectiles = false;
     public bool destroyOnImpact = true;
     public GameObject bulletDestroyParticlesPrefab;
-    public float bulletDestroyScreenShakeTime = 1f;
+    public float bulletDestroyScreenShakeTime = 0.2f;
     public float bulletDestroyScreenShakeAmplitude = 1f;
-    public float bulletDestroyScreenShakeFrequency = 1f;
+    public float bulletDestroyScreenShakeFrequency = 2f;
 
 
 #if UNITY_EDITOR

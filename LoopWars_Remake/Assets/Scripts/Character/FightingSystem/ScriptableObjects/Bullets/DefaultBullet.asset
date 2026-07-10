@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7748275580c944a4a83aaecbabec0ef3, type: 3}
-  m_Name: TestBullet
+  m_Name: DefaultBullet
   m_EditorClassIdentifier: 
   bulletPrefab: {fileID: 1732284584695153900, guid: 6f78e9ca3a4f9b6428fd90532d2e3935, type: 3}
   damage: 10

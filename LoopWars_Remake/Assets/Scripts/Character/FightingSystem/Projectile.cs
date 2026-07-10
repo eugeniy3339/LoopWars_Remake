@@ -7,10 +7,10 @@ using UnityEngine.UIElements;
 public class Projectile : MonoBehaviour
 {
     private Character attacker;
-    private BulletScriptableObject bulletScriptableObject;
+    protected virtual BulletScriptableObject bulletScriptableObject { get; set; }
 
     private Rigidbody2D _rb;
-    private Rigidbody2D rigidbody {  
+    protected Rigidbody2D rigidbody {  
         get 
         {
             if (_rb == null)
@@ -31,14 +31,8 @@ public class Projectile : MonoBehaviour
         }
     }
 
-    private float damage;
-    private float maxDamageMultiplier;
-    private bool destroyOnImpact;
-
     private float lifeTime;
-
-    private float curCanDamageAttackerTimer = 0.1f;
-    private bool canDamageAttacker;
+    protected float curCanDamageAttackerTimer = 0.1f;
 
     private bool despawnOnDisable = false;
 
@@ -59,29 +53,34 @@ public class Projectile : MonoBehaviour
     {
         lifeTime -= Time.deltaTime;
         if (lifeTime <= 0f)
-            DisableProjectile();
+            OnLifeTime();
+    }
+
+    protected virtual void OnLifeTime()
+    {
+        DisableProjectile();
     }
 
     private void CanDamageAttackerTimer()
     {
-        if(canDamageAttacker)
+        if(bulletScriptableObject.canDamageAttacker)
         {
             if(curCanDamageAttackerTimer > 0f)
                 curCanDamageAttackerTimer -= Time.deltaTime;
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    protected virtual void OnTriggerEnter2D(Collider2D collision)
     {
         if (IsThereADamagable(collision.gameObject, out IDamagable damagable, out bool isAttacker))
         {
             if (isAttacker)
             {
-                if (!canDamageAttacker || curCanDamageAttackerTimer > 0f)
+                if (!bulletScriptableObject.canDamageAttacker || curCanDamageAttackerTimer > 0f)
                     return;
             }
 
-            Damage(damagable);
+            Damage(damagable, bulletScriptableObject.damage, bulletScriptableObject.maxDamageMultiplier);
         }
         else if(IsThereAProjectile(collision.gameObject, out Projectile projectile, out bool isAttackers))
         {
@@ -89,14 +88,11 @@ public class Projectile : MonoBehaviour
                 return;
         }
 
-        if (destroyOnImpact)
-        {
-            onDestroyedStatic?.Invoke(this, bulletScriptableObject);
-            DisableProjectile();
-        }
+        if(bulletScriptableObject.destroyOnImpact)
+            DestroyOnImpact();
     }
 
-    private bool IsThereADamagable(GameObject gameObject, out IDamagable damagable, out bool isAttacker)
+    protected bool IsThereADamagable(GameObject gameObject, out IDamagable damagable, out bool isAttacker)
     {
         damagable = gameObject.GetComponentInChildren<IDamagable>();
 
@@ -111,7 +107,7 @@ public class Projectile : MonoBehaviour
         return false;
     }
 
-    private bool IsThereAProjectile(GameObject gameObject, out Projectile projectile, out bool isAttackers)
+    protected bool IsThereAProjectile(GameObject gameObject, out Projectile projectile, out bool isAttackers)
     {
         projectile = gameObject.GetComponentInChildren<Projectile>();
 
@@ -125,10 +121,16 @@ public class Projectile : MonoBehaviour
         return false;
     }
 
-    protected virtual void Damage(IDamagable damagable)
+    protected virtual void Damage(IDamagable damagable, float damage, float maxDamageMultiplier = 1f)
     {
-        float damage = this.damage * UnityEngine.Random.Range(1f, maxDamageMultiplier);
+        damage = damage * UnityEngine.Random.Range(1f, maxDamageMultiplier);
         damagable.Damage(attacker.transform, transform, damage);
+    }
+
+    protected virtual void DestroyOnImpact()
+    {
+        onDestroyedStatic?.Invoke(this, bulletScriptableObject);
+        DisableProjectile();
     }
 
     private void DisableProjectile()
@@ -179,10 +181,6 @@ public class Projectile : MonoBehaviour
         Projectile projectile = Instantiate(bulletScriptableObject.bulletPrefab).GetComponent<Projectile>();
 
         projectile.bulletScriptableObject = bulletScriptableObject;
-        projectile.damage = bulletScriptableObject.damage;
-        projectile.maxDamageMultiplier = bulletScriptableObject.maxDamageMultiplier;
-        projectile.destroyOnImpact = bulletScriptableObject.destroyOnImpact;
-        projectile.canDamageAttacker = bulletScriptableObject.canDamageAttacker;
 
         projectile.attacker = attacker;
         projectile.despawnOnDisable = despawnOnDestroy;
