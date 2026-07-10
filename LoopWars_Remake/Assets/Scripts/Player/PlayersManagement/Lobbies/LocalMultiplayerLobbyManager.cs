@@ -124,6 +124,12 @@ public class LocalMultiplayerLobbyManager : MonoBehaviour
         return connectedPlayers.Count > 1 && readyPlayers.Count == connectedPlayers.Count;
     }
 
+    public void StartGameIfCanTo()
+    {
+        if (CanStart())
+            StartGame();
+    }
+
     public void StartGame()
     {
         var transport = NetworkManager.Singleton.GetComponent<UnityTransport>();

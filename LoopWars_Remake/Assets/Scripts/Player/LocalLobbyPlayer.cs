@@ -31,6 +31,12 @@ public class LocalLobbyPlayer : MonoBehaviour
             onPlayerUneady?.Invoke(player);
     }
 
+    public void OnStart(InputAction.CallbackContext context)
+    {
+        if(context.started)
+            LocalMultiplayerLobbyManager.Instance.StartGameIfCanTo();
+    }
+
     public void OnLeave(InputAction.CallbackContext context)
     {
         if (!context.started) return;

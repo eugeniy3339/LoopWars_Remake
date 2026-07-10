@@ -1616,7 +1616,7 @@ MonoBehaviour:
   - panel: {fileID: 1687796485}
     firstObjectToSelect: {fileID: 1929735394}
   - panel: {fileID: 807445421}
-    firstObjectToSelect: {fileID: 1128310244}
+    firstObjectToSelect: {fileID: 0}
   - panel: {fileID: 905809944}
     firstObjectToSelect: {fileID: 1547540632}
   lobbyPlayerUIPrefab: {fileID: 2192092671279497864, guid: 70a0d619f50a4724582a11f651bd0b41, type: 3}
