@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e543f0ced1ecc504fa50518a00c78f26, type: 3}
-  m_Name: TestWeapon
+  m_Name: AK
   m_EditorClassIdentifier: 
-  weaponToPickupPrefab: {fileID: 7793299113729613695, guid: 842c7133a2f329640a288f14d2ab8911, type: 3}
-  weaponPrefab: {fileID: 7793299113729613695, guid: 3fdcd9cba89178a46abcfd9e7d223294, type: 3}
+  weaponToPickupPrefab: {fileID: 2389650858894993659, guid: 50d6bb17d4ed0b04e9f938b0e4471dcf, type: 3}
+  weaponPrefab: {fileID: 6241412477574245328, guid: a570ff45116ee7f4fad1cfdc20f8f69f, type: 3}
   attackCooldown: 0.1
-  infinityBullets: 1
-  bulletsCount: 20
+  infinityBullets: 0
+  bulletsCount: 30
   shotBackForce: 1
   bulletScriptableObject: {fileID: 11400000, guid: 5419e7bb527d2a948bb85b89bb7e4c97, type: 2}
-  gunThrowableScriptableObject: {fileID: 11400000, guid: a9c4ac81983b76f449fc5acfea30c49b, type: 2}
+  gunThrowableScriptableObject: {fileID: 11400000, guid: 9b1dbfaaa4bcbaf438c41a5fe0cf57f7, type: 2}
   fireVFXPrefab: {fileID: 5100191992029250864, guid: 58607d88be78e1142ad0a908998961e2, type: 3}

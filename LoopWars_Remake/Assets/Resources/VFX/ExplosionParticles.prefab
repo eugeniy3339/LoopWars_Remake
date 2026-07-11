@@ -48,6 +48,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2851412778414229301, guid: 53caffadd1fcfc54aba5209e355fe960, type: 3}
+      propertyPath: m_SortingOrder
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 3847871207141242846, guid: 53caffadd1fcfc54aba5209e355fe960, type: 3}
       propertyPath: ShapeModule.type
       value: 0
@@ -78,7 +82,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5858374820891711627, guid: 53caffadd1fcfc54aba5209e355fe960, type: 3}
       propertyPath: m_Name
-      value: ExplosionParticles Variant
+      value: ExplosionParticles
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

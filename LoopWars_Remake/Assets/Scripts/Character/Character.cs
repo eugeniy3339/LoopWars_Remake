@@ -8,7 +8,7 @@ public class Character : NetworkBehaviour
 {
     public Rigidbody2D rigidbody { get; protected set; }
     public CapsuleCollider2D collider { get; protected set; }
-    public SpriteRenderer spriteRenderer { get; protected set; }
+    public SpriteRenderer[] spriteRenderers { get; protected set; }
     public Animator animator { get; protected set;   }
     private PlayerInput _pI;
     public PlayerInput playerInput { get { if (_pI == null) { _pI = GetComponent<PlayerInput>(); } return _pI; } protected set { _pI = value; } }
@@ -27,7 +27,7 @@ public class Character : NetworkBehaviour
     {
         rigidbody = GetComponent<Rigidbody2D>();
         collider = GetComponent<CapsuleCollider2D>();
-        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        spriteRenderers = GetComponentsInChildren<SpriteRenderer>();
         animator = GetComponent<Animator>();
         playerInput = GetComponent<PlayerInput>();
 

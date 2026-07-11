@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bulletPrefab: {fileID: 3712294170592783366, guid: 584812cfa2434104f8b733bb433c33c8, type: 3}
   damage: 5
-  maxDamageMultiplier: 1
+  maxDamageMultiplier: 1.2
   speed: 10
   maxLifeTime: 3
   canDamageAttacker: 0
@@ -25,6 +25,6 @@ MonoBehaviour:
   bulletDestroyScreenShakeAmplitude: 2
   bulletDestroyScreenShakeFrequency: 3
   explosionParticles: {fileID: 807005535252179894, guid: 795c723954111914ea7cb524799990af, type: 3}
-  explosionRange: 3
+  explosionRange: 4
   explosionStrength: 20
-  explosionDamage: 50
+  explosionDamage: 40

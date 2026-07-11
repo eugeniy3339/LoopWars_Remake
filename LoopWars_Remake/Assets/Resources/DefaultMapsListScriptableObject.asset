@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: DefaultMapsListScriptableObject
   m_EditorClassIdentifier: 
   maps:
-  - {fileID: 11793460730025838, guid: 0f595e6793cca2f4693f711522e65fdd, type: 3}
+  - {fileID: 8301606517898308085, guid: 553262d4e4a2f2a4fb539a7b1da1aeeb, type: 3}
+  - {fileID: 1723603061664784093, guid: dd254a5f0c04a284a990eb1af4d1e510, type: 3}

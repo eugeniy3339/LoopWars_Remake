@@ -6,13 +6,17 @@ public class HealthSystem : NetworkBehaviour, IDamagable
 {
     private Character character;
 
-    [SerializeField] private float maxHealth;
+    [SerializeField] private float _maxHealth = 100f;
+    public float maxHealth { get { return _maxHealth; } }
     private NetworkVariable<float> health = new NetworkVariable<float>();
 
     private bool sentDeathEvent = false;
     public static event Action<Character, Transform, float> onCharacterDamaged;
     public static event Action<Character> onCharacterDied;
     public static event Action<Character, float, float> onCharactersHealthChanged;
+
+    [SerializeField] private Transform _healthSlider;
+    public Transform healthSlider { get { return _healthSlider; } }
 
     private void Awake()
     {
@@ -23,10 +27,11 @@ public class HealthSystem : NetworkBehaviour, IDamagable
     {
         base.OnNetworkSpawn();
 
-        health.OnValueChanged += OnHealthValueChanged;
-
         if (IsServer)
             health.Value = maxHealth;
+
+        health.OnValueChanged += OnHealthValueChanged;
+        OnHealthValueChanged(0f, health.Value);
     }
 
     public override void OnNetworkDespawn()

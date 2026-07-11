@@ -48,6 +48,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2699656206369281915, guid: 270504f2a2dc7c94996d5b1603c39a10, type: 3}
+      propertyPath: m_SortingOrder
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 4000104311142573968, guid: 270504f2a2dc7c94996d5b1603c39a10, type: 3}
       propertyPath: ShapeModule.angle
       value: 16.5
@@ -106,7 +110,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6028203379709561029, guid: 270504f2a2dc7c94996d5b1603c39a10, type: 3}
       propertyPath: m_Name
-      value: PlayerDeathParticle Variant
+      value: PlayerDeathParticle
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

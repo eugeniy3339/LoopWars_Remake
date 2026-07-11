@@ -50,8 +50,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 003d620ef35772743837ff909da54098, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _spawnPoints:
-  - {fileID: 6988941304981202552}
   _minWeaponsSpawnPos: {fileID: 3192764619938254614}
   _maxWeaponsSpawnPos: {fileID: 8440286931411746803}
 --- !u!114 &6771968939487768208
@@ -66,7 +64,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 1162007314
+  GlobalObjectIdHash: 3742034039
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -284,6 +282,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4022169367051518201}
+  - component: {fileID: 4756655415256981805}
   m_Layer: 0
   m_Name: SpawnPoints
   m_TagString: Untagged
@@ -307,6 +306,18 @@ Transform:
   - {fileID: 6988941304981202552}
   m_Father: {fileID: 8915245127204449895}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4756655415256981805
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4125819683251181203}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5b347a0b3ab3144a93854aab437c0f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4186056055104508289
 GameObject:
   m_ObjectHideFlags: 0

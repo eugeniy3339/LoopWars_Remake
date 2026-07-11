@@ -95,13 +95,20 @@ public class WeaponManager : NetworkBehaviour
         return weapon;
     }
 
+    [Rpc(SendTo.Everyone)]
+    public void DestroyCurWeaponRpc()
+    {
+        DestroyCurWeapon();
+    }
+
     public void DestroyCurWeapon()
     {
-        if (!IsServer) return;
-        if (curWeapon == null) return;
+        if(IsOwner)
+            StopAttacking();
 
-        StopAttacking();
-        curWeapon.NetworkObject.Despawn();
+        if (IsServer && curWeapon != null && curWeapon.NetworkObject.IsSpawned)
+            curWeapon.NetworkObject.Despawn();
+
         curWeaponScriptableObject = null;
         curWeapon = null;
     }
@@ -109,16 +116,16 @@ public class WeaponManager : NetworkBehaviour
     public void ThrowWeapon()
     {
         if (!IsOwner) return;
-        print(curWeaponScriptableObject);
         if (curWeaponScriptableObject == null) return;
 
         ThrowWeaponRpc(WeaponsListScriptableObject.Instance.weapons.IndexOf(curWeaponScriptableObject), curWeapon.transform.position, curWeapon.transform.right);
     }
 
     [Rpc(SendTo.Everyone)]
-    private void ThrowWeaponRpc(int weaponScriptableObject, Vector2 position, Vector2 direction)
+    private void ThrowWeaponRpc(int weponScriptableObject, Vector2 position, Vector2 direction)
     {
-        Projectile projectile = Projectile.CreateNewProjectile(WeaponsListScriptableObject.Instance.weapons[weaponScriptableObject].gunThrowableScriptableObject, character, true);
+        if (WeaponsListScriptableObject.Instance.weapons[weponScriptableObject] == null) return;
+        Projectile projectile = Projectile.CreateNewProjectile(WeaponsListScriptableObject.Instance.weapons[weponScriptableObject].gunThrowableScriptableObject, character, true);
         projectile.LaunchProjectile(position, direction);
 
         DestroyCurWeapon();
@@ -179,7 +186,10 @@ public class WeaponManager : NetworkBehaviour
     private void OnWeaponSpawned(Weapon weapon)
     {
         if (curWeapon == null && weapon.OwnerClientId == OwnerClientId)
+        {
             curWeapon = weapon;
+            curWeaponScriptableObject = weapon.weaponScriptableObject;
+        }
     }
 
     private void OnEnable()

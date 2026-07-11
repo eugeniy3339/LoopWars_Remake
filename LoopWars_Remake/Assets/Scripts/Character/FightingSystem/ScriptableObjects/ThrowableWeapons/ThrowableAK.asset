@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7748275580c944a4a83aaecbabec0ef3, type: 3}
-  m_Name: DefaultBullet
+  m_Name: ThrowableAK
   m_EditorClassIdentifier: 
-  bulletPrefab: {fileID: 1732284584695153900, guid: 6f78e9ca3a4f9b6428fd90532d2e3935, type: 3}
-  damage: 10
-  maxDamageMultiplier: 1.2
-  speed: 10
+  bulletPrefab: {fileID: 1871654346085065679, guid: 3682d757ea14fa24aa511448c9dba72c, type: 3}
+  damage: 5
+  maxDamageMultiplier: 1
+  speed: 12
   maxLifeTime: 3
   canDamageAttacker: 0
   canBeDestroyedByAttackersProjectiles: 0
-  destroyOnImpact: 1
-  bulletDestroyParticlesPrefab: {fileID: 5858374820891711627, guid: 53caffadd1fcfc54aba5209e355fe960, type: 3}
-  bulletDestroyScreenShakeTime: 0.2
-  bulletDestroyScreenShakeAmplitude: 1
-  bulletDestroyScreenShakeFrequency: 2
+  destroyOnImpact: 0
+  bulletDestroyParticlesPrefab: {fileID: 0}
+  bulletDestroyScreenShakeTime: 0
+  bulletDestroyScreenShakeAmplitude: 0
+  bulletDestroyScreenShakeFrequency: 0

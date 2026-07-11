@@ -1,8 +1,5 @@
-using LoopWars.GameMode;
 using LoopWars.Players;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.TextCore.Text;
 
 public static class CharactersVisualsHandler
 {
@@ -87,7 +84,15 @@ public static class CharactersVisualsHandler
 
     private static void OnCharactersHealthChanged(Character character, float oldHealth, float curHealth)
     {
+        try
+        {
+            Debug.Log(curHealth);
+            character.healthSystem.healthSlider.transform.localScale = new Vector3(character.healthSystem.healthSlider.transform.localScale.x, Mathf.Clamp(curHealth / character.healthSystem.maxHealth, 0f, 1f));
+        }
+        catch
+        {
 
+        }
     }
 
     private static void OnCharacterGrounded(Character character)

@@ -25,6 +25,6 @@ MonoBehaviour:
   bulletDestroyScreenShakeAmplitude: 2
   bulletDestroyScreenShakeFrequency: 3
   explosionParticles: {fileID: 807005535252179894, guid: 795c723954111914ea7cb524799990af, type: 3}
-  explosionRange: 4
+  explosionRange: 5
   explosionStrength: 20
   explosionDamage: 50
