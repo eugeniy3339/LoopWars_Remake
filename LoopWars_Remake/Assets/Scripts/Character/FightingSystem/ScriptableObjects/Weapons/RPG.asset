@@ -21,3 +21,4 @@ MonoBehaviour:
   bulletScriptableObject: {fileID: 11400000, guid: 86073b95219d1e549a53c5b07d7a8f65, type: 2}
   gunThrowableScriptableObject: {fileID: 11400000, guid: 491148c340d6a4f4e823ae472d7324d8, type: 2}
   fireVFXPrefab: {fileID: 5100191992029250864, guid: 58607d88be78e1142ad0a908998961e2, type: 3}
+  fireSound: {fileID: 11400000, guid: c1c67f6c4e0eefa42833e0d4f9b1aa8f, type: 2}

@@ -32,6 +32,8 @@ public class WeaponManager : NetworkBehaviour
 
     [SerializeField] private WeaponScriptableObject startWeapon;
 
+    public static event Action<Character, WeaponScriptableObject> onWeaponGotThrown;
+
     private void Awake()
     {
         character = GetComponent<Character>();
@@ -122,11 +124,13 @@ public class WeaponManager : NetworkBehaviour
     }
 
     [Rpc(SendTo.Everyone)]
-    private void ThrowWeaponRpc(int weponScriptableObject, Vector2 position, Vector2 direction)
+    private void ThrowWeaponRpc(int weaponScriptableObjectIndex, Vector2 position, Vector2 direction)
     {
-        if (WeaponsListScriptableObject.Instance.weapons[weponScriptableObject] == null) return;
-        Projectile projectile = Projectile.CreateNewProjectile(WeaponsListScriptableObject.Instance.weapons[weponScriptableObject].gunThrowableScriptableObject, character, true);
+        WeaponScriptableObject weaponScriptableObject = WeaponsListScriptableObject.Instance.weapons[weaponScriptableObjectIndex];
+        if (weaponScriptableObject == null) return;
+        Projectile projectile = Projectile.CreateNewProjectile(weaponScriptableObject.gunThrowableScriptableObject, character, true);
         projectile.LaunchProjectile(position, direction);
+        onWeaponGotThrown?.Invoke(character, weaponScriptableObject);
 
         DestroyCurWeapon();
     }

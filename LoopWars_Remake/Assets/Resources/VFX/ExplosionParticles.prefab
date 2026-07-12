@@ -78,7 +78,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3847871207141242846, guid: 53caffadd1fcfc54aba5209e355fe960, type: 3}
       propertyPath: EmissionModule.m_Bursts.Array.data[0].countCurve.minScalar
-      value: 8
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 5858374820891711627, guid: 53caffadd1fcfc54aba5209e355fe960, type: 3}
       propertyPath: m_Name

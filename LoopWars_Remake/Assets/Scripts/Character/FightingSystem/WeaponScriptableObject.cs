@@ -13,6 +13,7 @@ public class WeaponScriptableObject : ScriptableObject
     public BulletScriptableObject bulletScriptableObject;
     public BulletScriptableObject gunThrowableScriptableObject;
     public GameObject fireVFXPrefab;
+    public SoundScriptableObject fireSound;
 }
 
 #if UNITY_EDITOR

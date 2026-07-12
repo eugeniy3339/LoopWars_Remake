@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7748275580c944a4a83aaecbabec0ef3, type: 3}
+  m_Name: DefaultBullet25
+  m_EditorClassIdentifier: 
+  bulletPrefab: {fileID: 1732284584695153900, guid: 6f78e9ca3a4f9b6428fd90532d2e3935, type: 3}
+  damage: 25
+  maxDamageMultiplier: 1.2
+  speed: 10
+  maxLifeTime: 3
+  canDamageAttacker: 0
+  canBeDestroyedByAttackersProjectiles: 0
+  destroyOnImpact: 1
+  bulletDestroyParticlesPrefab: {fileID: 5858374820891711627, guid: 53caffadd1fcfc54aba5209e355fe960, type: 3}
+  bulletDestroySound: {fileID: 0}
+  bulletDestroyScreenShakeTime: 0.2
+  bulletDestroyScreenShakeAmplitude: 1
+  bulletDestroyScreenShakeFrequency: 2
