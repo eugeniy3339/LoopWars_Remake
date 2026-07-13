@@ -21,6 +21,9 @@ public class Character : NetworkBehaviour
     public HealthSystem healthSystem { get; protected set; }
     public ObjectColorsHandler objectColorsHandler { get; protected set; }
 
+    [SerializeField] private Transform _characterVisualsTransform;
+    public Transform characterVisualsTransform { get { return _characterVisualsTransform; } }
+
     public static event Action<Character> onCharacterSpawned;
 
     private void Awake()

@@ -1,9 +1,8 @@
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.Windows;
-using System.Linq;
 
 public class MovementManager : NetworkBehaviour
 {
@@ -15,17 +14,18 @@ public class MovementManager : NetworkBehaviour
     private Dash dash;
 
     private MovementState _mS;
-    public MovementState movementState 
-    { 
-        get { return _mS; } 
-        private set { 
-            if (_mS == value) { return; } 
-            _mS = value; 
-            onMovementStateChanged?.Invoke(value); 
-        } 
+    public MovementState movementState
+    {
+        get { return _mS; }
+        private set
+        {
+            if (_mS == value) { return; }
+            _mS = value;
+            onMovementStateChanged?.Invoke(value);
+        }
     }
     public event Action<MovementState> onMovementStateChanged;
-    
+
     public bool isGrounded { get; private set; }
     public bool onTheWall { get; private set; }
     public bool onSlope { get; private set; }
@@ -44,6 +44,28 @@ public class MovementManager : NetworkBehaviour
 
     [Header("On Wall Settings")]
     [SerializeField] private float onWallDrag = 10f;
+
+    [Header("MovementSettings")]
+    [SerializeField] private float _maxMovementCurrency = 100f;
+    public float maxMovementCurrency { get { return _maxMovementCurrency; } }
+    private float _cMC;
+    public float curMovementCurrency
+    {
+        get { return _cMC; }
+        private set
+        {
+            if (value > maxMovementCurrency)
+                value = maxMovementCurrency;
+            else if (value < 0f)
+                value = 0f;
+
+            _cMC = value;
+        }
+    }
+    [SerializeField] private float movementCurrencyPerSecond = 30f;
+
+    [SerializeField] private Transform _movementCurrencyVisualTransform;
+    public Transform movementCurrencyVisualTransform { get { return _movementCurrencyVisualTransform; } }
 
     public bool onWall { get; private set; }
     private List<Collider2D> wallsImCollidingWith = new List<Collider2D>();
@@ -108,6 +130,7 @@ public class MovementManager : NetworkBehaviour
     private void Awake()
     {
         character = GetComponent<Character>();
+        curMovementCurrency = maxMovementCurrency;
     }
 
     private void Start()
@@ -153,6 +176,8 @@ public class MovementManager : NetworkBehaviour
 
         onSlope = OnSlope(groundHit);
         useGravity = !onSlope;
+
+        MovementCurrencyManagement();
     }
 
     private bool IsGrounded(out RaycastHit2D raycastHit)
@@ -171,8 +196,16 @@ public class MovementManager : NetworkBehaviour
         return angle > 0f && angle < maxSlopeAngle;
     }
 
+    private void MovementCurrencyManagement()
+    {
+        if (curMovementCurrency < maxMovementCurrency)
+        {
+            curMovementCurrency += Time.deltaTime * movementCurrencyPerSecond;
+        }
+    }
 
-    
+
+
     private bool GetOnAWallIfCanTo(Collider2D wallCantToGetOn = null)
     {
         if (!wallsImCollidingWith.Any()) return false;
@@ -227,6 +260,8 @@ public class MovementManager : NetworkBehaviour
 
         canChangeLinearDamping = false;
         canChangeUseGravity = false;
+
+        curMovementCurrency -= dash.maxMovementCurrencyCost;
     }
 
     private void OnEndedDash()
@@ -253,17 +288,8 @@ public class MovementManager : NetworkBehaviour
         movementState = MovementState.Jumping;
 
         canChangeLinearDamping = false;
-    }
 
-    private void OnWallJump()
-    {
-        canChangeLinearDamping = true;
-
-        linearDamping = 0f;
-
-        movementState = MovementState.Jumping;
-
-        canChangeLinearDamping = false;
+        curMovementCurrency -= jump.maxMovementCurrencyCost;
     }
 
     private void OnJumpEnd()
@@ -293,7 +319,7 @@ public class MovementManager : NetworkBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if(collision.collider.gameObject.tag == "Wall")
+        if (collision.collider.gameObject.tag == "Wall")
         {
             if (collision.contacts[0].normal.y <= 0.1f)
             {
@@ -309,13 +335,13 @@ public class MovementManager : NetworkBehaviour
 
     private void OnCollisionExit2D(Collision2D collision)
     {
-        if(collision.collider.gameObject.tag == "Wall")
+        if (collision.collider.gameObject.tag == "Wall")
         {
-            if(wallsImCollidingWith.Contains(collision.collider))
+            if (wallsImCollidingWith.Contains(collision.collider))
             {
                 wallsImCollidingWith.Remove(collision.collider);
 
-                if(onWall && curWall == collision.collider)
+                if (onWall && curWall == collision.collider)
                 {
                     GetOffTheWall();
                 }
@@ -327,14 +353,14 @@ public class MovementManager : NetworkBehaviour
 
     private void SubscribeOnEvents()
     {
-        if(!subscribedOnEvents)
+        if (!subscribedOnEvents)
         {
             onGrounded += OnGrounded;
 
             subscribedOnEvents = true;
         }
 
-        if(dash != null && !dash.subscribedOnEvents)
+        if (dash != null && !dash.subscribedOnEvents)
         {
             dash.onDash += OnStartedDash;
             dash.onDashEnd += OnEndedDash;
@@ -342,10 +368,10 @@ public class MovementManager : NetworkBehaviour
             dash.subscribedOnEvents = true;
         }
 
-        if(jump != null && !jump.subscribedOnEvents)
+        if (jump != null && !jump.subscribedOnEvents)
         {
             jump.onJump += OnJump;
-            jump.onWallJump += OnWallJump;
+            jump.onWallJump += OnJump;
             jump.onJumpEnd += OnJumpEnd;
 
             jump.subscribedOnEvents = true;
@@ -369,7 +395,7 @@ public class MovementManager : NetworkBehaviour
         if (jump != null)
         {
             jump.onJump -= OnJump;
-            jump.onWallJump -= OnWallJump;
+            jump.onWallJump -= OnJump;
             jump.onJumpEnd -= OnJumpEnd;
 
             jump.subscribedOnEvents = false;
@@ -418,7 +444,7 @@ public class MovementManager : NetworkBehaviour
 
     public void OnJump(bool start)
     {
-        if(start)
+        if (start)
         {
             if (jump.CanJump())
                 jump.JumpIfCanTo();

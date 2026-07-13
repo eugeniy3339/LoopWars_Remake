@@ -53,6 +53,10 @@ PrefabInstance:
       value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 3847871207141242846, guid: 53caffadd1fcfc54aba5209e355fe960, type: 3}
+      propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3847871207141242846, guid: 53caffadd1fcfc54aba5209e355fe960, type: 3}
       propertyPath: ShapeModule.type
       value: 0
       objectReference: {fileID: 0}

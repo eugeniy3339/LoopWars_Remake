@@ -1,7 +1,6 @@
 using System;
 using Unity.Netcode;
 using UnityEngine;
-using static UnityEngine.LightAnchor;
 
 [RequireComponent(typeof(Character), typeof(Movement))]
 public class Jump : MovementComponent
@@ -14,6 +13,10 @@ public class Jump : MovementComponent
     [SerializeField, Tooltip("Wall Jump angle to the right side")] private float wallJumpAngle = 30f;
     [SerializeField] private float wallJumpForce = 8f;
     private Vector2 wallJumpDirection;
+
+    [SerializeField] private float _maxMovementCurrencyCost = 10f;
+    public float maxMovementCurrencyCost { get { return _maxMovementCurrencyCost; } }
+    [SerializeField] private float minMovementCurrencyNeeded = 5f;
 
     public event Action onJump;
     public static event Action<Character> onJumpStatic;
@@ -132,7 +135,7 @@ public class Jump : MovementComponent
     public bool CanJump()
     {
         if (!IsOwner) return false;
-        return movementManager.movementState == MovementManager.MovementState.Default && !jumping && (movementManager.isGrounded || movementManager.onWall) && curMinJumpTime <= 0f;
+        return movementManager.movementState == MovementManager.MovementState.Default && !jumping && (movementManager.isGrounded || movementManager.onWall) && curMinJumpTime <= 0f && movementManager.curMovementCurrency >= minMovementCurrencyNeeded;
     }
 
     private Vector2 GetWallJumpDirection(float angle)

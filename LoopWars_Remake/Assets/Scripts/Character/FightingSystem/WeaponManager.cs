@@ -8,7 +8,7 @@ public class WeaponManager : NetworkBehaviour
     private Character character { get { if (_char == null) { _char = GetComponent<Character>(); } return _char; } set { _char = value; } }
 
     private WeaponScriptableObject curWeaponScriptableObject;
-    private Weapon curWeapon;
+    public Weapon curWeapon { get; private set; }
     private Vector2 _d;
     public Vector2 direction
     {

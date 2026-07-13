@@ -35,7 +35,7 @@ public static class CharactersSoundsManager
         SoundsManager.StartSound(jumpSound, character.transform);
     }
 
-    private static void OnCharacterDashed(Character character)
+    private static void OnCharacterDashed(Character character, float dashTime)
     {
         SoundsManager.StartSound(dashSound, character.transform);
     }

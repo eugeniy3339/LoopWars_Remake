@@ -1,4 +1,5 @@
 using LoopWars.Players;
+using System.Collections;
 using UnityEngine;
 
 public static class CharactersVisualsHandler
@@ -34,6 +35,9 @@ public static class CharactersVisualsHandler
 
     private static void OnCharacterSpawned(Character character)
     {
+        character.StartCoroutine(CharacterMovementCurrencyVisualsHandlingCoro(character));
+        character.StartCoroutine(CharacterFlipingHandlingCoro(character));
+
         Player player = PlayersContainer.GetPlayerByCharacter(character);
 
         if (player == null) return;
@@ -53,12 +57,12 @@ public static class CharactersVisualsHandler
         ParticlesHandler.SpawnParticles(jumpParticlesPrefab, character.movementManager.footPosition.position, direction, player.color);
     }
 
-    private static void OnCharacterDashed(Character character)
+    private static void OnCharacterDashed(Character character, float dashTime)
     {
         character.animator.Play("Dash");
         character.animator.SetBool("Dashing", true);
         Player player = PlayersContainer.GetPlayerByCharacter(character);
-        ParticleSystem particles = ParticlesHandler.SpawnParticles(dashParticlesPrefab, character.transform.position, character.transform.up, player.color);
+        ParticleSystem particles = ParticlesHandler.SpawnParticles(dashParticlesPrefab, character.transform.position, character.transform.up, player.color, dashTime);
         particles?.transform.SetParent(character.transform);
     }
 
@@ -86,7 +90,6 @@ public static class CharactersVisualsHandler
     {
         try
         {
-            Debug.Log(curHealth);
             character.healthSystem.healthSlider.transform.localScale = new Vector3(character.healthSystem.healthSlider.transform.localScale.x, Mathf.Clamp(curHealth / character.healthSystem.maxHealth, 0f, 1f));
         }
         catch
@@ -125,6 +128,69 @@ public static class CharactersVisualsHandler
         catch
         {
 
+        }
+    }
+
+    private static IEnumerator CharacterMovementCurrencyVisualsHandlingCoro(Character character)
+    {
+        MovementManager movementManager = character.movementManager;
+        if (movementManager == null) yield break;
+        Transform movementCurrencyVisualsTransform = movementManager.movementCurrencyVisualTransform;
+        if (movementCurrencyVisualsTransform == null) yield break;
+        Vector2 startSize = movementCurrencyVisualsTransform.localScale;
+        float maxMovementCurrency = movementManager.maxMovementCurrency;
+
+        float beforeMovementCurrency = movementManager.curMovementCurrency;
+        while (movementManager != null && movementCurrencyVisualsTransform != null)
+        {
+            if(beforeMovementCurrency != movementManager.curMovementCurrency)
+            {
+                movementCurrencyVisualsTransform.localScale = startSize * movementManager.curMovementCurrency / maxMovementCurrency;
+                beforeMovementCurrency = movementManager.curMovementCurrency;
+            }
+
+            yield return new WaitForEndOfFrame();
+        }
+
+        yield break;
+    }
+
+    private static IEnumerator CharacterFlipingHandlingCoro(Character character)
+    {
+        Transform characterVisualsTransform = character.characterVisualsTransform;
+        if (characterVisualsTransform == null) yield break;
+        WeaponManager weaponManager = character.weaponManager;
+        float lastFrameHorizontalPosition = 0f;
+
+        bool flipX = false;
+
+        while(weaponManager != null && characterVisualsTransform != null)
+        {
+            bool flip = flipX;
+
+            if(weaponManager.curWeapon != null)
+            {
+                flip = weaponManager.curWeapon.transform.right.x < 0f;
+            }
+            else
+            {
+                float curHorizontalPosition = character.transform.position.x;
+                if(lastFrameHorizontalPosition != curHorizontalPosition)
+                {
+                    float dir = curHorizontalPosition - lastFrameHorizontalPosition;
+                    flip = dir < 0f;
+
+                    lastFrameHorizontalPosition = curHorizontalPosition;
+                }
+            }
+
+            if (flipX != flip)
+            {
+                characterVisualsTransform.localScale = new Vector3(flip ? -1f : 1f, 1f, 1f);
+                flipX = flip;
+            }
+
+            yield return new WaitForEndOfFrame();
         }
     }
 }

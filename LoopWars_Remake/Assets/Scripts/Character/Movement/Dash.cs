@@ -5,16 +5,19 @@ using UnityEngine;
 
 public class Dash : MovementComponent
 {
-    [SerializeField] private float dashCooldown = 3f;
+    [SerializeField] private float dashCooldown = 0.1f;
     private float curDashCooldown;
 
     [SerializeField] private float dashSpeed = 5f;
-    [SerializeField] private float dashTime = 2f;
+    [SerializeField] private float maxDashTime = 2f;
+    [SerializeField] private float _maxMovementCurrencyCost = 90f;
+    public float maxMovementCurrencyCost { get { return _maxMovementCurrencyCost; } }
+    [SerializeField] private float minNeededMovementCurrency = 20f;
 
     private Coroutine curDashCoroutine;
 
     public event Action onDash;
-    public static event Action<Character> onDashStatic;
+    public static event Action<Character, float> onDashStatic;
     public event Action onDashEnd;
     public static event Action<Character> onDashEndStatic;
 
@@ -47,19 +50,20 @@ public class Dash : MovementComponent
         if (!CanDash()) return;
 
         if (curDashCoroutine != null) StopCoroutine(curDashCoroutine);
-        curDashCoroutine = StartCoroutine(DashCoro(direction, dashSpeed, dashTime));
+        print(maxDashTime * (movementManager.curMovementCurrency / maxMovementCurrencyCost));
+        curDashCoroutine = StartCoroutine(DashCoro(direction, dashSpeed, maxDashTime * (movementManager.curMovementCurrency / maxMovementCurrencyCost)));
     }
 
     private bool CanDash()
     {
         if (!IsOwner) return false;
-        return (movementManager.movementState == MovementManager.MovementState.Default || movementManager.movementState == MovementManager.MovementState.Jumping) && curDashCooldown <= 0f;
+        return (movementManager.movementState == MovementManager.MovementState.Default || movementManager.movementState == MovementManager.MovementState.Jumping) && curDashCooldown <= 0f && movementManager.curMovementCurrency >= minNeededMovementCurrency;
     }
 
     private IEnumerator DashCoro(Vector2 dashDirection, float dashSpeed, float dashTime)
     {
         if (!IsOwner) yield break;
-        CallOnDashEventRpc();
+        CallOnDashEventRpc(dashTime);
 
         float curDashTime = 0f;
         Vector2 velocity = dashDirection.normalized * dashSpeed;
@@ -84,10 +88,10 @@ public class Dash : MovementComponent
     }
 
     [Rpc(SendTo.Everyone)]
-    private void CallOnDashEventRpc()
+    private void CallOnDashEventRpc(float dashTime)
     {
         onDash?.Invoke();
-        onDashStatic?.Invoke(character);
+        onDashStatic?.Invoke(character, dashTime);
     }
 
     [Rpc(SendTo.Everyone)]
