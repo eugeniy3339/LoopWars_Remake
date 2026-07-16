@@ -13,7 +13,10 @@ public class WindowsManager : MonoBehaviour
     protected virtual void Awake()
     {
         Instance = this;
+    }
 
+    protected virtual void Start()
+    {
         OpenPanel(0);
     }
 
@@ -26,7 +29,8 @@ public class WindowsManager : MonoBehaviour
     {
         foreach (var panel in panels)
         {
-            panel.panel.SetActive(false);
+            if (panel.panel != null)
+                panel.panel.SetActive(false);
         }
     }
 
@@ -46,7 +50,8 @@ public class WindowsManager : MonoBehaviour
         if (panel == null) return;
         CloseAllPanels();
 
-        panel.panel.SetActive(true);
+        if(panel.panel != null)
+            panel.panel.SetActive(true);
         EventSystem.current.SetSelectedGameObject(panel.firstObjectToSelect);
     }
 

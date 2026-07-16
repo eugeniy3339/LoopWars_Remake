@@ -36,28 +36,37 @@ public class NetworkMultiplayerLobbyManager : NetworkBehaviour
     private bool canStart;
     public static event Action<bool> onCanStartChanged;
 
-    public static Action<bool, string> onJoinedLobby;
+    public static event Action<bool, string> onJoinedLobby;
+    public static event Action onLeftLobby;
 
     [HideInInspector] public string curRelayCode;
 
     private void Awake()
     {
         Instance = this;
+        KickAllConnectedPlayers();
     }
 
     private async void Start()
     {
-        await UnityServices.InitializeAsync();
-        await AuthenticationService.Instance.SignInAnonymouslyAsync();
+        if(UnityServices.State == ServicesInitializationState.Uninitialized)
+            await UnityServices.InitializeAsync();
+        if(!AuthenticationService.Instance.IsSignedIn)
+            await AuthenticationService.Instance.SignInAnonymouslyAsync();
 
         NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
+        NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconected;
+        NetworkManager.Singleton.OnServerStopped += OnServerStopped;
+        NetworkManager.Singleton.OnClientStopped += OnClientStopped;
+
     }
 
     public override void OnNetworkSpawn()
     {
+        if (GameMode.multiplayerMode != MultiplayerMode.NetworkMultiplayer) return;
+
         base.OnNetworkSpawn();
 
-        playersToSynchronize.OnListChanged += OnPlayersToSynchronizeChanged;
         foreach (var playerToSynchronize in playersToSynchronize)
         {
             OnPlayerAdded(playerToSynchronize);
@@ -69,8 +78,6 @@ public class NetworkMultiplayerLobbyManager : NetworkBehaviour
     public override void OnNetworkDespawn()
     {
         base.OnNetworkDespawn();
-
-        playersToSynchronize.OnListChanged -= OnPlayersToSynchronizeChanged;
     }
 
 
@@ -84,7 +91,7 @@ public class NetworkMultiplayerLobbyManager : NetworkBehaviour
     {
         try
         {
-            if (curJoinedAllocation != null) return;
+            if (curJoinedAllocation != null || curHostedAllocation != null) return;
             curJoinedAllocation = await RelayService.Instance.JoinAllocationAsync(joinCode);
 
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetClientRelayData(
@@ -115,7 +122,7 @@ public class NetworkMultiplayerLobbyManager : NetworkBehaviour
     {
         try
         {
-            if (curHostedAllocation != null) return null;
+            if (curHostedAllocation != null || curJoinedAllocation != null) return null;
             maxPlayers = maxPlayersCount;
             curHostedAllocation = await RelayService.Instance.CreateAllocationAsync(maxPlayersCount);
             string joinCode = await RelayService.Instance.GetJoinCodeAsync(curHostedAllocation.AllocationId);
@@ -133,9 +140,9 @@ public class NetworkMultiplayerLobbyManager : NetworkBehaviour
             onJoinedLobby?.Invoke(true, joinCode);
             return joinCode;
         }
-        catch
-        {
-            return null;
+        catch 
+        { 
+            return null; 
         }
     }
 
@@ -187,7 +194,6 @@ public class NetworkMultiplayerLobbyManager : NetworkBehaviour
         Player player = PlayersContainer.GetPlayerById(removedPlayer.Id);
         if (player != null)
             KickPlayer(player);
-        onPlayerLeft?.Invoke(player);
     }
 
     private void OnPlayerAdded(PlayerToSynchronize addedPlayer)
@@ -213,6 +219,7 @@ public class NetworkMultiplayerLobbyManager : NetworkBehaviour
             usedColors.Remove(color);
 
         PlayersContainer.KickPlayer(player);
+        onPlayerLeft?.Invoke(player);
     }
 
 
@@ -297,6 +304,96 @@ public class NetworkMultiplayerLobbyManager : NetworkBehaviour
         {
             NetworkManager.Singleton.DisconnectClient(clientId);
             return;
+        }
+    }
+
+    private void OnClientDisconected(ulong clientId)
+    {
+        if (TryToGetPlayerToSynchronize(clientId, out PlayerToSynchronize playerToSynchronize))
+        {
+            playersToSynchronize.Remove(playerToSynchronize);
+        }
+    }
+
+    public void Leave()
+    {
+        if (NetworkManager.ShutdownInProgress || (curJoinedAllocation == null && curHostedAllocation == null)) return;
+        NetworkManager.Shutdown();
+    }
+
+    private void OnServerStopped(bool b)
+    {
+        OnLeavedLobby();
+    }
+
+    private void OnClientStopped(bool b)
+    {
+        OnLeavedLobby();
+    }
+
+    private void OnLeavedLobby()
+    {
+        curHostedAllocation = null;
+        curJoinedAllocation = null;
+        KickAllConnectedPlayers();
+        onLeftLobby?.Invoke();
+    }
+
+    private bool TryToGetPlayerToSynchronize(ulong playerId, out PlayerToSynchronize playerToSynchronize)
+    {
+        foreach(var pTS in playersToSynchronize)
+        {
+            if(pTS.Id == playerId)
+            {
+                playerToSynchronize = pTS;
+                return true;
+            }
+        }
+
+        playerToSynchronize = new PlayerToSynchronize();
+        return false;
+    }
+
+    private void OnJoinedLocalLobby(Player player)
+    {
+        Leave();
+    }
+        
+    private void KickAllConnectedPlayers()
+    {
+        for (int i = playersToSynchronize.Count - 1; i >= 0; i--)
+        {
+            playersToSynchronize.Remove(playersToSynchronize[i]);
+        }
+
+        for (int i = PlayersContainer.players.Count - 1; i >= 0; i--)
+        {
+            Player player = PlayersContainer.players[i];
+            if (player.multiplayerMode == MultiplayerMode.NetworkMultiplayer)
+            {
+                KickPlayer(player);
+            }
+        }
+    }
+
+    private void OnEnable()
+    {
+        LocalMultiplayerLobbyManager.onPlayerJoined += OnJoinedLocalLobby;
+
+        playersToSynchronize.OnListChanged += OnPlayersToSynchronizeChanged;
+    }
+
+    private void OnDisable()
+    {
+        LocalMultiplayerLobbyManager.onPlayerJoined -= OnJoinedLocalLobby;
+
+        playersToSynchronize.OnListChanged -= OnPlayersToSynchronizeChanged;
+        if (NetworkManager.Singleton != null)
+        {
+            NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnected;
+            NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconected;
+            NetworkManager.Singleton.OnServerStopped -= OnServerStopped;
+            NetworkManager.Singleton.OnClientStopped -= OnClientStopped;
         }
     }
 

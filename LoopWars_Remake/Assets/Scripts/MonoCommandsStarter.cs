@@ -8,7 +8,7 @@ public class MonoCommandsStarter : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance != null) Destroy(gameObject);
+        if (Instance != null) { Destroy(gameObject); return; }
         Instance = this;
         DontDestroyOnLoad(gameObject);
     }

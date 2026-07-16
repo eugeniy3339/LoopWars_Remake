@@ -31,6 +31,7 @@ public static class PlayersContainer
 
     public static Player GetPlayerById(ulong id)
     {
+        List<Player> players = GetPlayersByMultiplayerMode(MultiplayerMode.NetworkMultiplayer);
         return players.Find((player) => player.playerId == id);
     }
 
@@ -44,6 +45,18 @@ public static class PlayersContainer
             player = GetPlayerById(character.OwnerClientId);
 
         return player;
+    }
+
+    public static List<Player> GetPlayersByMultiplayerMode(MultiplayerMode multiplayerMode)
+    {
+        List<Player> players = new List<Player>();
+        foreach (var player in PlayersContainer.players)
+        {
+            if (player.multiplayerMode == multiplayerMode)
+                players.Add(player);
+        }
+
+        return players;
     }
 
     public static void KickPlayer(Player player)

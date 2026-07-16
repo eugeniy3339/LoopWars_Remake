@@ -11,7 +11,7 @@ using UnityEngine.SceneManagement;
 public class LocalMultiplayerLobbyManager : MonoBehaviour
 {
     private static LocalMultiplayerLobbyManager _i;
-    public static LocalMultiplayerLobbyManager Instance { get { if (_i == null) { _i = FindObjectOfType<LocalMultiplayerLobbyManager>(); } return _i; } private set { _i = value; } }
+    public static LocalMultiplayerLobbyManager Instance { get { if (_i == null) { _i = FindObjectOfType<LocalMultiplayerLobbyManager>(true); } return _i; } private set { _i = value; } }
 
     private PlayerInputManager playerInputManager;
 
@@ -19,6 +19,7 @@ public class LocalMultiplayerLobbyManager : MonoBehaviour
     private List<Player> readyPlayers = new List<Player>();
 
     private List<int> usedColors = new List<int>();
+    private Dictionary<Player, int> usedNumbersForNames = new Dictionary<Player, int>();
 
     public static event Action<Player> onPlayerJoined;
     public static event Action<Player> onPlayerLeft;
@@ -30,11 +31,9 @@ public class LocalMultiplayerLobbyManager : MonoBehaviour
     {
         Instance = this;
 
-        playerInputManager = FindAnyObjectByType<PlayerInputManager>();
-    }
+        NetworkMultiplayerLobbyManager.onJoinedLobby += OnJoinedNetworkLobby;
 
-    private void Start()
-    {
+        playerInputManager = FindAnyObjectByType<PlayerInputManager>();
         KickConnectedPlayers();
         enabled = false;
     }
@@ -48,8 +47,10 @@ public class LocalMultiplayerLobbyManager : MonoBehaviour
         Player player = PlayersContainer.GetPlayerByDevice(playerInput.devices[0]);
         if (player != null) return;
 
+        GameMode.multiplayerMode = MultiplayerMode.LocalMultiplayer;
+
         player = new Player(playerInput.devices, playerInput.currentControlScheme);
-        player.name = PlayerSettings.name + (connectedPlayers.Count + 1).ToString();
+        player.name = PlayerSettings.name + GetNumberForName(player).ToString();
         int color = Player.GetRandomColor(usedColors.ToArray());
         player.color = Player.playersColors[color];
         usedColors.Add(color);
@@ -88,7 +89,27 @@ public class LocalMultiplayerLobbyManager : MonoBehaviour
     {
         OnPlayerUnready(player);
         PlayersContainer.KickPlayer(player);
+        if(Player.playersColors.Contains(player.color) && usedColors.Contains(Player.playersColors.IndexOf(player.color)))
+            usedColors.Remove(Player.playersColors.IndexOf(player.color));
+        if(connectedPlayers.Contains(player))
+            connectedPlayers.Remove(player);
+        if (usedNumbersForNames.ContainsKey(player))
+            usedNumbersForNames.Remove(player);
         onPlayerLeft?.Invoke(player);
+    }
+
+    private int GetNumberForName(Player player)
+    {
+        for(int i = 1; i <= 4; i++)
+        {
+            if(!usedNumbersForNames.ContainsValue(i))
+            {
+                usedNumbersForNames.Add(player, i);
+                return i;
+            }
+        }
+
+        return 0;
     }
 
 
@@ -121,7 +142,7 @@ public class LocalMultiplayerLobbyManager : MonoBehaviour
 
     public bool CanStart()
     {
-        return connectedPlayers.Count > 1 && readyPlayers.Count == connectedPlayers.Count;
+        return gameObject.active && connectedPlayers.Count > 1 && readyPlayers.Count == connectedPlayers.Count;
     }
 
     public void StartGameIfCanTo()
@@ -169,6 +190,11 @@ public class LocalMultiplayerLobbyManager : MonoBehaviour
         }
     }
 
+    private void OnJoinedNetworkLobby(bool isHost, string relayCode)
+    {
+        KickConnectedPlayers();
+    }
+
     private void OnEnable()
     {
         if (playerInputManager != null)
@@ -189,5 +215,10 @@ public class LocalMultiplayerLobbyManager : MonoBehaviour
         LocalLobbyPlayer.onPlayerReady -= OnPlayerReady;
         LocalLobbyPlayer.onPlayerUneady -= OnPlayerUnready;
         LocalLobbyPlayer.onPlayerLeave -= OnPlayerLeave;
+    }
+
+    private void OnDestroy()
+    {
+        NetworkMultiplayerLobbyManager.onJoinedLobby -= OnJoinedNetworkLobby;
     }
 }

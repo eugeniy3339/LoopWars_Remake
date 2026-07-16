@@ -50,7 +50,6 @@ public class Dash : MovementComponent
         if (!CanDash()) return;
 
         if (curDashCoroutine != null) StopCoroutine(curDashCoroutine);
-        print(maxDashTime * (movementManager.curMovementCurrency / maxMovementCurrencyCost));
         curDashCoroutine = StartCoroutine(DashCoro(direction, dashSpeed, maxDashTime * (movementManager.curMovementCurrency / maxMovementCurrencyCost)));
     }
 

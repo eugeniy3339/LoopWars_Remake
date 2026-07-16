@@ -4,15 +4,20 @@ using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using LoopWars.GameMode;
 
 public class GameManager : NetworkBehaviour
 {
+    public static GameManager Instance { get; private set; }
+
     private Coroutine curEndRoundCoroutine;
 
     private int loadedPlayersCount;
 
     private void Awake()
     {
+        Instance = this;
+
         if (curEndRoundCoroutine != null)
             StopCoroutine(curEndRoundCoroutine);
     }
@@ -47,7 +52,10 @@ public class GameManager : NetworkBehaviour
     private void EndRound(Player winner)
     {
         if (!IsServer) return;
-        EndRoundRpc(winner.playerId);
+        if(GameMode.multiplayerMode == MultiplayerMode.NetworkMultiplayer)
+            EndRoundRpc(winner.playerId);
+        else
+            curEndRoundCoroutine = StartCoroutine(EndRoundCoro(winner));
     }
 
     [Rpc(SendTo.Everyone)]
@@ -74,6 +82,33 @@ public class GameManager : NetworkBehaviour
             EndRound(PlayersContainer.GetPlayerByCharacter(alivePlayers[0]));
     }
 
+    private void OnClientDisconnected(ulong playerId)
+    {
+        Player player = PlayersContainer.GetPlayerById(playerId);
+        PlayersContainer.KickPlayer(player);
+
+        if (PlayersContainer.GetPlayersByMultiplayerMode(GameMode.multiplayerMode).Count < 2)
+        {
+            NetworkManager.Singleton.Shutdown();
+        }
+
+    }
+
+    private void OnClientStopped(bool b)
+    {
+        OnGameStopped();
+    }
+
+    private void OnServerStopped(bool b)
+    {
+        OnGameStopped();
+    }
+
+    private void OnGameStopped()
+    {
+        SceneManager.LoadScene(0);
+    }
+
 
 
     private void OnEnable()
@@ -83,14 +118,28 @@ public class GameManager : NetworkBehaviour
             PlayersManager.onPlayerDied += OnPlayerDied;
             NetworkManager.Singleton.SceneManager.OnLoadComplete += OnLoadComplete;
         }
+
+        NetworkManager.Singleton.OnClientStopped += OnClientStopped;
+        NetworkManager.Singleton.OnServerStopped += OnServerStopped;
+        NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnected;
     }
 
     private void OnDisable()
     {
-        if (NetworkManager.Singleton.IsServer)
+        PlayersManager.onPlayerDied -= OnPlayerDied;
+        try
         {
-            PlayersManager.onPlayerDied -= OnPlayerDied;
             NetworkManager.Singleton.SceneManager.OnLoadComplete -= OnLoadComplete;
         }
+        catch { }
+
+        NetworkManager.Singleton.OnClientStopped -= OnClientStopped;
+        NetworkManager.Singleton.OnServerStopped -= OnServerStopped;
+        NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnected;
+    }
+
+    public void Leave()
+    {
+        NetworkManager.Singleton.Shutdown();
     }
 }

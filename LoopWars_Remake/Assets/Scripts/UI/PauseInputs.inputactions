@@ -1,0 +1,46 @@
+{
+    "version": 1,
+    "name": "PauseInputs",
+    "maps": [
+        {
+            "name": "Default",
+            "id": "efd0dadc-acf6-4c59-8938-60841281d548",
+            "actions": [
+                {
+                    "name": "OpenClose",
+                    "type": "Button",
+                    "id": "ba2e8346-0d3b-4cc4-b9f2-64d006361af5",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "40866b5d-8041-4a5e-a131-4acc5faf511d",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "OpenClose",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5d3e9ab9-609a-46ba-bed8-e1d82e928137",
+                    "path": "<Gamepad>/start",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "OpenClose",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
