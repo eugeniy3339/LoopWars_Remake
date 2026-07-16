@@ -49,6 +49,16 @@ public class MainMenu : WindowsManager
         networkMultiplayerReadyButton.gameObject.SetActive(false);
         networkMultiplayerUnreadyButton.gameObject.SetActive(false);
         networkMultiplayerStartButton.gameObject.SetActive(false);
+
+        leaveNetworkLobbyButton.gameObject.SetActive(false);
+
+        createNetworkLobbyButton.gameObject.SetActive(true);
+        relayCodeInputField.gameObject.SetActive(true);
+        joinNetworkLobbyButton.gameObject.SetActive(true);
+
+        relayCodeText.gameObject.SetActive(false);
+        relayCodeText.text = string.Empty;
+
         networkMultiplayerStartButton.interactable = false;
     }
 
@@ -90,7 +100,15 @@ public class MainMenu : WindowsManager
         networkMultiplayerReadyButton.gameObject.SetActive(true);
         networkMultiplayerUnreadyButton.gameObject.SetActive(false);
         networkMultiplayerStartButton.gameObject.SetActive(isHost);
-        relayCodeText.text = lobbyCode;
+
+        leaveNetworkLobbyButton.gameObject.SetActive(true);
+
+        createNetworkLobbyButton.gameObject.SetActive(false);
+        relayCodeInputField.gameObject.SetActive(false);
+        joinNetworkLobbyButton.gameObject.SetActive(false);
+
+        relayCodeText.gameObject.SetActive(true);
+        relayCodeText.text = lobbyCode.ToUpper();
     }
 
     private void OnLeftNetworkLobby()
@@ -98,6 +116,14 @@ public class MainMenu : WindowsManager
         networkMultiplayerReadyButton.gameObject.SetActive(false);
         networkMultiplayerUnreadyButton.gameObject.SetActive(false);
         networkMultiplayerStartButton.gameObject.SetActive(false);
+
+        leaveNetworkLobbyButton.gameObject.SetActive(false);
+
+        createNetworkLobbyButton.gameObject.SetActive(true);
+        relayCodeInputField.gameObject.SetActive(true);
+        joinNetworkLobbyButton.gameObject.SetActive(true);
+
+        relayCodeText.gameObject.SetActive(false);
         relayCodeText.text = string.Empty;
     }
 
