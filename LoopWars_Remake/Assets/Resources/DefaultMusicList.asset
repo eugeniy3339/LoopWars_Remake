@@ -13,5 +13,7 @@ MonoBehaviour:
   m_Name: DefaultMusicList
   m_EditorClassIdentifier: 
   musicMapsPairs:
-  - music: {fileID: 0}
-    maps: {fileID: 0}
+  - music: {fileID: 11400000, guid: d372ae38d1b00494b87b3044352506bd, type: 2}
+    maps: {fileID: 11400000, guid: 51d8fb40ab5ac944489b9000b7b16036, type: 2}
+  - music: {fileID: 11400000, guid: 925fbf121f05563479373b19d9176c02, type: 2}
+    maps: {fileID: 11400000, guid: 51d8fb40ab5ac944489b9000b7b16036, type: 2}

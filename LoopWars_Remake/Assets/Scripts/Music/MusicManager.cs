@@ -1,18 +1,12 @@
 using System;
+using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
-public class MusicManager : MonoBehaviour
+public class MusicManager : NetworkBehaviour
 {
     public static MusicManager Instance { get; private set; }
 
-    [SerializeField] private SoundScriptableObject mainMenuMusic;
-
-    private const int gameSceneIndex = 1;
-
     private SoundScript curMusicScript;
-    private bool mainMenu = true;
-
     public SoundScriptableObject curMusic { get; private set; }
 
     public static event Action<SoundScriptableObject> onMusicStarted;
@@ -20,30 +14,35 @@ public class MusicManager : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance != null) { Destroy(gameObject); return; }
-
         Instance = this;
-        OnMainMenuLoaded();
     }
 
-    private void OnGameSceneLoaded()
+    private void OnAllPlayersLoaded()
     {
-        mainMenu = false;
-        StartNextMusic(MusicListScriptableObject.Instance.GetRandomMusic().music);
-    }
-
-    private void OnMainMenuLoaded()
-    {
-        mainMenu = true;
-        StartNextMusic(mainMenuMusic);
+        StartNextMusic();
     }
 
     private void OnMusicStopped(SoundScript soundScript)
     {
-        StartNextMusic(MusicListScriptableObject.Instance.GetRandomMusic().music);
+        StartNextMusic();
     }
 
-    private void StopPreviousMusic()
+    private void StartNextMusic()
+    {
+        MusicListScriptableObject.SoundMapPair musicToPlay = MusicListScriptableObject.Instance.GetRandomMusic();
+        if (IsSpawned && IsServer)
+            StartNextMusicRpc(MusicListScriptableObject.Instance.musicMapsPairs.IndexOf(musicToPlay));
+        else
+            StartNextMusic(musicToPlay.music);
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void StartNextMusicRpc(int musicIndex)
+    {
+        StartNextMusic(MusicListScriptableObject.Instance.musicMapsPairs[musicIndex].music);
+    }
+
+    private void StopCurMusic()
     {
         if (curMusicScript == null) return;
         curMusicScript.onSoundFinished -= OnMusicStopped;
@@ -53,28 +52,21 @@ public class MusicManager : MonoBehaviour
 
     private void StartNextMusic(SoundScriptableObject musicSound)
     {
-        StopPreviousMusic();
+        StopCurMusic();
         curMusic = musicSound;
         curMusicScript = SoundsManager.StartSound(musicSound, null, Vector2.zero, 2f, true);
         curMusicScript.onSoundFinished += OnMusicStopped;
         onMusicStarted?.Invoke(musicSound);
     }
 
-    private void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
-    {
-        if (scene.buildIndex == gameSceneIndex && !mainMenu)
-            OnGameSceneLoaded();
-        else
-            OnMainMenuLoaded();
-    }
-
     private void OnEnable()
     {
-        SceneManager.sceneLoaded += OnSceneLoaded;
+        GameManager.onAllThePlayersLoaded += OnAllPlayersLoaded;
     }
 
     private void OnDisable()
     {
-        SceneManager.sceneLoaded -= OnSceneLoaded;
+        GameManager.onAllThePlayersLoaded -= OnAllPlayersLoaded;
+        StopCurMusic();
     }
 }

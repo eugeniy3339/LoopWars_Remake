@@ -168,18 +168,6 @@ public class LocalMultiplayerLobbyManager : MonoBehaviour
 
 
 
-    private void OnGameStarted(MultiplayerMode multiplayerMode, string relayCode)
-    {
-        if (multiplayerMode == MultiplayerMode.LocalMultiplayer)
-        {
-            
-        }
-        else
-        {
-            KickConnectedPlayers();
-        }
-    }
-
     private void KickConnectedPlayers()
     {
         for (int i = PlayersContainer.players.Count - 1; i >= 0; i--)

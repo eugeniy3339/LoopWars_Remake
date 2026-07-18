@@ -1,11 +1,11 @@
+using LoopWars.GameMode;
 using LoopWars.Players;
-using System.Collections.Generic;
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using LoopWars.GameMode;
-using System;
 
 public class GameManager : NetworkBehaviour
 {
@@ -15,7 +15,11 @@ public class GameManager : NetworkBehaviour
 
     private int loadedPlayersCount;
 
+    public static event Action onAllThePlayersLoaded;
     public static event Action onGameStarted;
+    public static event Action onGameEnded;
+
+    private bool subscribedToPlayerDiedEvent = false;
 
     private void Awake()
     {
@@ -34,14 +38,30 @@ public class GameManager : NetworkBehaviour
 
         if (loadedPlayersCount >= NetworkManager.Singleton.ConnectedClients.Count)
         {
-            onGameStarted?.Invoke();
+            onAllThePlayersLoaded?.Invoke();
         }
     }
+
+
+
+    private void EndCurRound()
+    {
+        UnsubscribeFromOnPlayerDiedEvent();
+        onGameEnded?.Invoke();
+    }
+
+    private void StartNextRound()
+    {
+        SubscribeToOnPlayerDiedEvent();
+        onGameStarted?.Invoke();
+    }
+
+
 
     private void EndRound(Player winner)
     {
         if (!IsServer) return;
-        if(GameMode.multiplayerMode == MultiplayerMode.NetworkMultiplayer)
+        if (GameMode.multiplayerMode == MultiplayerMode.NetworkMultiplayer)
             EndRoundRpc(winner.playerId);
         else
             curEndRoundCoroutine = StartCoroutine(EndRoundCoro(winner));
@@ -55,21 +75,47 @@ public class GameManager : NetworkBehaviour
 
     private IEnumerator EndRoundCoro(Player winner)
     {
+        EndCurRound();
         Debug.Log(winner.name + " has won!");
 
         yield return new WaitForSeconds(3f);
 
-        if (IsServer)
-            NetworkManager.SceneManager.LoadScene("GameScene", LoadSceneMode.Single);
+        /*if (IsServer)
+            NetworkManager.SceneManager.LoadScene("GameScene", LoadSceneMode.Single);*/
+        StartNextRound();
+    }
+
+
+
+    private void OnMusicStarted(SoundScriptableObject music)
+    {
+        StartNextRound();
     }
 
 
 
     private void OnPlayerDied(Character character, List<Character> alivePlayers) // On player object is destroyed
     {
-        if(alivePlayers.Count == 1)
+        if (alivePlayers.Count == 1)
             EndRound(PlayersContainer.GetPlayerByCharacter(alivePlayers[0]));
     }
+
+    private void SubscribeToOnPlayerDiedEvent()
+    {
+        if (!NetworkManager.Singleton.IsServer) return;
+        if (subscribedToPlayerDiedEvent) return;
+
+        subscribedToPlayerDiedEvent = true;
+        PlayersManager.onPlayerDied += OnPlayerDied;
+    }
+
+    private void UnsubscribeFromOnPlayerDiedEvent()
+    {
+        subscribedToPlayerDiedEvent = false;
+        PlayersManager.onPlayerDied -= OnPlayerDied;
+    }
+
+
 
     private void OnClientDisconnected(ulong playerId)
     {
@@ -103,19 +149,17 @@ public class GameManager : NetworkBehaviour
     private void OnEnable()
     {
         if (NetworkManager.Singleton.IsServer)
-        {
-            PlayersManager.onPlayerDied += OnPlayerDied;
             NetworkManager.Singleton.SceneManager.OnLoadComplete += OnLoadComplete;
-        }
 
         NetworkManager.Singleton.OnClientStopped += OnClientStopped;
         NetworkManager.Singleton.OnServerStopped += OnServerStopped;
         NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnected;
+
+        MusicManager.onMusicStarted += OnMusicStarted;
     }
 
     private void OnDisable()
     {
-        PlayersManager.onPlayerDied -= OnPlayerDied;
         try
         {
             NetworkManager.Singleton.SceneManager.OnLoadComplete -= OnLoadComplete;
@@ -125,6 +169,8 @@ public class GameManager : NetworkBehaviour
         NetworkManager.Singleton.OnClientStopped -= OnClientStopped;
         NetworkManager.Singleton.OnServerStopped -= OnServerStopped;
         NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnected;
+
+        MusicManager.onMusicStarted -= OnMusicStarted;
     }
 
     public void Leave()

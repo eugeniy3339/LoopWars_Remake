@@ -73,6 +73,15 @@ public class WeaponsSpawner : NetworkBehaviour
         weaponToPickUp.NetworkObject.Spawn(true);
     }
 
+    private void DespawnWeapons()
+    {
+        foreach(var weapon in spawnedWeapons)
+        {
+            if(weapon.IsSpawned)
+                weapon.NetworkObject.Despawn(true);
+        }
+    }
+
 
 
     private Vector2 GetRandomWeaponSpawnPosition((float, float) minMaxHorizontalPosition, float height, float startHorizontalPos = 0f)
@@ -107,6 +116,21 @@ public class WeaponsSpawner : NetworkBehaviour
         return time * Random.Range(1f, maxRandomMultiplier);
     }
 
+
+    private void OnMapDespawned()
+    {
+        DespawnWeapons();
+    }
+
+    private void OnEnable()
+    {
+        MapsManager.onMapDespawned += OnMapDespawned;
+    }
+
+    private void OnDisable()
+    {
+        MapsManager.onMapDespawned -= OnMapDespawned;
+    }
 
 
     private enum WeaponSpawnType

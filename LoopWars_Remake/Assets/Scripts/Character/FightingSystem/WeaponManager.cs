@@ -52,7 +52,7 @@ public class WeaponManager : NetworkBehaviour
         {
             if(curWeapon == null)
                 curWeapon = Weapon.FindWeapon(OwnerClientId);
-            curWeapon.OnAttackerSpawned(character);
+            curWeapon.OnAttackerChanged(character);
             if(curWeaponScriptableObject == null)
                 curWeaponScriptableObject = curWeapon.weaponScriptableObject;
         }

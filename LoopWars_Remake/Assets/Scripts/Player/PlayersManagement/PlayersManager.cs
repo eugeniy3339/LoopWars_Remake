@@ -18,8 +18,6 @@ public class PlayersManager : NetworkBehaviour
 
     public static event Action<Character, List<Character>> onPlayerDied;
 
-    private bool spawnedPlayers;
-
     private void Awake()
     {
         try
@@ -40,12 +38,21 @@ public class PlayersManager : NetworkBehaviour
         SpawnPlayers();
     }
 
+    private void DespawnPlayers()
+    {
+        if (!NetworkManager.Singleton.IsServer) return;
+
+        foreach (var character in FindObjectsOfType<Character>())
+        {
+            if(character.IsSpawned)
+                character.NetworkObject.Despawn(true);
+        }
+    }
+
     private void SpawnPlayers()
     {
         if (!NetworkManager.Singleton.IsServer) return;
-        if (spawnedPlayers) return;
-
-        spawnedPlayers = true;
+        DespawnPlayers();
 
         foreach (var player in PlayersContainer.players)
         {
