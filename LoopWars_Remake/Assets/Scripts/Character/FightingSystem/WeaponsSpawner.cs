@@ -98,7 +98,8 @@ public class WeaponsSpawner : NetworkBehaviour
 
     private WeaponScriptableObject GetRandomWeapon()
     {
-        return WeaponsListScriptableObject.Instance.weapons[Random.Range(0, WeaponsListScriptableObject.Instance.weapons.Count)];
+        //return WeaponsListScriptableObject.Instance.weapons[Random.Range(0, WeaponsListScriptableObject.Instance.weapons.Count)];
+        return MapHandler.Instance.weaponsList.GetRandomWeapon();
     }
 
     private float GetRandomizedTime(float time, float maxRandomMultiplier)

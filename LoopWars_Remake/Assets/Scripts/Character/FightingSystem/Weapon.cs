@@ -38,6 +38,7 @@ public abstract class Weapon : NetworkBehaviour
     private int curProjectileIndex;
 
     public static event Action<Weapon> onWeaponSpawned;
+    public event Action<Weapon> onWeaponDespawned;
 
     public event Action onAttackCooldown;
     public static event Action<Weapon, WeaponScriptableObject> onShootStatic;
@@ -74,7 +75,7 @@ public abstract class Weapon : NetworkBehaviour
         base.OnNetworkDespawn();
 
         weaponScriptableObjectIndex.OnValueChanged -= OnWeaponScriptableObjectIndexChanged;
-        DespawnProjectiles();
+        onWeaponDespawned?.Invoke(this);
     }
 
     private void OnWeaponScriptableObjectIndexChanged(int oldIndex, int curIndex)
@@ -100,26 +101,10 @@ public abstract class Weapon : NetworkBehaviour
 
         for(int i = 0; i < count; i++)
         {
-            projectiles.Add(Projectile.CreateNewProjectile(bulletScriptableObject, attacker, false));
+            projectiles.Add(Projectile.CreateNewProjectile(this, bulletScriptableObject, attacker, false));
         }
 
         return projectiles;
-    }
-
-    private void DespawnProjectiles()
-    {
-        DespawnProjectiles(spawnedProjectiles);
-    }
-
-    private void DespawnProjectiles(List<Projectile> projectiles)
-    {
-        if (projectiles == null) return;
-        foreach(var projectile in projectiles)
-        {
-            projectile.DespawnProjectile();
-        }
-
-        projectiles.Clear();
     }
 
     private void Update()

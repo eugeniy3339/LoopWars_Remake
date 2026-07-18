@@ -14,6 +14,9 @@ public class MapHandler : MonoBehaviour
     public Transform minWeaponsSpawnPos { get { return _minWeaponsSpawnPos; } }
     public Transform maxWeaponsSpawnPos { get { return _maxWeaponsSpawnPos; } }
 
+    [SerializeField] private WeaponsListScriptableObject _weaponsList;
+    public WeaponsListScriptableObject weaponsList { get { if (_weaponsList == null) { _weaponsList = WeaponsListScriptableObject.Instance; } return _weaponsList; } }
+
     private void Awake()
     {
         Instance = this;

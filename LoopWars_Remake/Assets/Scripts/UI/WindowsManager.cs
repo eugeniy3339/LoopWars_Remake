@@ -60,6 +60,11 @@ public class WindowsManager : MonoBehaviour
         return panels.Find((x) => x.panel == panel);
     }
 
+    public void Quit()
+    {
+        Application.Quit();
+    }
+
     [Serializable]
     public class Panel
     {

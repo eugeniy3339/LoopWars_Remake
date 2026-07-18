@@ -424,10 +424,14 @@ public class MovementManager : NetworkBehaviour
             lastMoveDir = moveDir;
         }
 
-        if (Mathf.Abs(moveDir) >= 0.1f)
-            CallOnStartedMovingEventRpc();
-        else
-            CallOnStopedMovingEventRpc();
+
+        if (NetworkObject.IsSpawned)
+        {
+            if (Mathf.Abs(moveDir) >= 0.1f)
+                CallOnStartedMovingEventRpc();
+            else
+                CallOnStopedMovingEventRpc();
+        }
     }
 
     [Rpc(SendTo.Everyone)]

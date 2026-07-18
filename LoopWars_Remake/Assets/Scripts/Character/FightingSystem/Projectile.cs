@@ -147,6 +147,11 @@ public class Projectile : MonoBehaviour
         gameObject.SetActive(false);
     }
 
+    private void DespawnProjectile()
+    {
+        Destroy(gameObject);
+    }
+
     public void LaunchProjectile(Vector2 position, Vector2 direction)
     {
         gameObject.SetActive(true);
@@ -160,14 +165,24 @@ public class Projectile : MonoBehaviour
         curCanDamageAttackerTimer = 0.1f;
     }
 
-    public void DespawnProjectile()
+    private void OnWeaponDespawned(Weapon weapon)
     {
-        Destroy(gameObject);
+        weapon.onWeaponDespawned -= OnWeaponDespawned;
+        if (!gameObject.active)
+            DespawnProjectile();
+        else
+            despawnOnDisable = true;
     }
 
 
 
+    public static Projectile CreateNewProjectile(Weapon weapon, BulletScriptableObject bulletScriptableObject, Character attacker, bool despawnOnDestroy)
+    {
+        Projectile projectile = SpawnProjectile(bulletScriptableObject, attacker, despawnOnDestroy);
+        weapon.onWeaponDespawned += projectile.OnWeaponDespawned;
 
+        return projectile;
+    }
 
     public static Projectile CreateNewProjectile(BulletScriptableObject bulletScriptableObject, Character attacker, bool despawnOnDestroy)
     {

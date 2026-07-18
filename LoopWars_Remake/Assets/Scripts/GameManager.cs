@@ -5,6 +5,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using LoopWars.GameMode;
+using System;
 
 public class GameManager : NetworkBehaviour
 {
@@ -13,6 +14,8 @@ public class GameManager : NetworkBehaviour
     private Coroutine curEndRoundCoroutine;
 
     private int loadedPlayersCount;
+
+    public static event Action onGameStarted;
 
     private void Awake()
     {
@@ -31,22 +34,8 @@ public class GameManager : NetworkBehaviour
 
         if (loadedPlayersCount >= NetworkManager.Singleton.ConnectedClients.Count)
         {
-            StartGame();
+            onGameStarted?.Invoke();
         }
-    }
-
-    private void SpawnMap()
-    {
-        if (!IsServer) return;
-        GameObject map = Instantiate(MapsListScriptableObject.Instance.GetRandomMap());
-        map.GetComponent<NetworkObject>().Spawn(true);
-    }
-
-    private void StartGame()
-    {
-        if (MapHandler.Instance == null)
-            SpawnMap();
-        PlayersManager.Instance.SpawnPlayers();
     }
 
     private void EndRound(Player winner)

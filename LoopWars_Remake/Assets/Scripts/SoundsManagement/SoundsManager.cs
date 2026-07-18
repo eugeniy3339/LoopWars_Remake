@@ -5,7 +5,7 @@ using UnityEngine;
 public static class SoundsManager
 {
     private static GameObject sop;
-    private static GameObject _soundObjectPrefab
+    private static GameObject soundObjectPrefab
     {
         get 
         {
@@ -79,7 +79,7 @@ public static class SoundsManager
 
     private static SoundScript SpawnSoundObject(Transform parent, Vector3 localPosition, bool dontDestroyOnLoad)
     {
-        GameObject soundObject = GameObject.Instantiate(_soundObjectPrefab, parent);
+        GameObject soundObject = GameObject.Instantiate(soundObjectPrefab, parent);
         soundObject.transform.localPosition = localPosition;
         if (dontDestroyOnLoad)
             GameObject.DontDestroyOnLoad(soundObject);
@@ -101,8 +101,6 @@ public static class SoundsManager
         {
             soundScript.PauseSound();
         }
-        
-        Debug.Log("Sounds paused");
     }
 
     public static void ResumeSounds()

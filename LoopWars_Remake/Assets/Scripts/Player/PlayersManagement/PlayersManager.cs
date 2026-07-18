@@ -35,16 +35,12 @@ public class PlayersManager : NetworkBehaviour
         catch { }
     }
 
-
-
-
-
-    public override void OnNetworkSpawn()
+    private void OnMapSpawned()
     {
-        if (!IsServer) return;
+        SpawnPlayers();
     }
 
-    public void SpawnPlayers()
+    private void SpawnPlayers()
     {
         if (!NetworkManager.Singleton.IsServer) return;
         if (spawnedPlayers) return;
@@ -107,6 +103,7 @@ public class PlayersManager : NetworkBehaviour
         if (NetworkManager.Singleton.IsServer)
         {
             HealthSystem.onCharacterDied += OnPlayerDied;
+            MapsManager.onMapSpawned += OnMapSpawned;
         }
     }
 
@@ -115,6 +112,7 @@ public class PlayersManager : NetworkBehaviour
         if (NetworkManager.Singleton.IsServer)
         {
             HealthSystem.onCharacterDied -= OnPlayerDied;
+            MapsManager.onMapSpawned -= OnMapSpawned;
         }
     }
 }

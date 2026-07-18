@@ -7,4 +7,9 @@ public class WeaponsListScriptableObject : ScriptableObject
 {
     public static WeaponsListScriptableObject Instance { get { return Resources.Load<WeaponsListScriptableObject>("DefaultWeaponsList"); } }
     public List<WeaponScriptableObject> weapons = new List<WeaponScriptableObject>();
+
+    public WeaponScriptableObject GetRandomWeapon()
+    {
+        return weapons[Random.Range(0, weapons.Count)];
+    }
 }
