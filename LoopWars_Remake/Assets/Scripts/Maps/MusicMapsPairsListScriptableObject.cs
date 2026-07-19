@@ -2,10 +2,10 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "DefaultMusicList", menuName = "Music/Create new Music List")]
-public class MusicListScriptableObject : ScriptableObject
+[CreateAssetMenu(fileName = "DefaultMusicMapsPairsList", menuName = "Maps/Create new Music Maps Pairs List")]
+public class MusicMapsPairsListScriptableObject : ScriptableObject
 {
-    public static MusicListScriptableObject Instance { get { return Resources.Load<MusicListScriptableObject>("DefaultMusicList"); } }
+    public static MusicMapsPairsListScriptableObject Instance { get { return Resources.Load<MusicMapsPairsListScriptableObject>("DefaultMusicMapsPairsList"); } }
     public List<SoundMapPair> musicMapsPairs = new List<SoundMapPair>();
 
     public SoundMapPair GetRandomMusic()
@@ -18,6 +18,18 @@ public class MusicListScriptableObject : ScriptableObject
         SoundMapPair pair = musicMapsPairs.Find((p) => p.music == music);
         if (pair == null) return null;
         return pair.maps;
+    }
+
+    public int GetIndex(SoundScriptableObject soundScriptableObject)
+    {
+        try
+        {
+            return musicMapsPairs.IndexOf(musicMapsPairs.Find((x) => x.music == soundScriptableObject));
+        }
+        catch
+        {
+            return 0;
+        }
     }
 
     [Serializable]

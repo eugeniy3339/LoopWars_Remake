@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4405750366111189310}
-  - component: {fileID: 7027079867607794942}
+  - component: {fileID: 7780810267495995092}
   m_Layer: 0
   m_Name: MusicManager
   m_TagString: Untagged
@@ -32,7 +32,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 6169057955722919470}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7027079867607794942
+--- !u!114 &7780810267495995092
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -41,7 +41,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4752619101347880355}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 06f6d428f85cefe4d98dc0633a018a27, type: 3}
+  m_Script: {fileID: 11500000, guid: 9c03e78d295c77a439cda2bd0802a6d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1

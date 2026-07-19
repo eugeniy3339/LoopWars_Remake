@@ -30,7 +30,7 @@ public class MapsManager : NetworkBehaviour
         if (!IsServer) return;
         DespawnMap();
 
-        GameObject map = Instantiate(MusicManager.Instance?.curMusic != null ? MusicListScriptableObject.Instance.GetMaps(MusicManager.Instance.curMusic).GetRandomMap() : MapsListScriptableObject.Instance.GetRandomMap());
+        GameObject map = Instantiate(MusicManager.curMusic != null ? MusicMapsPairsListScriptableObject.Instance.GetMaps(MusicManager.curMusic).GetRandomMap() : MapsListScriptableObject.Instance.GetRandomMap());
         map.GetComponent<NetworkObject>().Spawn(true);
         onMapSpawned?.Invoke();
     }
