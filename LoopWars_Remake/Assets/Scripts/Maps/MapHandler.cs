@@ -6,6 +6,9 @@ using UnityEngine;
 public class MapHandler : MonoBehaviour
 {
     public static MapHandler Instance
+    {
+        get
+        {
             foreach(var MapHandler in FindObjectsOfType<MapHandler>())
             {
                 if (!MapHandler.despawned)
