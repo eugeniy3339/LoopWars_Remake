@@ -16,6 +16,7 @@ public class PlayersManager : NetworkBehaviour
     [SerializeField] private GameObject playerPrefab;
     [HideInInspector] public List<Character> alivePlayers = new List<Character>();
 
+    public static event Action onAllPlayersSpawned;
     public static event Action<Character, List<Character>> onPlayerDied;
 
     private void Awake()
@@ -78,6 +79,8 @@ public class PlayersManager : NetworkBehaviour
 
             OnPlayerCreated(character, GameMode.multiplayerMode);
         }
+
+        onAllPlayersSpawned?.Invoke();
     }
 
 

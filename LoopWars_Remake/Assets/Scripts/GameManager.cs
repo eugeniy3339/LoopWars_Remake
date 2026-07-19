@@ -52,7 +52,7 @@ public class GameManager : NetworkBehaviour
 
     private void StartNextRound()
     {
-        SubscribeToOnPlayerDiedEvent();
+        UnsubscribeFromOnPlayerDiedEvent();
         onGameStarted?.Invoke();
     }
 
@@ -115,6 +115,11 @@ public class GameManager : NetworkBehaviour
         PlayersManager.onPlayerDied -= OnPlayerDied;
     }
 
+    private void OnAllPlayersSpawned()
+    {
+        SubscribeToOnPlayerDiedEvent();
+    }
+
 
 
     private void OnClientDisconnected(ulong playerId)
@@ -156,6 +161,7 @@ public class GameManager : NetworkBehaviour
         NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnected;
 
         MusicManager.onMusicStarted += OnMusicStarted;
+        PlayersManager.onAllPlayersSpawned += OnAllPlayersSpawned;
     }
 
     private void OnDisable()
@@ -171,6 +177,7 @@ public class GameManager : NetworkBehaviour
         NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnected;
 
         MusicManager.onMusicStarted -= OnMusicStarted;
+        PlayersManager.onAllPlayersSpawned -= OnAllPlayersSpawned;
     }
 
     public void Leave()
