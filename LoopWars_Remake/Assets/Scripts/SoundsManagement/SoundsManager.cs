@@ -39,25 +39,35 @@ public static class SoundsManager
 
     private static List<SoundScript> _spawnedSounds = new List<SoundScript>();
 
-    public static SoundScript StartRandomSound(SoundsListScriptableObject soundList, Transform parentTransform, bool dontDestroyOnLoad = false)
+    public static SoundScript StartSound(SoundsListScriptableObject soundList, Transform parentTransform, bool dontDestroyOnLoad = false)
     {
-        return StartRandomSound(soundList, parentTransform, Vector2.zero, out SoundScriptableObject soundScriptableObject, dontDestroyOnLoad);
+        return StartSound(soundList, parentTransform, Vector2.zero, out SoundScriptableObject soundScriptableObject, dontDestroyOnLoad);
     }
 
-    public static SoundScript StartRandomSound(SoundsListScriptableObject soundList, Transform parentTransform, out SoundScriptableObject soundScriptableObject, bool dontDestroyOnLoad = false)
+    public static SoundScript StartSound(SoundsListScriptableObject soundList, Transform parentTransform, out SoundScriptableObject soundScriptableObject, bool dontDestroyOnLoad = false)
     {
-        return StartRandomSound(soundList, parentTransform, Vector2.zero, out soundScriptableObject, dontDestroyOnLoad);
+        return StartSound(soundList, parentTransform, Vector2.zero, out soundScriptableObject, dontDestroyOnLoad);
     }
 
-    public static SoundScript StartRandomSound(SoundsListScriptableObject soundList, Transform parentTransform, Vector2 localPosition, bool dontDestroyOnLoad = false)
+    public static SoundScript StartSound(SoundsListScriptableObject soundList, Transform parentTransform, Vector2 localPosition, bool dontDestroyOnLoad = false)
     {
-        return StartRandomSound(soundList, parentTransform, localPosition, out SoundScriptableObject soundScriptableObject, dontDestroyOnLoad);
+        return StartSound(soundList, parentTransform, localPosition, out SoundScriptableObject soundScriptableObject, dontDestroyOnLoad);
     }
 
-    public static SoundScript StartRandomSound(SoundsListScriptableObject soundList, Transform parentTransform, Vector2 localPosition, out SoundScriptableObject soundScriptableObject, bool dontDestroyOnLoad = false)
+    public static SoundScript StartSound(SoundsListScriptableObject soundList, Transform parentTransform, Vector2 localPosition, out SoundScriptableObject soundScriptableObject, bool dontDestroyOnLoad = false)
     {
-        soundScriptableObject = soundList.sounds[UnityEngine.Random.Range(0, soundList.sounds.Count)];
-        if (soundScriptableObject == null) 
+        return StartSound(soundList.sounds, parentTransform, localPosition, out soundScriptableObject, dontDestroyOnLoad);
+    }
+
+    public static SoundScript StartSound(List<SoundScriptableObject> sounds, Transform parentTransform, bool dontDestroyOnLoad = false)
+    {
+        return StartSound(sounds, parentTransform, Vector2.zero, out SoundScriptableObject soundScriptableObject, dontDestroyOnLoad);
+    }
+
+    public static SoundScript StartSound(List<SoundScriptableObject> sounds, Transform parentTransform, Vector2 localPosition, out SoundScriptableObject soundScriptableObject, bool dontDestroyOnLoad = false)
+    {
+        soundScriptableObject = sounds[UnityEngine.Random.Range(0, sounds.Count)];
+        if (soundScriptableObject == null)
             return null;
         return StartSound(soundScriptableObject, parentTransform, localPosition, 0f, dontDestroyOnLoad);
     }

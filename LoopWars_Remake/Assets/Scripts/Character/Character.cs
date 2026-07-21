@@ -12,6 +12,8 @@ public class Character : NetworkBehaviour
     public Animator animator { get; protected set;   }
     private PlayerInput _pI;
     public PlayerInput playerInput { get { if (_pI == null) { _pI = GetComponent<PlayerInput>(); } return _pI; } protected set { _pI = value; } }
+    private AnimationEventsHandler _aEH;
+    public AnimationEventsHandler animationEventsHandler { get { if (_aEH == null) { _aEH = GetComponent<AnimationEventsHandler>(); } return _aEH; } protected set { _aEH = value; } }
 
     public MovementManager movementManager { get; protected set; }
     public Movement movement { get; protected set; }

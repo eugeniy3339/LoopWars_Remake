@@ -14,6 +14,7 @@ public class WeaponScriptableObject : ScriptableObject
     public BulletScriptableObject gunThrowableScriptableObject;
     public GameObject fireVFXPrefab;
     public SoundScriptableObject fireSound;
+    public SoundsListScriptableObject fireSounds;
 }
 
 #if UNITY_EDITOR
@@ -26,6 +27,8 @@ public class WeaponScriptableObjectEditor : Editor
         serializedObject.Update();
 
         SerializedProperty infinityBullets = serializedObject.FindProperty("infinityBullets");
+        SerializedProperty fireSound = serializedObject.FindProperty("fireSound");
+        SerializedProperty fireSounds = serializedObject.FindProperty("fireSounds");
 
         SerializedProperty prop = serializedObject.GetIterator();
         bool enterChildren = true;
@@ -48,6 +51,16 @@ public class WeaponScriptableObjectEditor : Editor
                 {
                     EditorGUILayout.PropertyField(prop);
                 }
+            }
+            else if(prop.name == "fireSound")
+            {
+                if (fireSounds.boxedValue == null || fireSound.boxedValue != null)
+                    EditorGUILayout.PropertyField(prop);
+            }
+            else if (prop.name == "fireSounds")
+            {
+                if (fireSound.boxedValue == null || fireSounds.boxedValue != null)
+                    EditorGUILayout.PropertyField(prop);
             }
             else
             {

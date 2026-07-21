@@ -9,13 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3ef6212aa23171d46ba33e8e603fe168, type: 3}
+  m_Script: {fileID: 11500000, guid: ff3dc2abf892e8145a9c8bdda2d72e42, type: 3}
   m_Name: Throw
   m_EditorClassIdentifier: 
-  audioClip: {fileID: 8300000, guid: 23c3ceab3e58d704981aa52593f689e8, type: 3}
-  volume: 1
-  pitch: 1
-  loop: 0
-  threeD: 0
-  maxVolumeRandomizer: 1
-  maxPitchRandomizer: 1.3
+  sounds:
+  - {fileID: 11400000, guid: 762ec71fc1ca45b4195c5920540965f9, type: 2}
+  - {fileID: 11400000, guid: de80eea95587db446bd0ddbcdb25d817, type: 2}

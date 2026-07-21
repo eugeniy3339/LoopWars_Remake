@@ -21,6 +21,8 @@ MonoBehaviour:
   canBeDestroyedByAttackersProjectiles: 0
   destroyOnImpact: 1
   bulletDestroyParticlesPrefab: {fileID: 5858374820891711627, guid: 53caffadd1fcfc54aba5209e355fe960, type: 3}
+  bulletDestroySound: {fileID: 0}
+  bulletDestroySounds: {fileID: 11400000, guid: 0cf9443873eaccb4090556a5d7e28d3f, type: 2}
   bulletDestroyScreenShakeTime: 0.3
   bulletDestroyScreenShakeAmplitude: 2
   bulletDestroyScreenShakeFrequency: 3

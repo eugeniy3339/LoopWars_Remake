@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff3dc2abf892e8145a9c8bdda2d72e42, type: 3}
+  m_Name: Step
+  m_EditorClassIdentifier: 
+  sounds:
+  - {fileID: 11400000, guid: 5dc25a3ab4a96c3419b5c06d47b6f79b, type: 2}
+  - {fileID: 11400000, guid: 600fa71746d3c9e4b8c65a9d3937554f, type: 2}
+  - {fileID: 11400000, guid: 0c87e3edfb09c8c4b8fee9638bd7aeda, type: 2}
+  - {fileID: 11400000, guid: 692ea8e9197f6494dbc4d0d46b37331e, type: 2}
+  - {fileID: 11400000, guid: 0213e48879041274bbd236444d585550, type: 2}

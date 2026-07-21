@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff3dc2abf892e8145a9c8bdda2d72e42, type: 3}
+  m_Name: RiffleShot
+  m_EditorClassIdentifier: 
+  sounds:
+  - {fileID: 11400000, guid: 28c66f1d1e948f84ebd9c114fc64dc0c, type: 2}
+  - {fileID: 11400000, guid: cc673542592fe2d448f2ae0da6e485b3, type: 2}
+  - {fileID: 11400000, guid: 633204d33fbc89f4ba2f3ed57bdab6fd, type: 2}

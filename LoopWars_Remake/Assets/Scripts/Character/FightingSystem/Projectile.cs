@@ -187,6 +187,7 @@ public class Projectile : MonoBehaviour
     public static Projectile CreateNewProjectile(BulletScriptableObject bulletScriptableObject, Character attacker, bool despawnOnDestroy)
     {
         Projectile projectile = SpawnProjectile(bulletScriptableObject, attacker, despawnOnDestroy);
+        projectile.gameObject.SetActive(false);
 
         return projectile;
     }

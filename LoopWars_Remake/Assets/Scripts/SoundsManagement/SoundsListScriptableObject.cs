@@ -11,4 +11,18 @@ public class SoundsListScriptableObject : ScriptableObject
     {
         return sounds.Find((sound) => sound.name == name);
     }
+
+    public List<SoundScriptableObject> GetSounds(string name)
+    {
+        List<SoundScriptableObject> sounds = new List<SoundScriptableObject>();
+        foreach(var sound in this.sounds)
+        {
+            if(sound.name == name)
+            {
+                sounds.Add(sound);
+            }
+        }
+
+        return sounds;
+    }
 }

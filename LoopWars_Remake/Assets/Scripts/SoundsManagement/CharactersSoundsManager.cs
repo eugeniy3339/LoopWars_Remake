@@ -3,26 +3,28 @@ using UnityEngine;
 public static class CharactersSoundsManager
 {
     #region Sounds
-    private static SoundsListScriptableObject charactersSounds;
     private static SoundScriptableObject jumpSound;
     private static SoundScriptableObject dashSound;
     private static SoundScriptableObject hitSound;
+    private static SoundScriptableObject deathSound;
+    private static SoundsListScriptableObject stepSound;
     #endregion
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void Initialize()
     {
-        charactersSounds = Resources.Load<SoundsListScriptableObject>("Sounds/CharactersSounds");
-
-        jumpSound = charactersSounds.GetSound("Jump");
-        dashSound = charactersSounds.GetSound("Dash");
-        hitSound = charactersSounds.GetSound("Hit");
+        jumpSound = Resources.Load<SoundScriptableObject>("Sounds/Jump");
+        dashSound = Resources.Load<SoundScriptableObject>("Sounds/Dash");
+        hitSound = Resources.Load<SoundScriptableObject>("Sounds/Hit");
+        deathSound = Resources.Load<SoundScriptableObject>("Sounds/Death");
+        stepSound = Resources.Load<SoundsListScriptableObject>("Sounds/Step");
 
         Jump.onJumpStatic += OnCharacterJumped;
         Jump.onWallJumpStatic += OnCharacterWallJumped;
         Dash.onDashStatic += OnCharacterDashed;
         HealthSystem.onCharacterDamaged += OnCharacterDamaged;
         HealthSystem.onCharacterDied += OnCharacterDied;
+        MovementManager.onCharacterSteped += OnCharacterSteped;
     }
 
     private static void OnCharacterJumped(Character character)
@@ -47,6 +49,11 @@ public static class CharactersSoundsManager
 
     private static void OnCharacterDied(Character character)
     {
-        SoundsManager.StartSound(hitSound, null);
+        SoundsManager.StartSound(deathSound, null);
+    }
+
+    private static void OnCharacterSteped(Character character)
+    {
+        SoundsManager.StartSound(stepSound, null);
     }
 }

@@ -82,6 +82,8 @@ public class MovementManager : NetworkBehaviour
     public static event Action<Character> onStartedMoving;
     public static event Action<Character> onStopedMoving;
 
+    public static event Action<Character> onCharacterSteped;
+
     public float lastMoveDir { get; private set; }
     public float moveDir { get; private set; }
     private Vector2 lastMoveInput;
@@ -305,6 +307,12 @@ public class MovementManager : NetworkBehaviour
         GetOnAWallIfCanTo();
     }
 
+    private void OnAnimationEvent(string evn)
+    {
+        if (evn == "Step")
+            onCharacterSteped?.Invoke(character);
+    }
+
 
 
     private void OnEnable()
@@ -356,6 +364,7 @@ public class MovementManager : NetworkBehaviour
         if (!subscribedOnEvents)
         {
             onGrounded += OnGrounded;
+            character.animationEventsHandler.onAnimationEvent += OnAnimationEvent;
 
             subscribedOnEvents = true;
         }
@@ -381,6 +390,7 @@ public class MovementManager : NetworkBehaviour
     private void UnsubscribeFromEvents()
     {
         onGrounded -= OnGrounded;
+        character.animationEventsHandler.onAnimationEvent -= OnAnimationEvent;
 
         subscribedOnEvents = false;
 

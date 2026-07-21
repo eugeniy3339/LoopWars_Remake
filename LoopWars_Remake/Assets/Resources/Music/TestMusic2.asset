@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: TestMusic2
   m_EditorClassIdentifier: 
   audioClip: {fileID: 8300000, guid: b545fc684099a224598261f2d5a1af0b, type: 3}
-  volume: 1
+  volume: 0.1
   pitch: 1
   loop: 0
   threeD: 0
