@@ -64,9 +64,7 @@ public abstract class Weapon : NetworkBehaviour
 
     private void OnCurAttackerNetworkObjectIDChanged(ulong beforeValue, ulong currentValue)
     {
-        print(currentValue);
         Character character = Character.FindCharacter(currentValue);
-        print(character);
         if (character != null)
         {
             OnAttackerChanged(character);

@@ -78,7 +78,6 @@ public class MapsManager : NetworkBehaviour
 
     private void OnDisable()
     {
-        if (NetworkManager.Singleton.IsServer)
-            GameManager.onGameStarted -= OnGameStarted;
+        GameManager.onGameStarted -= OnGameStarted;
     }
 }

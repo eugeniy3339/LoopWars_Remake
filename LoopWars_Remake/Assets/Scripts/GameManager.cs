@@ -35,9 +35,12 @@ public class GameManager : NetworkBehaviour
         if (sceneName != "GameScene") return;
 
         loadedPlayersCount++;
+        print(NetworkManager.Singleton.ConnectedClients.Count + 1);
+        print(loadedPlayersCount);
 
-        if (loadedPlayersCount >= NetworkManager.Singleton.ConnectedClients.Count)
+        if (loadedPlayersCount >= NetworkManager.Singleton.ConnectedClients.Count + 1)
         {
+            print("onAllThePlayersLoaded");
             onAllThePlayersLoaded?.Invoke();
         }
     }
@@ -52,6 +55,8 @@ public class GameManager : NetworkBehaviour
 
     private void StartNextRound()
     {
+        if (!NetworkManager.Singleton.IsServer) return;
+        print("StartNextRound");
         UnsubscribeFromOnPlayerDiedEvent();
         onGameStarted?.Invoke();
     }
@@ -89,6 +94,7 @@ public class GameManager : NetworkBehaviour
 
     private void OnMusicStarted(SoundScriptableObject music)
     {
+        print("OnMusicStarted");
         StartNextRound();
     }
 
@@ -96,12 +102,14 @@ public class GameManager : NetworkBehaviour
 
     private void OnPlayerDied(Character character, List<Character> alivePlayers) // On player object is destroyed
     {
+        print(gameObject);
         if (alivePlayers.Count == 1)
             EndRound(PlayersContainer.GetPlayerByCharacter(alivePlayers[0]));
     }
 
     private void SubscribeToOnPlayerDiedEvent()
     {
+        print("SubscribeToOnPlayerDiedEvent");
         if (!NetworkManager.Singleton.IsServer) return;
         if (subscribedToPlayerDiedEvent) return;
 
@@ -111,6 +119,7 @@ public class GameManager : NetworkBehaviour
 
     private void UnsubscribeFromOnPlayerDiedEvent()
     {
+        print("UnsubscribeFromOnPlayerDiedEvent");
         subscribedToPlayerDiedEvent = false;
         PlayersManager.onPlayerDied -= OnPlayerDied;
     }
@@ -166,6 +175,7 @@ public class GameManager : NetworkBehaviour
 
     private void OnDisable()
     {
+        UnsubscribeFromOnPlayerDiedEvent();
         try
         {
             NetworkManager.Singleton.SceneManager.OnLoadComplete -= OnLoadComplete;

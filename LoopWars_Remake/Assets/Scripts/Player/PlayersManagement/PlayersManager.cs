@@ -5,7 +5,6 @@ using LoopWars.Players;
 using LoopWars.GameMode;
 using Unity.Netcode;
 using System;
-using UnityEngine.SceneManagement;
 
 public class PlayersManager : NetworkBehaviour
 {
@@ -42,6 +41,7 @@ public class PlayersManager : NetworkBehaviour
     private void DespawnPlayers()
     {
         if (!NetworkManager.Singleton.IsServer) return;
+        print("DespawnPlayers");
 
         foreach (var character in FindObjectsOfType<Character>())
         {
@@ -53,6 +53,7 @@ public class PlayersManager : NetworkBehaviour
     private void SpawnPlayers()
     {
         if (!NetworkManager.Singleton.IsServer) return;
+        print("SpawnPlayers");
         DespawnPlayers();
 
         foreach (var player in PlayersContainer.players)
@@ -119,10 +120,7 @@ public class PlayersManager : NetworkBehaviour
 
     private void OnDisable()
     {
-        if (NetworkManager.Singleton.IsServer)
-        {
-            HealthSystem.onCharacterDied -= OnPlayerDied;
-            MapsManager.onMapSpawned -= OnMapSpawned;
-        }
+        HealthSystem.onCharacterDied -= OnPlayerDied;
+        MapsManager.onMapSpawned -= OnMapSpawned;
     }
 }

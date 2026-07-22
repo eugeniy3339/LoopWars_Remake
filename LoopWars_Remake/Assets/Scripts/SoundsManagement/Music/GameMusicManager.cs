@@ -10,7 +10,8 @@ public class GameMusicManager : NetworkBehaviour
         base.OnNetworkSpawn();
 
         curMusicIndex.OnValueChanged += OnCurMusicIndexChanged;
-        OnCurMusicIndexChanged(0, curMusicIndex.Value);
+        if(!IsServer)
+            OnCurMusicIndexChanged(0, curMusicIndex.Value);
     }
 
     private void OnCurMusicIndexChanged(int oldMusicIndex, int curMusicIndex)
