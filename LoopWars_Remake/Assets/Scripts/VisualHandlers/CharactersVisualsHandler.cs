@@ -48,13 +48,13 @@ public static class CharactersVisualsHandler
     {
         character.animator.Play("Jump");
         Player player = PlayersContainer.GetPlayerByCharacter(character);
-        ParticlesHandler.SpawnParticles(jumpParticlesPrefab, character.movementManager.footPosition.position, Vector2.up, player.color);
+        ParticlesHandler.SpawnParticles(jumpParticlesPrefab, character.movementManager.footPosition.position, Vector2.up, player != null ? player.color : Color.white);
     }
 
     private static void OnCharacterWallJumped(Character character, Vector2 direction)
     {
         Player player = PlayersContainer.GetPlayerByCharacter(character);
-        ParticlesHandler.SpawnParticles(jumpParticlesPrefab, character.movementManager.footPosition.position, direction, player.color);
+        ParticlesHandler.SpawnParticles(jumpParticlesPrefab, character.movementManager.footPosition.position, direction, player != null ? player.color : Color.white);
     }
 
     private static void OnCharacterDashed(Character character, float dashTime)
@@ -62,7 +62,7 @@ public static class CharactersVisualsHandler
         character.animator.Play("Dash");
         character.animator.SetBool("Dashing", true);
         Player player = PlayersContainer.GetPlayerByCharacter(character);
-        ParticleSystem particles = ParticlesHandler.SpawnParticles(dashParticlesPrefab, character.transform.position, character.transform.up, player.color, dashTime);
+        ParticleSystem particles = ParticlesHandler.SpawnParticles(dashParticlesPrefab, character.transform.position, character.transform.up, player != null ? player.color : Color.white, dashTime);
         particles?.transform.SetParent(character.transform);
     }
 
@@ -78,7 +78,7 @@ public static class CharactersVisualsHandler
             Player player = PlayersContainer.GetPlayerByCharacter(character);
             Vector2 directionToTheBullet = damageObject.position - character.transform.position;
             Vector2 spawnPosition = new Vector2(character.transform.position.x, character.transform.position.y) + new Vector2(directionToTheBullet.normalized.x * character.collider.size.x / 2f, directionToTheBullet.normalized.y * character.collider.size.y / 2f);
-            ParticlesHandler.SpawnParticles(bloodParticlesPrefab, spawnPosition, -damageObject.right, player.color);
+            ParticlesHandler.SpawnParticles(bloodParticlesPrefab, spawnPosition, -damageObject.right, player != null ? player.color : Color.white);
         }
         catch
         {
@@ -123,7 +123,7 @@ public static class CharactersVisualsHandler
         try
         {
             Player player = PlayersContainer.GetPlayerByCharacter(character);
-            ParticlesHandler.SpawnParticles(deathParticlesPrefab, character.transform.position, Vector2.up, player.color);
+            ParticlesHandler.SpawnParticles(deathParticlesPrefab, character.transform.position, Vector2.up, player != null ? player.color : Color.white);
         }
         catch
         {

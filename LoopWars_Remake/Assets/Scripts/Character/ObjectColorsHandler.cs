@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections.Generic;
-using LoopWars.Players;
 
 public class ObjectColorsHandler : MonoBehaviour
 {

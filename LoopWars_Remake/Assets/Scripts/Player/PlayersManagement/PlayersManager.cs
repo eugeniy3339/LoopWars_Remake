@@ -27,7 +27,7 @@ public class PlayersManager : NetworkBehaviour
 
             playerInputManager.playerPrefab = playerPrefab;
 
-            if (GameMode.multiplayerMode != MultiplayerMode.LocalMultiplayer)
+            if (GameMode.multiplayerMode != LoopWars.GameMode.PlayMode.LocalMultiplayer)
                 Destroy(playerInputManager);
         }
         catch { }
@@ -64,7 +64,7 @@ public class PlayersManager : NetworkBehaviour
 
             Character character;
             Transform spawnPoint = MapHandler.Instance.GetRandomSpawnPoint();
-            if (GameMode.multiplayerMode == MultiplayerMode.LocalMultiplayer)
+            if (GameMode.multiplayerMode == LoopWars.GameMode.PlayMode.LocalMultiplayer)
             {
                 PlayerInput playerInput = playerInputManager.JoinPlayer(-1, -1, player.controllScheme, player.devices.ToArray());
                 character = playerInput.GetComponent<Character>();
@@ -86,13 +86,13 @@ public class PlayersManager : NetworkBehaviour
 
 
 
-    private void OnPlayerCreated(Character character, MultiplayerMode multiplayerMode)
+    private void OnPlayerCreated(Character character, LoopWars.GameMode.PlayMode multiplayerMode)
     {
         if (!NetworkManager.Singleton.IsServer) return;
         if (alivePlayers.Contains(character)) return;
 
         alivePlayers.Add(character);
-        Player player = multiplayerMode == MultiplayerMode.LocalMultiplayer ? PlayersContainer.GetPlayerByDevice(character.playerInput.devices[0]) : PlayersContainer.GetPlayerById(character.OwnerClientId);
+        Player player = multiplayerMode == LoopWars.GameMode.PlayMode.LocalMultiplayer ? PlayersContainer.GetPlayerByDevice(character.playerInput.devices[0]) : PlayersContainer.GetPlayerById(character.OwnerClientId);
         player.character = character;
     }
 

@@ -23,4 +23,18 @@ public static class PlayerSettings
             PlayerPrefs.Save();
         }
     }
+    public static bool endedTutorial
+    {
+        get
+        {
+            if (!PlayerPrefs.HasKey("EndedTutorial"))
+                return false;
+
+            return PlayerPrefs.GetInt("EndedTutorial") == 1;
+        }
+        set
+        {
+            PlayerPrefs.SetInt("EndedTutorial", value ? 1 : 0);
+        }
+    }
 }

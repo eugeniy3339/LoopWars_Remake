@@ -14,6 +14,7 @@ public class GameManager : NetworkBehaviour
     private Coroutine curEndRoundCoroutine;
 
     private int loadedPlayersCount;
+    private bool loadedAllPlayers = false;
 
     public static event Action onAllThePlayersLoaded;
     public static event Action onGameStarted;
@@ -31,16 +32,23 @@ public class GameManager : NetworkBehaviour
 
     private void OnLoadComplete(ulong clientId, string sceneName, LoadSceneMode loadSceneMode)
     {
+        if (loadedAllPlayers) return;
         if (!NetworkManager.Singleton.IsServer) return;
         if (sceneName != "GameScene") return;
 
-        loadedPlayersCount++;
-        print(NetworkManager.Singleton.ConnectedClients.Count + 1);
-        print(loadedPlayersCount);
-
-        if (loadedPlayersCount >= NetworkManager.Singleton.ConnectedClients.Count + 1)
+        if (GameMode.multiplayerMode == LoopWars.GameMode.PlayMode.NetworkMultiplayer)
         {
-            print("onAllThePlayersLoaded");
+            loadedPlayersCount++;
+
+            if (loadedPlayersCount >= NetworkManager.Singleton.ConnectedClients.Count + 1)
+            {
+                loadedAllPlayers = true;
+                onAllThePlayersLoaded?.Invoke();
+            }
+        }
+        else
+        {
+            loadedAllPlayers = true;
             onAllThePlayersLoaded?.Invoke();
         }
     }
@@ -66,7 +74,7 @@ public class GameManager : NetworkBehaviour
     private void EndRound(Player winner)
     {
         if (!IsServer) return;
-        if (GameMode.multiplayerMode == MultiplayerMode.NetworkMultiplayer)
+        if (GameMode.multiplayerMode == LoopWars.GameMode.PlayMode.NetworkMultiplayer)
             EndRoundRpc(winner.playerId);
         else
             curEndRoundCoroutine = StartCoroutine(EndRoundCoro(winner));

@@ -32,7 +32,7 @@ public class WeaponManager : NetworkBehaviour
 
     [SerializeField] private WeaponScriptableObject startWeapon;
 
-    public static event Action<Character, WeaponScriptableObject> onWeaponGotThrown;
+    public static event Action<Character, WeaponScriptableObject> onThrewTheWeapon;
 
     private void Awake()
     {
@@ -130,7 +130,7 @@ public class WeaponManager : NetworkBehaviour
         if (weaponScriptableObject == null) return;
         Projectile projectile = Projectile.CreateNewProjectile(weaponScriptableObject.gunThrowableScriptableObject, character, true);
         projectile.LaunchProjectile(position, direction);
-        onWeaponGotThrown?.Invoke(character, weaponScriptableObject);
+        onThrewTheWeapon?.Invoke(character, weaponScriptableObject);
 
         DestroyCurWeapon();
     }

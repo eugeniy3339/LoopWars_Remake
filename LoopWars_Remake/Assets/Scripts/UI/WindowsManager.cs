@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 public class WindowsManager : MonoBehaviour
 {
     [SerializeField] private List<Panel> panels = new List<Panel>();
+    protected Panel curOpenedPanel;
 
     public static WindowsManager Instance { get; protected set; }
 
@@ -52,12 +53,18 @@ public class WindowsManager : MonoBehaviour
 
         if(panel.panel != null)
             panel.panel.SetActive(true);
-        EventSystem.current.SetSelectedGameObject(panel.firstObjectToSelect);
+        SetSelectedObject(panel.firstObjectToSelect);
+        curOpenedPanel = panel;
     }
 
-    private Panel GetPanel(GameObject panel)
+    protected Panel GetPanel(GameObject panel)
     {
         return panels.Find((x) => x.panel == panel);
+    }
+
+    public void SetSelectedObject(GameObject selected)
+    {
+        EventSystem.current.SetSelectedGameObject(selected);
     }
 
     public void Quit()

@@ -63,7 +63,7 @@ public class NetworkMultiplayerLobbyManager : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        if (GameMode.multiplayerMode != MultiplayerMode.NetworkMultiplayer) return;
+        if (GameMode.multiplayerMode != LoopWars.GameMode.PlayMode.NetworkMultiplayer) return;
 
         base.OnNetworkSpawn();
 
@@ -103,7 +103,7 @@ public class NetworkMultiplayerLobbyManager : NetworkBehaviour
                 curJoinedAllocation.HostConnectionData
             );
 
-            GameMode.multiplayerMode = MultiplayerMode.NetworkMultiplayer;
+            GameMode.multiplayerMode = LoopWars.GameMode.PlayMode.NetworkMultiplayer;
             NetworkManager.Singleton.StartClient();
             onJoinedLobby?.Invoke(false, joinCode);
         }
@@ -135,7 +135,7 @@ public class NetworkMultiplayerLobbyManager : NetworkBehaviour
                 curHostedAllocation.ConnectionData
             );
 
-            GameMode.multiplayerMode = MultiplayerMode.NetworkMultiplayer;
+            GameMode.multiplayerMode = LoopWars.GameMode.PlayMode.NetworkMultiplayer;
             NetworkManager.Singleton.StartServer();
             onJoinedLobby?.Invoke(true, joinCode);
             return joinCode;
@@ -290,14 +290,14 @@ public class NetworkMultiplayerLobbyManager : NetworkBehaviour
 
     public void StartGame()
     {
-        GameMode.multiplayerMode = MultiplayerMode.NetworkMultiplayer;
+        GameMode.multiplayerMode = LoopWars.GameMode.PlayMode.NetworkMultiplayer;
         NetworkManager.Singleton.SceneManager.LoadScene("GameScene", LoadSceneMode.Single);
     }
 
 
     private void OnClientConnected(ulong clientId)
     {
-        if (GameMode.multiplayerMode != MultiplayerMode.NetworkMultiplayer) return;
+        if (GameMode.multiplayerMode != LoopWars.GameMode.PlayMode.NetworkMultiplayer) return;
         if (!NetworkManager.Singleton.IsServer) return;
 
         if (NetworkManager.Singleton.ConnectedClientsList.Count > maxPlayers)
@@ -369,7 +369,7 @@ public class NetworkMultiplayerLobbyManager : NetworkBehaviour
         for (int i = PlayersContainer.players.Count - 1; i >= 0; i--)
         {
             Player player = PlayersContainer.players[i];
-            if (player.multiplayerMode == MultiplayerMode.NetworkMultiplayer)
+            if (player.multiplayerMode == LoopWars.GameMode.PlayMode.NetworkMultiplayer)
             {
                 KickPlayer(player);
             }

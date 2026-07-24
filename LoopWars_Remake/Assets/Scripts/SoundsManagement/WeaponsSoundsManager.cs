@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.TextCore.Text;
 
 public static class WeaponsSoundsManager
 {
@@ -16,7 +15,7 @@ public static class WeaponsSoundsManager
 
         Weapon.onShootStatic += OnWeaponShoot;
         Projectile.onDestroyedStatic += OnBulletDestroyed;
-        WeaponManager.onWeaponGotThrown += OnWeaponGotThrown;
+        WeaponManager.onThrewTheWeapon += OnWeaponGotThrown;
         ExplosiveProjectile.onExplodeStatic += OnExplosion;
     }
 

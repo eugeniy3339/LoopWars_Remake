@@ -80,7 +80,7 @@ public class HealthSystem : NetworkBehaviour, IDamagable
 
     private void SendDeathEvent()
     {
-        if(!sentDeathEvent)
+        if (!sentDeathEvent)
         {
             onCharacterDied?.Invoke(character);
             sentDeathEvent = true;

@@ -1,0 +1,769 @@
+fileFormatVersion: 2
+guid: 850cc87bc0572d0419452a56fe94cd32
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -3016941467284881539
+    second: TutorialOnWallArts_0
+  - first:
+      213: 1421070718789251074
+    second: TutorialOnWallArts_1
+  - first:
+      213: 3570231965824670518
+    second: TutorialOnWallArts_2
+  - first:
+      213: -2040142780561180817
+    second: TutorialOnWallArts_3
+  - first:
+      213: 2109175433127026564
+    second: TutorialOnWallArts_4
+  - first:
+      213: -8757785161650101672
+    second: TutorialOnWallArts_5
+  - first:
+      213: 6885979073465784133
+    second: TutorialOnWallArts_6
+  - first:
+      213: 8611877760173122355
+    second: TutorialOnWallArts_7
+  - first:
+      213: -6958901709683673429
+    second: TutorialOnWallArts_8
+  - first:
+      213: 5951297632845645343
+    second: TutorialOnWallArts_9
+  - first:
+      213: -5493844707388238261
+    second: TutorialOnWallArts_10
+  - first:
+      213: -4687442494436324082
+    second: TutorialOnWallArts_11
+  - first:
+      213: -2149597082348508408
+    second: TutorialOnWallArts_12
+  - first:
+      213: 185424637894048753
+    second: TutorialOnWallArts_13
+  - first:
+      213: -6220845383860020774
+    second: TutorialOnWallArts_14
+  - first:
+      213: 759542329763856089
+    second: TutorialOnWallArts_15
+  - first:
+      213: -6464314252244064601
+    second: TutorialOnWallArts_16
+  - first:
+      213: -5191825630543085109
+    second: TutorialOnWallArts_17
+  - first:
+      213: 8322630737369253195
+    second: TutorialOnWallArts_18
+  - first:
+      213: -462944404596849051
+    second: TutorialOnWallArts_19
+  - first:
+      213: -5019638883714679165
+    second: TutorialOnWallArts_20
+  - first:
+      213: 2920753547987811490
+    second: TutorialOnWallArts_21
+  - first:
+      213: -2477245254930649915
+    second: TutorialOnWallArts_22
+  - first:
+      213: -1242864055961054404
+    second: TutorialOnWallArts_23
+  - first:
+      213: 448922786528783482
+    second: TutorialOnWallArts_24
+  - first:
+      213: 5695107032425306665
+    second: TutorialOnWallArts_25
+  - first:
+      213: -8739358459552162028
+    second: TutorialOnWallArts_26
+  - first:
+      213: -7293752951253464278
+    second: TutorialOnWallArts_27
+  - first:
+      213: -6708463392957408532
+    second: TutorialOnWallArts_28
+  - first:
+      213: 8375641436789078465
+    second: TutorialOnWallArts_29
+  - first:
+      213: -6714961122444299496
+    second: TutorialOnWallArts_30
+  - first:
+      213: 3180982157440070613
+    second: TutorialOnWallArts_31
+  - first:
+      213: 1811379403508823422
+    second: TutorialOnWallArts_32
+  - first:
+      213: 1882786760444408496
+    second: TutorialOnWallArts_33
+  - first:
+      213: 6117869872924463975
+    second: TutorialOnWallArts_34
+  - first:
+      213: -3938054580991312654
+    second: TutorialOnWallArts_35
+  - first:
+      213: 9186134678142699159
+    second: TutorialOnWallArts_36
+  - first:
+      213: -2096733579041077449
+    second: TutorialOnWallArts_37
+  - first:
+      213: 7970413890583537303
+    second: TutorialOnWallArts_38
+  - first:
+      213: 1387091493553826705
+    second: TutorialOnWallArts_39
+  - first:
+      213: -8436635402357981414
+    second: TutorialOnWallArts_40
+  - first:
+      213: 6945594371143144563
+    second: TutorialOnWallArts_41
+  - first:
+      213: 5700237335531641103
+    second: TutorialOnWallArts_42
+  - first:
+      213: 6535012917982502361
+    second: TutorialOnWallArts_43
+  - first:
+      213: 5813823614700542312
+    second: TutorialOnWallArts_44
+  - first:
+      213: -8687398483201854135
+    second: TutorialOnWallArts_45
+  - first:
+      213: -4207701058340520898
+    second: TutorialOnWallArts_46
+  - first:
+      213: 8439317570371558600
+    second: TutorialOnWallArts_47
+  - first:
+      213: -7202387446805134029
+    second: TutorialOnWallArts_48
+  - first:
+      213: -3226716086925599222
+    second: TutorialOnWallArts_49
+  - first:
+      213: -5064438413584054515
+    second: TutorialOnWallArts_50
+  - first:
+      213: 8149427162854467732
+    second: TutorialOnWallArts_51
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: TutorialOnWallArts_1
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 2265
+        width: 412
+        height: 180
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20074222a48a8b310800000000000000
+      internalID: 1421070718789251074
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TutorialOnWallArts_3
+      rect:
+        serializedVersion: 2
+        x: 546
+        y: 2077
+        width: 185
+        height: 386
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f67b29143f4ffa3e0800000000000000
+      internalID: -2040142780561180817
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TutorialOnWallArts_5
+      rect:
+        serializedVersion: 2
+        x: 802
+        y: 2217
+        width: 486
+        height: 179
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 852a8a4dbc8167680800000000000000
+      internalID: -8757785161650101672
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TutorialOnWallArts_12
+      rect:
+        serializedVersion: 2
+        x: 1376
+        y: 1868
+        width: 252
+        height: 579
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80ba668b7d81b22e0800000000000000
+      internalID: -2149597082348508408
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TutorialOnWallArts_13
+      rect:
+        serializedVersion: 2
+        x: 1733
+        y: 2146
+        width: 247
+        height: 276
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1fbb74ac9b2c29200800000000000000
+      internalID: 185424637894048753
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TutorialOnWallArts_23
+      rect:
+        serializedVersion: 2
+        x: 81
+        y: 1529
+        width: 1090
+        height: 385
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c331750e9b570cee0800000000000000
+      internalID: -1242864055961054404
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TutorialOnWallArts_27
+      rect:
+        serializedVersion: 2
+        x: 1333
+        y: 1545
+        width: 322
+        height: 223
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a2b8415b55267ca90800000000000000
+      internalID: -7293752951253464278
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TutorialOnWallArts_29
+      rect:
+        serializedVersion: 2
+        x: 1729
+        y: 1603
+        width: 233
+        height: 180
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1c9faddb2814c3470800000000000000
+      internalID: 8375641436789078465
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TutorialOnWallArts_35
+      rect:
+        serializedVersion: 2
+        x: 379
+        y: 1252
+        width: 75
+        height: 117
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2fcb9e929383959c0800000000000000
+      internalID: -3938054580991312654
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TutorialOnWallArts_36
+      rect:
+        serializedVersion: 2
+        x: 509
+        y: 1207
+        width: 188
+        height: 174
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 796c79dc1d4bb7f70800000000000000
+      internalID: 9186134678142699159
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TutorialOnWallArts_37
+      rect:
+        serializedVersion: 2
+        x: 98
+        y: 1207
+        width: 214
+        height: 218
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7378f983be7e6e2e0800000000000000
+      internalID: -2096733579041077449
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TutorialOnWallArts_40
+      rect:
+        serializedVersion: 2
+        x: 739
+        y: 1271
+        width: 44
+        height: 60
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a1fb7fefccc0bea80800000000000000
+      internalID: -8436635402357981414
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TutorialOnWallArts_41
+      rect:
+        serializedVersion: 2
+        x: 816
+        y: 1255
+        width: 49
+        height: 77
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 37490fdf745b36060800000000000000
+      internalID: 6945594371143144563
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TutorialOnWallArts_42
+      rect:
+        serializedVersion: 2
+        x: 123
+        y: 1003
+        width: 136
+        height: 147
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f0958cfc7af4b1f40800000000000000
+      internalID: 5700237335531641103
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TutorialOnWallArts_43
+      rect:
+        serializedVersion: 2
+        x: 292
+        y: 1077
+        width: 58
+        height: 52
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9dd9feaff9701ba50800000000000000
+      internalID: 6535012917982502361
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TutorialOnWallArts_45
+      rect:
+        serializedVersion: 2
+        x: 382
+        y: 1071
+        width: 64
+        height: 52
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9457c7a7b19207780800000000000000
+      internalID: -8687398483201854135
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TutorialOnWallArts_47
+      rect:
+        serializedVersion: 2
+        x: 492
+        y: 1047
+        width: 98
+        height: 121
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8cc95b8ed9a7e1570800000000000000
+      internalID: 8439317570371558600
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TutorialOnWallArts_48
+      rect:
+        serializedVersion: 2
+        x: 621
+        y: 1073
+        width: 31
+        height: 47
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 335827ae6cafb0c90800000000000000
+      internalID: -7202387446805134029
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TutorialOnWallArts_50
+      rect:
+        serializedVersion: 2
+        x: 667
+        y: 1064
+        width: 33
+        height: 51
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d07ca7b681087b9b0800000000000000
+      internalID: -5064438413584054515
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 6a4c13612a2a7b543a41014fe6b60850
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      TutorialOnWallArts_0: -3016941467284881539
+      TutorialOnWallArts_1: 1421070718789251074
+      TutorialOnWallArts_10: -5493844707388238261
+      TutorialOnWallArts_11: -4687442494436324082
+      TutorialOnWallArts_12: -2149597082348508408
+      TutorialOnWallArts_13: 185424637894048753
+      TutorialOnWallArts_14: -6220845383860020774
+      TutorialOnWallArts_15: 759542329763856089
+      TutorialOnWallArts_16: -6464314252244064601
+      TutorialOnWallArts_17: -5191825630543085109
+      TutorialOnWallArts_18: 8322630737369253195
+      TutorialOnWallArts_19: -462944404596849051
+      TutorialOnWallArts_2: 3570231965824670518
+      TutorialOnWallArts_20: -5019638883714679165
+      TutorialOnWallArts_21: 2920753547987811490
+      TutorialOnWallArts_22: -2477245254930649915
+      TutorialOnWallArts_23: -1242864055961054404
+      TutorialOnWallArts_24: 448922786528783482
+      TutorialOnWallArts_25: 5695107032425306665
+      TutorialOnWallArts_26: -8739358459552162028
+      TutorialOnWallArts_27: -7293752951253464278
+      TutorialOnWallArts_28: -6708463392957408532
+      TutorialOnWallArts_29: 8375641436789078465
+      TutorialOnWallArts_3: -2040142780561180817
+      TutorialOnWallArts_30: -6714961122444299496
+      TutorialOnWallArts_31: 3180982157440070613
+      TutorialOnWallArts_32: 1811379403508823422
+      TutorialOnWallArts_33: 1882786760444408496
+      TutorialOnWallArts_34: 6117869872924463975
+      TutorialOnWallArts_35: -3938054580991312654
+      TutorialOnWallArts_36: 9186134678142699159
+      TutorialOnWallArts_37: -2096733579041077449
+      TutorialOnWallArts_38: 7970413890583537303
+      TutorialOnWallArts_39: 1387091493553826705
+      TutorialOnWallArts_4: 2109175433127026564
+      TutorialOnWallArts_40: -8436635402357981414
+      TutorialOnWallArts_41: 6945594371143144563
+      TutorialOnWallArts_42: 5700237335531641103
+      TutorialOnWallArts_43: 6535012917982502361
+      TutorialOnWallArts_44: 5813823614700542312
+      TutorialOnWallArts_45: -8687398483201854135
+      TutorialOnWallArts_46: -4207701058340520898
+      TutorialOnWallArts_47: 8439317570371558600
+      TutorialOnWallArts_48: -7202387446805134029
+      TutorialOnWallArts_49: -3226716086925599222
+      TutorialOnWallArts_5: -8757785161650101672
+      TutorialOnWallArts_50: -5064438413584054515
+      TutorialOnWallArts_51: 8149427162854467732
+      TutorialOnWallArts_6: 6885979073465784133
+      TutorialOnWallArts_7: 8611877760173122355
+      TutorialOnWallArts_8: -6958901709683673429
+      TutorialOnWallArts_9: 5951297632845645343
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

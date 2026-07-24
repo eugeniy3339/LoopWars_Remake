@@ -47,7 +47,7 @@ public class LocalMultiplayerLobbyManager : MonoBehaviour
         Player player = PlayersContainer.GetPlayerByDevice(playerInput.devices[0]);
         if (player != null) return;
 
-        GameMode.multiplayerMode = MultiplayerMode.LocalMultiplayer;
+        GameMode.multiplayerMode = LoopWars.GameMode.PlayMode.LocalMultiplayer;
 
         player = new Player(playerInput.devices, playerInput.currentControlScheme);
         player.name = PlayerSettings.name + GetNumberForName(player).ToString();
@@ -162,7 +162,7 @@ public class LocalMultiplayerLobbyManager : MonoBehaviour
         bool startedHost = NetworkManager.Singleton.StartHost();
         if (!startedHost)
             return;
-        GameMode.multiplayerMode = MultiplayerMode.LocalMultiplayer;
+        GameMode.multiplayerMode = LoopWars.GameMode.PlayMode.LocalMultiplayer;
         NetworkManager.Singleton.SceneManager.LoadScene("GameScene", LoadSceneMode.Single);
     }
 
@@ -173,7 +173,7 @@ public class LocalMultiplayerLobbyManager : MonoBehaviour
         for (int i = PlayersContainer.players.Count - 1; i >= 0; i--)
         {
             Player player = PlayersContainer.players[i];
-            if (player.multiplayerMode == MultiplayerMode.LocalMultiplayer)
+            if (player.multiplayerMode == LoopWars.GameMode.PlayMode.LocalMultiplayer)
                 KickPlayer(player);
         }
     }

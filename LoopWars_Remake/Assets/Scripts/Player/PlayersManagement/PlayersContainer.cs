@@ -31,7 +31,7 @@ public static class PlayersContainer
 
     public static Player GetPlayerById(ulong id)
     {
-        List<Player> players = GetPlayersByMultiplayerMode(MultiplayerMode.NetworkMultiplayer);
+        List<Player> players = GetPlayersByMultiplayerMode(LoopWars.GameMode.PlayMode.NetworkMultiplayer);
         return players.Find((player) => player.playerId == id);
     }
 
@@ -39,7 +39,7 @@ public static class PlayersContainer
     {
         Player player;
 
-        if (GameMode.multiplayerMode == MultiplayerMode.LocalMultiplayer)
+        if (GameMode.multiplayerMode == LoopWars.GameMode.PlayMode.LocalMultiplayer)
             player = GetPlayerByDevice(character.playerInput.devices[0]);
         else
             player = GetPlayerById(character.OwnerClientId);
@@ -47,7 +47,7 @@ public static class PlayersContainer
         return player;
     }
 
-    public static List<Player> GetPlayersByMultiplayerMode(MultiplayerMode multiplayerMode)
+    public static List<Player> GetPlayersByMultiplayerMode(LoopWars.GameMode.PlayMode multiplayerMode)
     {
         List<Player> players = new List<Player>();
         foreach (var player in PlayersContainer.players)
@@ -110,7 +110,7 @@ namespace LoopWars
                 return randomIndex;
             }
 
-            public MultiplayerMode multiplayerMode;
+            public GameMode.PlayMode multiplayerMode;
 
             public string name;
             public Color color;
@@ -136,13 +136,13 @@ namespace LoopWars
             {
                 this.devices.AddRange(devices);
                 this.controllScheme = controllScheme;
-                this.multiplayerMode = MultiplayerMode.LocalMultiplayer;
+                this.multiplayerMode = GameMode.PlayMode.LocalMultiplayer;
             }
 
             public Player(ulong playerId)
             {
                 this.playerId = playerId;
-                this.multiplayerMode = MultiplayerMode.NetworkMultiplayer;
+                this.multiplayerMode = GameMode.PlayMode.NetworkMultiplayer;
             }
         }
     }
@@ -151,13 +151,14 @@ namespace LoopWars
     {
         public static class GameMode
         {
-            public static MultiplayerMode multiplayerMode;
+            public static PlayMode multiplayerMode;
         }
 
-        public enum MultiplayerMode
+        public enum PlayMode
         {
             LocalMultiplayer,
-            NetworkMultiplayer
+            NetworkMultiplayer,
+            Tutorial
         }
     }
 }
