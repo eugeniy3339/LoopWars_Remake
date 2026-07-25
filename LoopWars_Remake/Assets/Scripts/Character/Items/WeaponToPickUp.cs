@@ -1,29 +1,53 @@
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 
 public class WeaponToPickUp : Trigger
 {
     [SerializeField] private WeaponScriptableObject weaponToPickUp;
+    protected override bool areThereTriggerConditions { get { return true; } }
 
-    protected override void Awake()
+
+
+    protected override void OnTriggerEnt(Character character)
     {
-        base.Awake();
-        areThereTriggerConditions = true;
+        TryToPickUpWeapon(character);
+        base.OnTriggerEnt(character);
     }
 
-    protected override void OnTrigger(Character character)
+    private void TryToPickUpWeapon(Character character)
     {
-        if(character.weaponManager.SetCurWeapon(weaponToPickUp))
+        if (character.weaponManager.SetCurWeapon(weaponToPickUp))
         {
-            base.OnTrigger(character);
             DespawnTrigger();
         }
     }
 
     [Rpc(SendTo.Server)]
-    protected override void TriggerServerRpc(ulong clientId, ulong characterNetworkObjectId)
+    protected override void TriggerEnterServerRpc(ulong clientId, ulong characterNetworkObjectId)
     {
         if (!CanTrigger()) return;
-        OnTrigger(Character.FindCharacter(characterNetworkObjectId));
+        OnTriggerEnt(Character.FindCharacter(characterNetworkObjectId));
+    }
+
+    protected void OnWeaponDestroyed(Character character, WeaponScriptableObject weaponScriptableObject)
+    {
+        print(charactersInTrigger.Count);
+        print(charactersInTrigger.Contains(character));
+        print(character.weaponManager.curWeapon == null);
+        if (charactersInTrigger.Contains(character) && character.weaponManager.curWeapon == null)
+            TryToPickUpWeapon(character);
+
+    }
+
+    private void OnEnable()
+    {
+        WeaponManager.onWeaponDestroyed += OnWeaponDestroyed;
+    }
+
+    protected override void OnDisable()
+    {
+        base.OnDisable();
+        WeaponManager.onWeaponDestroyed -= OnWeaponDestroyed;
     }
 }

@@ -4,6 +4,7 @@ using System.Text;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class MainMenu : WindowsManager
@@ -154,7 +155,7 @@ public class MainMenu : WindowsManager
     {
         localMultiplayerStartButton.interactable = canStart;
         if (!canStart && curOpenedPanel.panel == localMultiplayerLobbyPanel)
-            SetSelectedObject(GetPanel(localMultiplayerLobbyPanel).firstObjectToSelect);
+            SetSelectedObject(GetActiveSelectable());
     }
 
     private void OnNetworkLobbyPlayerJoined(Player player)
@@ -165,7 +166,10 @@ public class MainMenu : WindowsManager
 
     private void OnNetworkLobbyCanStartChanged(bool canStart)
     {
+        GameObject curSelectable = EventSystem.current.currentSelectedGameObject;
         networkMultiplayerStartButton.interactable = canStart;
+        if (!canStart && curSelectable == networkMultiplayerStartButton.gameObject)
+            SetSelectedObject(GetActiveSelectable());
     }
 
     private void OnNetworkPlayerReady(Player player)

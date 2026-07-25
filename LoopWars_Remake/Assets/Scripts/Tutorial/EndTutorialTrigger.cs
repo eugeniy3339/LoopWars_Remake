@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class EndTutorialTrigger : Trigger
 {
-    protected override void OnTrigger(Character character)
+    protected override void OnTriggerEnt(Character character)
     {
-        base.OnTrigger(character);
+        base.OnTriggerEnt(character);
         Tutorial.EndTutorial();
     }
 }

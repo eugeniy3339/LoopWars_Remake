@@ -33,6 +33,7 @@ public class WeaponManager : NetworkBehaviour
     [SerializeField] private WeaponScriptableObject startWeapon;
 
     public static event Action<Character, WeaponScriptableObject> onThrewTheWeapon;
+    public static event Action<Character, WeaponScriptableObject> onWeaponDestroyed;
 
     private void Awake()
     {
@@ -111,8 +112,10 @@ public class WeaponManager : NetworkBehaviour
         if (IsServer && curWeapon != null && curWeapon.NetworkObject.IsSpawned)
             curWeapon.NetworkObject.Despawn();
 
+        WeaponScriptableObject weaponScriptableObject = curWeaponScriptableObject;
         curWeaponScriptableObject = null;
         curWeapon = null;
+        onWeaponDestroyed?.Invoke(character, weaponScriptableObject);
     }
 
     public void ThrowWeapon()

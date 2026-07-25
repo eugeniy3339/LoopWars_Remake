@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -64,7 +65,20 @@ public class WindowsManager : MonoBehaviour
 
     public void SetSelectedObject(GameObject selected)
     {
+        if (selected != null && !selected.activeSelf)
+            selected = GetActiveSelectable();
         EventSystem.current.SetSelectedGameObject(selected);
+    }
+
+    protected GameObject GetActiveSelectable()
+    {
+        foreach(var selectable in FindObjectsOfType<Selectable>())
+        {
+            if (selectable.IsActive())
+                return selectable.gameObject;
+        }
+
+        return null;
     }
 
     public void Quit()
