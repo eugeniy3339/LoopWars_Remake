@@ -49,13 +49,11 @@ public class WeaponManager : NetworkBehaviour
         {
             SetCurWeapon(startWeapon);
         }
-        else
+        else if (curWeapon == null)
         {
-            if(curWeapon == null)
-                curWeapon = Weapon.FindWeapon(OwnerClientId);
+            curWeapon = Weapon.FindWeapon(OwnerClientId);
             curWeapon.OnAttackerChanged(character);
-            if(curWeaponScriptableObject == null)
-                curWeaponScriptableObject = curWeapon.weaponScriptableObject;
+            curWeaponScriptableObject = curWeapon.weaponScriptableObject;
         }
 
         if (!IsOwner)
@@ -192,7 +190,8 @@ public class WeaponManager : NetworkBehaviour
 
     private void OnWeaponSpawned(Weapon weapon)
     {
-        if (curWeapon == null && weapon.OwnerClientId == OwnerClientId)
+        if (weapon == null) return;
+        if (weapon.attacker == character)
         {
             curWeapon = weapon;
             curWeaponScriptableObject = weapon.weaponScriptableObject;
