@@ -36,13 +36,13 @@ public class GameMusicManager : NetworkBehaviour
     private void OnEnable()
     {
         MusicManager.SetCurMusicList(MusicMapsPairsListScriptableObject.Instance);
-        GameManager.onAllThePlayersLoaded += OnAllPlayersLoaded;
+        GameManager.onAllPlayersLoaded += OnAllPlayersLoaded;
         MusicManager.onMusicStarted += OnMusicStarted;
     }
 
     private void OnDisable()
     {
-        GameManager.onAllThePlayersLoaded -= OnAllPlayersLoaded;
+        GameManager.onAllPlayersLoaded -= OnAllPlayersLoaded;
         MusicManager.onMusicStarted -= OnMusicStarted;
     }
 }

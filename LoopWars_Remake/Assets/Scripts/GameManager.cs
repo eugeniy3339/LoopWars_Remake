@@ -16,9 +16,10 @@ public class GameManager : NetworkBehaviour
     private int loadedPlayersCount;
     private bool loadedAllPlayers = false;
 
-    public static event Action onAllThePlayersLoaded;
+    public static event Action onAllPlayersLoaded;
     public static event Action onGameStarted;
     public static event Action onGameEnded;
+    public static event Action<Player> onPlayerWon;
 
     private bool subscribedToPlayerDiedEvent = false;
 
@@ -43,13 +44,13 @@ public class GameManager : NetworkBehaviour
             if (loadedPlayersCount >= NetworkManager.Singleton.ConnectedClients.Count + 1)
             {
                 loadedAllPlayers = true;
-                onAllThePlayersLoaded?.Invoke();
+                onAllPlayersLoaded?.Invoke();
             }
         }
         else
         {
             loadedAllPlayers = true;
-            onAllThePlayersLoaded?.Invoke();
+            onAllPlayersLoaded?.Invoke();
         }
     }
 
@@ -89,7 +90,7 @@ public class GameManager : NetworkBehaviour
     private IEnumerator EndRoundCoro(Player winner)
     {
         EndCurRound();
-        Debug.Log(winner.name + " has won!");
+        onPlayerWon?.Invoke(winner);
 
         yield return new WaitForSeconds(3f);
 
